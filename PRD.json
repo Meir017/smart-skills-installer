@@ -740,7 +740,7 @@
             "'skills-installer --version' works after global install",
             "'skills-installer --help' displays correct usage information"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S11-T02",
