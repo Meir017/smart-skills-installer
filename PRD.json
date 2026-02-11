@@ -941,7 +941,7 @@
             "Parallel project builds do not corrupt shared skill directories",
             "Build output shows skill acquisition running once per project, not per TFM"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     }
