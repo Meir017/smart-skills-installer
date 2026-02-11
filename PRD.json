@@ -327,7 +327,7 @@
             "404 responses for missing files are handled gracefully",
             "Organization/project are correctly interpolated in API URLs"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S05-T03",
