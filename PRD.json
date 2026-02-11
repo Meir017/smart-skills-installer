@@ -669,7 +669,7 @@
         {
           "id": "S10-T01",
           "title": "Implement 'list' Command",
-          "completed": false,
+          "completed": true,
           "description": "Add a command to list installed skills with their versions, sources, and install dates.",
           "apiReferences": [
             "ISkillStore.GetInstalledSkillsAsync",
@@ -692,7 +692,7 @@
         {
           "id": "S10-T02",
           "title": "Implement 'status' Command",
-          "completed": false,
+          "completed": true,
           "description": "Add a command showing a summary of the current project context: detected libraries, matched skills, installed/missing skills.",
           "requirements": [
             "Show detected packages count and list",

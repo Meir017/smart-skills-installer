@@ -187,6 +187,78 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
     }
 });
 
+// list command
+var listCommand = new Command("list", "List installed skills")
+{
+    jsonOption
+};
+
+rootCommand.Subcommands.Add(listCommand);
+
+listCommand.SetAction(async (parseResult, cancellationToken) =>
+{
+    bool verbose = parseResult.GetValue(verboseOption);
+    bool jsonOutput = parseResult.GetValue(jsonOption);
+
+    using var host = CreateHost(verbose);
+    var store = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillStore>();
+
+    var skills = await store.GetInstalledSkillsAsync(cancellationToken);
+
+    if (jsonOutput)
+    {
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(skills, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+    }
+    else if (skills.Count == 0)
+    {
+        Console.WriteLine("No skills installed.");
+    }
+    else
+    {
+        Console.WriteLine($"{"Name",-30} {"Provider",-15} {"Installed",-25} {"SHA"}");
+        Console.WriteLine(new string('-', 90));
+        foreach (var s in skills)
+        {
+            Console.WriteLine($"{s.Name,-30} {s.SourceProviderType,-15} {s.InstalledAt:yyyy-MM-dd HH:mm,-25} {s.CommitSha[..8]}");
+        }
+    }
+});
+
+// status command
+var statusCommand = new Command("status", "Show status of installed skills and available updates")
+{
+    projectOption,
+    jsonOption
+};
+
+rootCommand.Subcommands.Add(statusCommand);
+
+statusCommand.SetAction(async (parseResult, cancellationToken) =>
+{
+    bool verbose = parseResult.GetValue(verboseOption);
+    bool jsonOutput = parseResult.GetValue(jsonOption);
+
+    using var host = CreateHost(verbose);
+    var store = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillStore>();
+    var logger = host.Services.GetRequiredService<ILogger<Program>>();
+
+    var skills = await store.GetInstalledSkillsAsync(cancellationToken);
+
+    if (skills.Count == 0)
+    {
+        Console.WriteLine("No skills installed.");
+        return;
+    }
+
+    Console.WriteLine($"{"Name",-30} {"Status",-15} {"SHA",-12} {"Installed"}");
+    Console.WriteLine(new string('-', 80));
+
+    foreach (var s in skills)
+    {
+        Console.WriteLine($"{s.Name,-30} {"Installed",-15} {s.CommitSha[..8],-12} {s.InstalledAt:yyyy-MM-dd HH:mm}");
+    }
+});
+
 rootCommand.SetAction(parseResult =>
 {
     Console.WriteLine("SmartSkills CLI - Use --help for usage information.");
