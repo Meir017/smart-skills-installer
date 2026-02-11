@@ -1,13 +1,14 @@
 # SmartSkills
 
-Automatically discover and install agent skills based on your .NET project's dependencies. Available as both a CLI tool and MSBuild integration.
+Automatically discover and install agent skills based on your project's dependencies. Supports .NET (NuGet) and Node.js (npm/yarn/pnpm) ecosystems. Available as both a CLI tool and MSBuild integration.
 
 ## Overview
 
-SmartSkills scans your .NET project for installed NuGet packages and matches them against a remote skill registry to find relevant agent skills. Skills follow the [Agent Skills specification](https://agentskills.io/specification.md) and are downloaded, validated, and installed locally.
+SmartSkills scans your project for installed packages and matches them against a remote skill registry to find relevant agent skills. Skills follow the [Agent Skills specification](https://agentskills.io/specification.md) and are downloaded, validated, and installed locally.
 
 **Key features:**
-- Scan projects and solutions for NuGet dependencies
+- Scan projects and solutions for NuGet and npm dependencies
+- Auto-detect project type (.NET, Node.js) in a directory
 - Match packages against skill registries using exact and glob patterns
 - Fetch skills from GitHub and Azure DevOps repositories
 - Commit-SHA-based caching to skip unchanged skills
@@ -177,7 +178,7 @@ var entries = RegistryIndexParser.Parse(jsonString);
 
 ### Registry JSON Format
 
-A skill registry is a JSON file that maps NuGet packages to skill locations:
+A skill registry is a JSON file that maps packages to skill locations:
 
 ```json
 {
@@ -185,11 +186,13 @@ A skill registry is a JSON file that maps NuGet packages to skill locations:
   "skills": [
     {
       "packagePatterns": ["Microsoft.EntityFrameworkCore", "Microsoft.EntityFrameworkCore.*"],
-      "skillPath": "skills/ef-core"
+      "skillPath": "skills/ef-core",
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Serilog", "Serilog.*"],
-      "skillPath": "skills/serilog"
+      "packagePatterns": ["@azure/cosmos"],
+      "skillPath": "skills/azure-cosmos-ts",
+      "language": "npm"
     },
     {
       "packagePatterns": ["SomePackage"],
@@ -203,9 +206,11 @@ A skill registry is a JSON file that maps NuGet packages to skill locations:
 | Field | Required | Description |
 |-------|----------|-------------|
 | `repoUrl` (top-level) | No | Default repository URL inherited by all skills in the file |
-| `skills[].packagePatterns` | Yes | Array of NuGet package names or glob patterns to match |
+| `language` (top-level) | No | Default ecosystem filter inherited by all skills (`"dotnet"`, `"npm"`, or omit for any) |
+| `skills[].packagePatterns` | Yes | Array of package names or glob patterns to match |
 | `skills[].skillPath` | Yes | Path to the skill directory within the repository |
 | `skills[].repoUrl` | No | Per-skill repository URL override (takes precedence over the top-level value) |
+| `skills[].language` | No | Per-skill ecosystem filter override (takes precedence over the top-level value) |
 
 ### Package Patterns
 
