@@ -114,7 +114,7 @@
             "Handles Central Package Management where versions are in Directory.Packages.props",
             "Returns empty list for projects with no package references"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S02-T03",
