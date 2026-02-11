@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4DDC5CE1-F97E-477A-B589-5C5F3EB972C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSkills.Core", "src\SmartSkills.Core\SmartSkills.Core.csproj", "{BD2061F8-EF63-49C8-8011-CE18797B8153}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSkills.Cli", "src\SmartSkills.Cli\SmartSkills.Cli.csproj", "{33CE3886-66AD-4EAF-A452-048532830C28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSkills.MSBuild", "src\SmartSkills.MSBuild\SmartSkills.MSBuild.csproj", "{DADF56FD-43D8-48F1-8C3C-2E7BDCD427B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{121977E5-3BF9-478B-AEA4-C658BD21CC97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSkills.Core.Tests", "tests\SmartSkills.Core.Tests\SmartSkills.Core.Tests.csproj", "{6442DE73-5405-4BF6-80F2-C7B606513C6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSkills.Cli.Tests", "tests\SmartSkills.Cli.Tests\SmartSkills.Cli.Tests.csproj", "{B3789C5B-4A1D-412E-9F4B-3E5ED8F3F326}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSkills.MSBuild.Tests", "tests\SmartSkills.MSBuild.Tests\SmartSkills.MSBuild.Tests.csproj", "{DA12CFCC-E543-4BE7-A085-13549EF575C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD2061F8-EF63-49C8-8011-CE18797B8153}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD2061F8-EF63-49C8-8011-CE18797B8153}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD2061F8-EF63-49C8-8011-CE18797B8153}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD2061F8-EF63-49C8-8011-CE18797B8153}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33CE3886-66AD-4EAF-A452-048532830C28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33CE3886-66AD-4EAF-A452-048532830C28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33CE3886-66AD-4EAF-A452-048532830C28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33CE3886-66AD-4EAF-A452-048532830C28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DADF56FD-43D8-48F1-8C3C-2E7BDCD427B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DADF56FD-43D8-48F1-8C3C-2E7BDCD427B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DADF56FD-43D8-48F1-8C3C-2E7BDCD427B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DADF56FD-43D8-48F1-8C3C-2E7BDCD427B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6442DE73-5405-4BF6-80F2-C7B606513C6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6442DE73-5405-4BF6-80F2-C7B606513C6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6442DE73-5405-4BF6-80F2-C7B606513C6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6442DE73-5405-4BF6-80F2-C7B606513C6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3789C5B-4A1D-412E-9F4B-3E5ED8F3F326}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3789C5B-4A1D-412E-9F4B-3E5ED8F3F326}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3789C5B-4A1D-412E-9F4B-3E5ED8F3F326}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3789C5B-4A1D-412E-9F4B-3E5ED8F3F326}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA12CFCC-E543-4BE7-A085-13549EF575C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA12CFCC-E543-4BE7-A085-13549EF575C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA12CFCC-E543-4BE7-A085-13549EF575C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA12CFCC-E543-4BE7-A085-13549EF575C2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BD2061F8-EF63-49C8-8011-CE18797B8153} = {4DDC5CE1-F97E-477A-B589-5C5F3EB972C8}
+		{33CE3886-66AD-4EAF-A452-048532830C28} = {4DDC5CE1-F97E-477A-B589-5C5F3EB972C8}
+		{DADF56FD-43D8-48F1-8C3C-2E7BDCD427B1} = {4DDC5CE1-F97E-477A-B589-5C5F3EB972C8}
+		{6442DE73-5405-4BF6-80F2-C7B606513C6A} = {121977E5-3BF9-478B-AEA4-C658BD21CC97}
+		{B3789C5B-4A1D-412E-9F4B-3E5ED8F3F326} = {121977E5-3BF9-478B-AEA4-C658BD21CC97}
+		{DA12CFCC-E543-4BE7-A085-13549EF575C2} = {121977E5-3BF9-478B-AEA4-C658BD21CC97}
+	EndGlobalSection
+EndGlobal

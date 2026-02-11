@@ -1,0 +1,17 @@
+﻿Console.WriteLine("Smart Skills Installer CLI");
+Console.WriteLine("Usage: skills-installer <command> [options]");
+Console.WriteLine();
+Console.WriteLine("Commands:");
+Console.WriteLine("  scan       Scan project for installed libraries");
+Console.WriteLine("  install    Install skills matching project libraries");
+Console.WriteLine("  list       List installed or available skills");
+Console.WriteLine("  status     Show project skill status summary");
+Console.WriteLine("  update     Update installed skills");
+Console.WriteLine("  uninstall  Remove installed skills");
+Console.WriteLine("  config     Manage configuration");
+Console.WriteLine();
+Console.WriteLine("Options:");
+Console.WriteLine("  --help       Show help information");
+Console.WriteLine("  --version    Show version information");
+Console.WriteLine("  --verbose    Enable detailed logging");
+Console.WriteLine("  --dry-run    Preview actions without executing");

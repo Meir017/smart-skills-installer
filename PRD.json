@@ -1,0 +1,949 @@
+{
+  "name": "Smart Skills Installer CLI",
+  "version": "1.0.0",
+  "description": "A C# toolset that inspects installed libraries in a .NET project and automatically installs relevant agent skills by fetching them from remote sources (public GitHub repositories or authenticated Azure DevOps URLs). The primary acquisition mechanism is MSBuild integration—skills are resolved and installed as part of the build pipeline via custom MSBuild targets/tasks. A companion CLI tool is provided for manual operations, diagnostics, and configuration.",
+  "goals": [
+    "Automate the discovery and installation of agent skills based on project dependencies",
+    "Provide MSBuild-native integration so skills are acquired automatically during build",
+    "Support multiple remote skill sources (GitHub, Azure DevOps)",
+    "Provide a seamless developer experience with minimal configuration—just add a NuGet package",
+    "Ensure secure credential handling for authenticated sources",
+    "Support incremental builds so skill acquisition only runs when dependencies change"
+  ],
+  "stories": [
+    {
+      "id": "S01",
+      "title": "Project Scaffolding & CLI Framework",
+      "description": "Set up the .NET console application with a CLI framework for parsing commands, options, and arguments.",
+      "tasks": [
+        {
+          "id": "S01-T01",
+          "title": "Initialize .NET Console Project",
+          "description": "Create a .NET solution with a shared core class library and a console application project. The core library contains all scanning, matching, fetching, and installation logic so it can be consumed by both the CLI and the MSBuild task projects.",
+          "requirements": [
+            "Use .NET 8.0 or later",
+            "Project should follow standard .NET solution structure with src/ and tests/ folders",
+            "Create SmartSkills.Core class library project for shared logic (scanning, matching, fetching, installing)",
+            "Create SmartSkills.Cli console application project depending on SmartSkills.Core",
+            "Create SmartSkills.MSBuild class library project for custom MSBuild tasks depending on SmartSkills.Core",
+            "Include a .gitignore, Directory.Build.props, and global.json"
+          ],
+          "dod": "A buildable .NET solution exists with Core, Cli, and MSBuild projects with proper folder structure.",
+          "verifications": [
+            "'dotnet build' completes without errors for all projects",
+            "'dotnet run --project src/SmartSkills.Cli' prints a placeholder help message",
+            "Solution file references Core, Cli, MSBuild, and test projects",
+            "Core library can be referenced by both Cli and MSBuild projects"
+          ],
+          "completed": true
+        },
+        {
+          "id": "S01-T02",
+          "title": "Integrate CLI Parsing Library",
+          "description": "Add System.CommandLine NuGet package and configure root command with global options (--verbose, --config, --dry-run).",
+          "requirements": [
+            "Use System.CommandLine for argument parsing",
+            "Support global options: --verbose (enable detailed logging), --config <path> (custom config file), --dry-run (preview actions without executing)",
+            "Provide auto-generated --help and --version support"
+          ],
+          "dod": "CLI accepts and parses global options and displays help text when invoked with --help.",
+          "verifications": [
+            "'dotnet run -- --help' displays usage info with all global options",
+            "'dotnet run -- --version' displays the tool version",
+            "Invalid options produce a meaningful error message"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S01-T03",
+          "title": "Configure Logging Infrastructure",
+          "description": "Set up structured logging using Microsoft.Extensions.Logging with console and file sinks, controlled by the --verbose flag.",
+          "requirements": [
+            "Use Microsoft.Extensions.Logging with ILogger<T> pattern",
+            "Default log level: Information; with --verbose: Debug",
+            "Log output should include timestamps and log levels",
+            "Support optional file logging via configuration"
+          ],
+          "dod": "Application logs messages to console at appropriate levels, and verbose mode increases log detail.",
+          "verifications": [
+            "Running without --verbose shows only Info+ messages",
+            "Running with --verbose shows Debug+ messages",
+            "Log entries include timestamps and structured context"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Library Detection & Scanning",
+      "description": "Detect installed libraries/packages in the target project by scanning project files and lock files.",
+      "tasks": [
+        {
+          "id": "S02-T01",
+          "title": "Implement 'scan' Command",
+          "description": "Add a 'scan' subcommand that accepts an optional project/solution path (defaults to current directory) and triggers the library scanning pipeline.",
+          "requirements": [
+            "Command syntax: 'skills-installer scan [--path <dir>]'",
+            "Default to current working directory if --path is not provided",
+            "Validate that the path exists and contains a valid .NET project or solution"
+          ],
+          "dod": "The 'scan' command is registered, validates input path, and invokes the scanning pipeline.",
+          "verifications": [
+            "'dotnet run -- scan' runs against the current directory",
+            "'dotnet run -- scan --path ./myproject' runs against the specified path",
+            "Invalid paths produce a clear error message"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S02-T02",
+          "title": "Parse .csproj Files for PackageReference",
+          "description": "Implement a parser that reads .csproj files and extracts all <PackageReference> elements with their package names and versions.",
+          "requirements": [
+            "Parse XML-based .csproj files using System.Xml.Linq",
+            "Extract package Id/Name and Version from <PackageReference> elements",
+            "Support both Include attribute and child elements format",
+            "Handle multiple .csproj files when a solution is provided",
+            "Support Directory.Packages.props (Central Package Management)"
+          ],
+          "dod": "Given a .csproj or .sln path, the scanner returns a list of all referenced NuGet packages with versions.",
+          "verifications": [
+            "Correctly parses a .csproj with multiple PackageReference entries",
+            "Handles .csproj with version ranges and wildcard versions",
+            "Handles Central Package Management where versions are in Directory.Packages.props",
+            "Returns empty list for projects with no package references"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S02-T03",
+          "title": "Parse packages.lock.json for Resolved Dependencies",
+          "description": "Implement parsing of packages.lock.json to discover the full transitive dependency graph with resolved versions.",
+          "requirements": [
+            "Parse packages.lock.json (NuGet lock file) if present",
+            "Extract both direct and transitive dependencies",
+            "Resolve the actual installed version for each package",
+            "Fall back to .csproj parsing if lock file is absent"
+          ],
+          "dod": "The scanner can read packages.lock.json and produce a complete dependency list including transitive packages.",
+          "verifications": [
+            "Correctly parses a packages.lock.json with direct and transitive deps",
+            "Falls back to .csproj parsing when lock file is missing",
+            "Handles multiple target frameworks in the lock file"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S02-T04",
+          "title": "Display Scan Results",
+          "description": "Format and display the scanned library list in a human-readable table and support JSON output for tooling integration.",
+          "requirements": [
+            "Display results as a formatted table (Package Name | Version | Source)",
+            "Support --output json flag to emit results as JSON",
+            "Show summary count of detected libraries",
+            "Distinguish between direct and transitive dependencies in output"
+          ],
+          "dod": "Scan results are displayed as a formatted table by default and as valid JSON when --output json is used.",
+          "verifications": [
+            "Table output aligns columns correctly with varying package name lengths",
+            "JSON output is valid and parseable",
+            "Summary line shows correct count of detected packages"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Skill Registry & Mapping Configuration",
+      "description": "Define and manage the mapping between library names and their corresponding agent skills, including the skill metadata schema.",
+      "tasks": [
+        {
+          "id": "S03-T01",
+          "title": "Define Skill Manifest Schema",
+          "description": "Design a JSON schema for skill manifests that describes a skill's metadata, compatibility, and installation instructions.",
+          "requirements": [
+            "Schema must include: skillId, name, description, version, author, sourceUrl",
+            "Include a 'triggers' array listing library names/patterns that trigger this skill",
+            "Include 'minLibraryVersion' and 'maxLibraryVersion' for version compatibility",
+            "Include 'installSteps' array with ordered installation instructions",
+            "Include 'dependencies' array for skills that depend on other skills"
+          ],
+          "dod": "A documented JSON schema for skill manifests is defined and validated with sample manifests.",
+          "verifications": [
+            "Sample skill manifests validate against the schema",
+            "Schema supports regex patterns in library name triggers",
+            "Invalid manifests are rejected with descriptive errors"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S03-T02",
+          "title": "Implement Skill Registry Index",
+          "description": "Create a registry index file format that maps library names to available skills, hosted alongside skill packages in the remote source.",
+          "requirements": [
+            "Registry index is a JSON file (skills-registry.json) listing all available skill mappings",
+            "Each entry maps a library name/pattern to one or more skill manifest URLs",
+            "Support glob patterns for library name matching (e.g., 'Microsoft.Extensions.*')",
+            "Include metadata: lastUpdated, registryVersion, sourceType"
+          ],
+          "dod": "A registry index format is defined, can be parsed, and supports pattern-based library-to-skill matching.",
+          "verifications": [
+            "Registry index with glob patterns correctly matches library names",
+            "Multiple skills can be mapped to a single library",
+            "A library matching multiple patterns returns all applicable skills without duplicates"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S03-T03",
+          "title": "Implement Library-to-Skill Matching Engine",
+          "description": "Build the matching engine that takes a list of detected libraries and resolves them to applicable skills from the registry.",
+          "requirements": [
+            "Accept a list of detected libraries (name + version) and a skill registry index",
+            "Match library names against registry patterns (exact match and glob)",
+            "Filter skills by version compatibility constraints",
+            "Deduplicate results when multiple libraries resolve to the same skill",
+            "Order results by priority/relevance"
+          ],
+          "dod": "Given a set of detected libraries and a registry, the engine returns a deduplicated, version-compatible list of skills to install.",
+          "verifications": [
+            "Exact library name matches return correct skills",
+            "Glob patterns (e.g., 'Microsoft.Extensions.*') match appropriately",
+            "Version constraints filter out incompatible skills",
+            "Duplicate skills from multiple library matches are deduplicated"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Remote Source: Public GitHub Fetching",
+      "description": "Implement fetching of skill manifests and packages from public GitHub repositories.",
+      "tasks": [
+        {
+          "id": "S04-T01",
+          "title": "Implement GitHub HTTP Client",
+          "description": "Create an HTTP client wrapper for GitHub API and raw content access, with rate limiting awareness and retry logic.",
+          "requirements": [
+            "Use HttpClient with proper User-Agent header for GitHub API",
+            "Support fetching raw file content from GitHub repos (raw.githubusercontent.com)",
+            "Support GitHub API for listing repository contents",
+            "Implement rate limit detection and backoff (respect X-RateLimit headers)",
+            "Support optional GitHub PAT for increased rate limits via --github-token option"
+          ],
+          "dod": "An HTTP client can fetch files from public GitHub repositories with proper rate limit handling.",
+          "verifications": [
+            "Successfully fetches a known file from a public GitHub repo",
+            "Handles 404 responses gracefully with clear error message",
+            "Detects rate limiting and waits/retries appropriately",
+            "Authenticated requests include the token in Authorization header"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S04-T02",
+          "title": "Fetch Skill Registry from GitHub",
+          "description": "Implement the logic to fetch and parse the skill registry index file from a configured GitHub repository.",
+          "requirements": [
+            "Fetch skills-registry.json from a configurable GitHub repo and branch",
+            "Deserialize into the registry model",
+            "Cache the registry locally with a configurable TTL (default 1 hour)",
+            "Support specifying the registry source via config: 'github:<owner>/<repo>[@<branch>]'"
+          ],
+          "dod": "The tool can fetch, parse, and cache a skill registry from a public GitHub repository.",
+          "verifications": [
+            "Registry is fetched and parsed from a GitHub repo",
+            "Cached registry is used within TTL window",
+            "Expired cache triggers a fresh fetch",
+            "Invalid registry content produces a descriptive error"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S04-T03",
+          "title": "Download Skill Packages from GitHub",
+          "description": "Implement downloading of individual skill packages (files, directories, or release assets) from GitHub based on skill manifest URLs.",
+          "requirements": [
+            "Download individual files referenced in skill manifest installSteps",
+            "Support downloading directories (via GitHub API tree endpoint)",
+            "Support downloading release assets by tag",
+            "Verify downloaded content integrity via SHA256 checksum if provided in manifest",
+            "Show download progress for large files"
+          ],
+          "dod": "Skill packages can be downloaded from GitHub repositories with integrity verification.",
+          "verifications": [
+            "Single file download works correctly",
+            "Directory download retrieves all files preserving structure",
+            "Release asset download fetches the correct version",
+            "Checksum mismatch aborts installation with error"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "Remote Source: Authenticated Azure DevOps Fetching",
+      "description": "Implement fetching of skill manifests and packages from authenticated Azure DevOps (ADO) repositories.",
+      "tasks": [
+        {
+          "id": "S05-T01",
+          "title": "Implement ADO Authentication",
+          "description": "Support multiple ADO authentication methods: Personal Access Token (PAT), Azure CLI credential, and Managed Identity.",
+          "requirements": [
+            "Support PAT-based auth via --ado-token option or ADO_TOKEN environment variable",
+            "Support Azure CLI credential (az account get-access-token) as a fallback",
+            "Support Managed Identity for CI/CD environments",
+            "Store credentials securely (never log tokens, use SecureString where applicable)",
+            "Auth method selection priority: explicit token > env var > Azure CLI > Managed Identity"
+          ],
+          "dod": "The tool can authenticate with ADO using PAT, Azure CLI, or Managed Identity with secure credential handling.",
+          "verifications": [
+            "PAT auth works via both --ado-token and environment variable",
+            "Azure CLI credential is used when no PAT is provided",
+            "Invalid/expired tokens produce a clear authentication error",
+            "Tokens are never written to log output even in verbose mode"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S05-T02",
+          "title": "Implement ADO Git API Client",
+          "description": "Create an HTTP client for Azure DevOps Git REST API to fetch repository contents and file downloads.",
+          "requirements": [
+            "Use ADO REST API (https://dev.azure.com/{org}/{project}/_apis/git/repositories/...)",
+            "Support fetching file contents from a specific branch/commit",
+            "Support listing repository items (directory contents)",
+            "Handle ADO-specific error responses and status codes",
+            "Support configurable ADO organization and project via config"
+          ],
+          "dod": "An HTTP client can authenticate and fetch files from ADO Git repositories.",
+          "verifications": [
+            "Successfully fetches a file from an ADO repo with valid auth",
+            "401 responses trigger re-authentication or clear error message",
+            "404 responses for missing files are handled gracefully",
+            "Organization/project are correctly interpolated in API URLs"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S05-T03",
+          "title": "Fetch Skill Registry from ADO",
+          "description": "Implement fetching and parsing the skill registry index from an ADO repository, reusing the same registry format as GitHub.",
+          "requirements": [
+            "Fetch skills-registry.json from a configurable ADO repo and branch",
+            "Reuse the same registry deserialization and caching logic as GitHub source",
+            "Support specifying the source via config: 'ado:<org>/<project>/<repo>[@<branch>]'",
+            "Support multiple ADO sources with different credentials"
+          ],
+          "dod": "The tool can fetch, parse, and cache a skill registry from an authenticated ADO repository.",
+          "verifications": [
+            "Registry is fetched from ADO with proper authentication",
+            "Same cache logic applies (TTL, invalidation)",
+            "Multiple ADO sources with different orgs/credentials work simultaneously",
+            "Auth failures produce actionable error messages"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S05-T04",
+          "title": "Download Skill Packages from ADO",
+          "description": "Implement downloading skill packages from ADO repositories using the ADO Git API.",
+          "requirements": [
+            "Download files from ADO repos via Items API",
+            "Support downloading directories recursively",
+            "Verify content integrity via SHA256 checksum",
+            "Reuse the same skill installation pipeline as GitHub downloads"
+          ],
+          "dod": "Skill packages can be downloaded from ADO repositories with authentication and integrity checks.",
+          "verifications": [
+            "File download from ADO works with valid credentials",
+            "Directory download preserves file structure",
+            "Checksum verification works identically to GitHub source",
+            "Download failures produce retry attempts before failing"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S06",
+      "title": "Skill Installation Engine",
+      "description": "Implement the core logic for installing, updating, and managing agent skills on the local system.",
+      "tasks": [
+        {
+          "id": "S06-T01",
+          "title": "Implement 'install' Command",
+          "description": "Add the 'install' subcommand that orchestrates the full pipeline: scan libraries → match skills → fetch → install.",
+          "requirements": [
+            "Command syntax: 'skills-installer install [--path <dir>] [--source <source>] [--force]'",
+            "Orchestrate: scan → match → confirm → download → install",
+            "Show a preview of skills to be installed and prompt for confirmation (unless --yes flag)",
+            "Support --force to reinstall/overwrite existing skills",
+            "Support --source to filter to a specific registry source"
+          ],
+          "dod": "The 'install' command runs the full pipeline from scanning to installation with user confirmation.",
+          "verifications": [
+            "Full pipeline executes end-to-end with a test project and registry",
+            "User is prompted for confirmation before installation",
+            "--yes flag skips confirmation prompt",
+            "--dry-run shows what would be installed without making changes",
+            "--force reinstalls already-installed skills"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S06-T02",
+          "title": "Implement Local Skill Storage",
+          "description": "Define and implement the local file system layout for installed skills, including a local manifest tracking installed state.",
+          "requirements": [
+            "Skills are installed to a configurable directory (default: ~/.smart-skills/)",
+            "Each skill is stored in its own subdirectory: ~/.smart-skills/<skillId>/",
+            "Maintain a local installed-skills.json tracking installed skill IDs, versions, and install dates",
+            "Support environment variable override for install directory (SMART_SKILLS_HOME)"
+          ],
+          "dod": "Skills are installed to a well-defined directory structure with a local manifest tracking state.",
+          "verifications": [
+            "Skills are written to the correct directory structure",
+            "installed-skills.json is updated after each install/uninstall",
+            "Custom install directory via env var works correctly",
+            "Concurrent installs don't corrupt the manifest (file locking)"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S06-T03",
+          "title": "Implement Skill Update Detection",
+          "description": "Compare installed skill versions against the registry to detect available updates.",
+          "requirements": [
+            "Compare installed skill versions with latest available in registry",
+            "Support semantic versioning comparison",
+            "Implement 'skills-installer update [--skill <id>]' command",
+            "Show a summary of available updates before applying"
+          ],
+          "dod": "The tool can detect and apply skill updates by comparing local state with the remote registry.",
+          "verifications": [
+            "Detects when a newer version of an installed skill is available",
+            "Update command upgrades the skill files and updates local manifest",
+            "Downgrade is prevented unless --force is used",
+            "No-op when all skills are up to date"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S06-T04",
+          "title": "Implement Skill Uninstallation",
+          "description": "Add the ability to remove installed skills cleanly.",
+          "requirements": [
+            "Command syntax: 'skills-installer uninstall <skillId> [--all]'",
+            "Remove skill directory and update installed-skills.json",
+            "Warn if other installed skills depend on the skill being removed",
+            "Support --all flag to remove all installed skills"
+          ],
+          "dod": "Skills can be uninstalled individually or in bulk with dependency awareness.",
+          "verifications": [
+            "Uninstalling a skill removes its directory and manifest entry",
+            "Dependency warning is shown when removing a skill others depend on",
+            "--all removes all skills and clears the manifest",
+            "Uninstalling a non-existent skill shows a clear message"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S07",
+      "title": "Configuration Management",
+      "description": "Implement user and project-level configuration for registry sources, credentials, and tool behavior.",
+      "tasks": [
+        {
+          "id": "S07-T01",
+          "title": "Implement Configuration File Support",
+          "description": "Support a JSON/YAML configuration file for persistent settings, with user-level and project-level overrides.",
+          "requirements": [
+            "Support config file at ~/.smart-skills/config.json (user-level)",
+            "Support .skills-installer.json in project root (project-level, overrides user-level)",
+            "Config includes: sources (array of registry sources), installDir, cacheTtlMinutes, defaultBranch",
+            "Support 'skills-installer config set <key> <value>' and 'skills-installer config get <key>' commands",
+            "CLI flags override config file values"
+          ],
+          "dod": "Configuration is loaded from files with proper precedence (CLI > project > user > defaults).",
+          "verifications": [
+            "User-level config is loaded from ~/.smart-skills/config.json",
+            "Project-level config overrides user-level settings",
+            "CLI flags override all config file values",
+            "'config set' and 'config get' commands work correctly",
+            "Missing config files use sensible defaults"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S07-T02",
+          "title": "Implement Multi-Source Registry Configuration",
+          "description": "Allow users to configure multiple skill registry sources (mix of GitHub and ADO) with priority ordering.",
+          "requirements": [
+            "Support an ordered array of sources in config",
+            "Each source entry includes: type (github|ado), url, branch, auth (optional), priority",
+            "Skills from higher-priority sources take precedence in conflicts",
+            "Support 'skills-installer source add <url>' and 'skills-installer source list' commands"
+          ],
+          "dod": "Multiple registry sources can be configured and queried with proper priority-based conflict resolution.",
+          "verifications": [
+            "Multiple sources are queried and results merged",
+            "Higher priority source wins when same skill exists in multiple sources",
+            "'source add' and 'source list' commands work correctly",
+            "Failed source fetches don't block other sources"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S07-T03",
+          "title": "Implement Credential Storage",
+          "description": "Provide secure storage for ADO tokens and GitHub PATs, avoiding plaintext storage in config files.",
+          "requirements": [
+            "Integrate with OS credential store (Windows Credential Manager / macOS Keychain / Linux Secret Service)",
+            "Fall back to encrypted file storage if OS credential store is unavailable",
+            "Support 'skills-installer auth login <source>' and 'skills-installer auth logout <source>' commands",
+            "Never store plaintext tokens in config files"
+          ],
+          "dod": "Credentials are stored securely using OS-native credential stores with CLI commands for management.",
+          "verifications": [
+            "'auth login' stores credentials in OS credential store",
+            "'auth logout' removes stored credentials",
+            "Stored credentials are retrieved correctly for API calls",
+            "No plaintext tokens appear in config files or logs"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S08",
+      "title": "Error Handling, Resilience & Caching",
+      "description": "Implement robust error handling, retry logic, and caching to ensure reliable operation.",
+      "tasks": [
+        {
+          "id": "S08-T01",
+          "title": "Implement Retry Policy with Exponential Backoff",
+          "description": "Add configurable retry logic for all HTTP operations with exponential backoff and jitter.",
+          "requirements": [
+            "Use Polly library for retry policies",
+            "Default: 3 retries with exponential backoff (1s, 2s, 4s) plus jitter",
+            "Retry on transient HTTP errors (408, 429, 500, 502, 503, 504)",
+            "Do not retry on 401 (auth), 403 (forbidden), 404 (not found)",
+            "Configurable max retries via config file"
+          ],
+          "dod": "All HTTP operations use retry policies with appropriate backoff for transient failures.",
+          "verifications": [
+            "Transient 500 errors are retried and succeed on subsequent attempt",
+            "429 Too Many Requests triggers backoff and retry",
+            "401 errors fail immediately without retry",
+            "Max retry count is respected"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S08-T02",
+          "title": "Implement Local Cache",
+          "description": "Cache registry indexes and skill manifests locally to reduce network calls and enable offline browsing.",
+          "requirements": [
+            "Cache registry indexes and skill manifests to ~/.smart-skills/cache/",
+            "Cache entries have configurable TTL (default: 60 minutes)",
+            "Support 'skills-installer cache clear' command to purge cache",
+            "Cache key includes source URL and branch for uniqueness",
+            "Serve from cache when network is unavailable (stale-while-error)"
+          ],
+          "dod": "Network responses are cached locally with TTL and stale-while-error support.",
+          "verifications": [
+            "Second request within TTL is served from cache (no network call)",
+            "Expired cache triggers a network fetch",
+            "Network failure falls back to stale cache with a warning",
+            "'cache clear' removes all cached data"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S08-T03",
+          "title": "Implement Structured Error Reporting",
+          "description": "Provide clear, actionable error messages with error codes and suggested fixes.",
+          "requirements": [
+            "Define error codes for common failure scenarios (e.g., E001: Auth failed, E002: Registry not found)",
+            "Error messages include: error code, description, suggested action",
+            "Support --output json for machine-readable error output",
+            "Log full stack traces only in verbose mode",
+            "Non-zero exit codes for different error categories"
+          ],
+          "dod": "All error scenarios produce clear, actionable messages with error codes and appropriate exit codes.",
+          "verifications": [
+            "Auth failures show error code and suggest 'auth login' command",
+            "Network failures show error code and suggest checking connectivity",
+            "JSON error output includes code, message, and suggestion fields",
+            "Exit codes distinguish between auth, network, and validation errors"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S09",
+      "title": "List & Status Commands",
+      "description": "Provide commands to view installed skills, available skills, and overall status.",
+      "tasks": [
+        {
+          "id": "S09-T01",
+          "title": "Implement 'list' Command",
+          "description": "Add a command to list installed skills with their versions, sources, and install dates.",
+          "requirements": [
+            "Command syntax: 'skills-installer list [--installed] [--available] [--outdated]'",
+            "--installed (default): show installed skills from local manifest",
+            "--available: show all skills available in configured registries",
+            "--outdated: show installed skills with available updates",
+            "Support --output json for machine-readable output"
+          ],
+          "dod": "The 'list' command displays installed, available, or outdated skills with proper formatting.",
+          "verifications": [
+            "'list --installed' shows all installed skills with versions",
+            "'list --available' fetches and displays all skills from registries",
+            "'list --outdated' shows only skills with available updates",
+            "JSON output is valid and includes all relevant fields"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S09-T02",
+          "title": "Implement 'status' Command",
+          "description": "Add a command showing a summary of the current project context: detected libraries, matched skills, installed/missing skills.",
+          "requirements": [
+            "Command syntax: 'skills-installer status [--path <dir>]'",
+            "Show: number of detected libraries, number of matched skills, installed vs missing count",
+            "Color-coded output: green for installed, yellow for updates available, red for missing",
+            "Quick health check of all configured sources (reachable/unreachable)"
+          ],
+          "dod": "The 'status' command provides a comprehensive dashboard of the current state.",
+          "verifications": [
+            "Status shows correct counts for libraries, skills, and sources",
+            "Color coding correctly reflects skill states",
+            "Unreachable sources are reported without blocking the command",
+            "Command completes within 5 seconds for typical projects"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S10",
+      "title": "Testing & Quality Assurance",
+      "description": "Comprehensive testing strategy covering unit tests, integration tests, and end-to-end scenarios.",
+      "tasks": [
+        {
+          "id": "S10-T01",
+          "title": "Unit Tests for Core Logic",
+          "description": "Write unit tests for library detection, skill matching, manifest parsing, and configuration loading.",
+          "requirements": [
+            "Use xUnit as the test framework",
+            "Use NSubstitute for mocking HTTP clients and file system access",
+            "Achieve minimum 80% code coverage on core logic (scanner, matcher, config)",
+            "Test edge cases: empty projects, malformed XML, invalid manifests, version edge cases"
+          ],
+          "dod": "All core logic classes have unit tests with ≥80% coverage and all tests pass.",
+          "verifications": [
+            "'dotnet test' passes all unit tests",
+            "Code coverage report shows ≥80% on core logic namespaces",
+            "Edge cases are explicitly tested with descriptive test names"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S10-T02",
+          "title": "Integration Tests for Remote Fetching",
+          "description": "Write integration tests that verify fetching from GitHub and ADO sources using recorded HTTP responses.",
+          "requirements": [
+            "Use WireMock.Net or similar to replay recorded HTTP interactions",
+            "Test GitHub source: registry fetch, file download, rate limit handling",
+            "Test ADO source: authenticated fetch, token refresh, error handling",
+            "Test multi-source scenarios with conflict resolution"
+          ],
+          "dod": "Integration tests verify remote fetching logic against recorded HTTP responses.",
+          "verifications": [
+            "All integration tests pass with recorded HTTP responses",
+            "Tests cover both success and failure scenarios for each source type",
+            "Tests run without network access (fully mocked)"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S10-T03",
+          "title": "End-to-End CLI Tests",
+          "description": "Write E2E tests that invoke the CLI as a subprocess and verify complete workflows.",
+          "requirements": [
+            "Test full 'scan → install' workflow with a sample project and local file-based registry",
+            "Test 'list', 'status', 'update', 'uninstall' commands",
+            "Test error scenarios: missing project, invalid config, unreachable source",
+            "Verify exit codes and stdout/stderr output",
+            "Use temporary directories for isolation"
+          ],
+          "dod": "E2E tests verify complete CLI workflows and produce correct output and exit codes.",
+          "verifications": [
+            "All E2E tests pass in CI",
+            "Tests are isolated (no shared state between tests)",
+            "Both success and error exit codes are verified"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S10-T04",
+          "title": "MSBuild Integration Tests",
+          "description": "Write tests that invoke MSBuild with sample projects referencing the SmartSkills.MSBuild package and verify skill acquisition during build.",
+          "requirements": [
+            "Create sample test .csproj files that reference SmartSkills.MSBuild targets",
+            "Use 'dotnet build' or MSBuild programmatic API to invoke builds in tests",
+            "Verify that ResolveSmartSkills and InstallSmartSkills targets execute in correct order",
+            "Test incremental build: second build with unchanged deps should skip acquisition",
+            "Test MSBuild property overrides (SmartSkillsSources, SmartSkillsInstallDir, etc.)",
+            "Test that build fails gracefully when registry is unreachable (warning vs error modes)",
+            "Use WireMock.Net for mocked remote sources"
+          ],
+          "dod": "MSBuild integration tests verify end-to-end skill acquisition during build with various configurations.",
+          "verifications": [
+            "Build with SmartSkills targets produces installed skills in output directory",
+            "Incremental build skips acquisition when inputs haven't changed",
+            "MSBuild property overrides are respected",
+            "Build warning mode logs warnings but does not fail the build",
+            "Build error mode fails the build on acquisition failure"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S11",
+      "title": "Packaging & Distribution",
+      "description": "Package the CLI tool for distribution as a .NET global tool and provide installation documentation.",
+      "tasks": [
+        {
+          "id": "S11-T01",
+          "title": "Package as .NET Global Tool",
+          "description": "Configure the CLI project for distribution as a .NET global tool via NuGet.",
+          "requirements": [
+            "Set PackAsTool=true and ToolCommandName=skills-installer in SmartSkills.Cli.csproj",
+            "Configure package metadata: id, version, authors, description, license, repository URL",
+            "Produce a .nupkg file via 'dotnet pack'",
+            "Tool should be installable via 'dotnet tool install -g smart-skills-installer'"
+          ],
+          "dod": "The CLI can be packed and installed as a .NET global tool.",
+          "verifications": [
+            "'dotnet pack' produces a valid .nupkg for the CLI tool",
+            "'dotnet tool install -g --add-source ./nupkg smart-skills-installer' installs successfully",
+            "'skills-installer --version' works after global install",
+            "'skills-installer --help' displays correct usage information"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S11-T02",
+          "title": "Package MSBuild Targets as NuGet Package",
+          "description": "Package the SmartSkills.MSBuild project as a NuGet package that delivers .props and .targets files, automatically integrating skill acquisition into any consuming project's build.",
+          "requirements": [
+            "Package id: SmartSkills.MSBuild (or SmartSkills.Build)",
+            "Include build/SmartSkills.MSBuild.props and build/SmartSkills.MSBuild.targets in the NuGet package",
+            "Include the compiled MSBuild task DLL and its dependencies in the package",
+            "Use buildTransitive/ folder so targets apply to transitive consumers (projects referencing a project that references this package)",
+            "Set DevelopmentDependency=true so the package is not listed as a runtime dependency",
+            "Ensure the package works with both 'dotnet build' and Visual Studio MSBuild"
+          ],
+          "dod": "A NuGet package is produced that, when referenced by a project, automatically runs skill acquisition during build.",
+          "verifications": [
+            "'dotnet pack' on SmartSkills.MSBuild produces a valid .nupkg",
+            "NuGet package contains build/ and buildTransitive/ folders with .props and .targets files",
+            "Adding PackageReference to SmartSkills.MSBuild in a test project causes skill acquisition on build",
+            "Package works with both 'dotnet build' CLI and Visual Studio"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S11-T03",
+          "title": "Create README and Usage Documentation",
+          "description": "Write comprehensive README.md with installation instructions, usage examples, and configuration reference for both the MSBuild package and CLI tool.",
+          "requirements": [
+            "Quick start section showing MSBuild package installation (primary) and CLI tool installation (companion)",
+            "MSBuild integration guide: how to add the package, configure sources via MSBuild properties, and customize behavior",
+            "Full CLI command reference with examples for each command",
+            "Configuration file reference documenting all settings and MSBuild properties",
+            "Troubleshooting section for common errors (build failures, auth issues, network problems)",
+            "Contributing guidelines"
+          ],
+          "dod": "README.md provides complete documentation for both MSBuild and CLI usage.",
+          "verifications": [
+            "All commands documented in README have working examples",
+            "MSBuild quick start works: add package reference, build, skills installed",
+            "Configuration reference covers all supported settings and MSBuild properties",
+            "Installation instructions work on Windows, macOS, and Linux"
+          ],
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "S12",
+      "title": "MSBuild Integration - Custom Tasks & Targets",
+      "description": "Implement custom MSBuild tasks and targets that automatically acquire and install agent skills as part of the build pipeline. This is the primary skill acquisition mechanism—consumers simply add a PackageReference and skills are resolved at build time.",
+      "tasks": [
+        {
+          "id": "S12-T01",
+          "title": "Implement ResolveSmartSkills MSBuild Task",
+          "description": "Create a custom MSBuild task (extending Microsoft.Build.Utilities.Task) that reads the project's PackageReference items, queries the skill registry, and outputs a list of skills to install.",
+          "requirements": [
+            "Inherit from Microsoft.Build.Utilities.Task",
+            "Accept input: PackageReference items (ITaskItem[]), registry source URLs, cache directory",
+            "Output: ResolvedSkills item group (ITaskItem[]) with metadata: SkillId, Version, SourceUrl, ManifestUrl",
+            "Use the shared SmartSkills.Core library for scanning and matching logic",
+            "Log progress via MSBuild's TaskLoggingHelper (Log.LogMessage, Log.LogWarning, Log.LogError)",
+            "Support cancellation via ICancelableTask interface for build cancellation"
+          ],
+          "dod": "A custom MSBuild task resolves PackageReferences to a list of applicable skills and outputs them as ITaskItem[].",
+          "verifications": [
+            "Task resolves PackageReferences to correct skills using the matching engine",
+            "Task outputs ResolvedSkills with all required metadata",
+            "Task logs progress messages visible in MSBuild output",
+            "Task handles empty PackageReference list gracefully (no-op)",
+            "Task respects build cancellation"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S12-T02",
+          "title": "Implement InstallSmartSkills MSBuild Task",
+          "description": "Create a custom MSBuild task that takes the resolved skills list and downloads/installs each skill to the configured output directory.",
+          "requirements": [
+            "Accept input: ResolvedSkills item group (ITaskItem[]), install directory, force reinstall flag",
+            "Download skill packages from the source specified in each skill's metadata",
+            "Use the shared SmartSkills.Core fetching and installation logic",
+            "Skip already-installed skills (by version check) unless force reinstall is set",
+            "Output: InstalledSkills item group (ITaskItem[]) listing what was actually installed",
+            "Support parallel downloads controlled by MaxParallelDownloads property"
+          ],
+          "dod": "A custom MSBuild task downloads and installs resolved skills to the local file system.",
+          "verifications": [
+            "Task downloads and installs skills to the configured directory",
+            "Already-installed skills with matching version are skipped",
+            "Force reinstall re-downloads all skills",
+            "Parallel downloads work correctly without file corruption",
+            "Network failures produce MSBuild warnings or errors depending on configuration"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S12-T03",
+          "title": "Author .props and .targets Files",
+          "description": "Create the MSBuild .props and .targets files that wire the custom tasks into the build pipeline with correct ordering, default property values, and incremental build support.",
+          "requirements": [
+            "SmartSkills.MSBuild.props: define default MSBuild properties with conditions so users can override them",
+            "Properties: SmartSkillsSources (semicolon-delimited registry URLs), SmartSkillsInstallDir (default: $(MSBuildProjectDirectory)/.smart-skills/), SmartSkillsCacheTtlMinutes (default: 60), SmartSkillsEnabled (default: true), SmartSkillsFailOnError (default: false), SmartSkillsMaxParallelDownloads (default: 4), SmartSkillsVerbose (default: false)",
+            "SmartSkills.MSBuild.targets: define ResolveSmartSkills and InstallSmartSkills targets",
+            "ResolveSmartSkills target runs AfterTargets='ResolvePackageAssets' or 'CollectPackageReferences' to access resolved PackageReference items",
+            "InstallSmartSkills target runs after ResolveSmartSkills, DependsOnTargets='ResolveSmartSkills'",
+            "Use Inputs/Outputs on targets for incremental build support (input: project.assets.json or .csproj timestamp; output: installed-skills.json)",
+            "Support disabling via SmartSkillsEnabled=false (e.g., in CI or for specific configurations)",
+            "UsingTask element references the task DLL from the package's lib/ or tasks/ folder"
+          ],
+          "dod": "Build targets integrate seamlessly into the MSBuild pipeline with sensible defaults, user-overridable properties, and incremental build support.",
+          "verifications": [
+            "Building a project with default properties triggers skill acquisition",
+            "Setting SmartSkillsEnabled=false skips all skill targets",
+            "Overriding SmartSkillsInstallDir changes the output directory",
+            "Incremental build: second build with no dependency changes skips acquisition",
+            "Incremental build: adding a new PackageReference triggers re-acquisition",
+            "Targets run in correct order relative to NuGet restore and compile"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S12-T04",
+          "title": "Implement MSBuild Diagnostic Logging & Build Output",
+          "description": "Provide clear build output showing skill acquisition progress, using MSBuild message importance levels appropriately.",
+          "requirements": [
+            "Normal verbosity: show summary line (e.g., 'SmartSkills: Installed 3 skills (2 skipped, 1 new)')",
+            "Detailed verbosity (-v:d): show each skill being resolved and installed",
+            "Diagnostic verbosity (-v:diag): show HTTP requests, cache hits/misses, timing",
+            "Use MessageImportance.High for summary, Normal for per-skill info, Low for HTTP details",
+            "Errors use Log.LogError with proper subcategory and error code (e.g., 'SMSK001')",
+            "Warnings use Log.LogWarning for non-fatal issues (e.g., unreachable source fallback to cache)"
+          ],
+          "dod": "Build output at each verbosity level shows appropriate detail about skill acquisition.",
+          "verifications": [
+            "'dotnet build' (normal) shows only the summary line",
+            "'dotnet build -v:d' shows per-skill details",
+            "'dotnet build -v:diag' shows full HTTP/cache diagnostics",
+            "Errors and warnings use proper MSBuild error/warning format with codes",
+            "Error codes appear in Visual Studio Error List when building from IDE"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S12-T05",
+          "title": "Handle MSBuild Task Assembly Loading & Dependencies",
+          "description": "Ensure the MSBuild task DLL and its dependencies (SmartSkills.Core, HTTP libraries, etc.) load correctly in the MSBuild process without conflicting with the host project's assemblies.",
+          "requirements": [
+            "Use MSBuildTaskAssemblyIsolation or TaskHostFactory if needed to avoid assembly conflicts",
+            "Bundle all task dependencies into the NuGet package (ILMerge/ILRepack or use custom AssemblyLoadContext)",
+            "Test with both in-process MSBuild (dotnet build) and out-of-process (Visual Studio)",
+            "Handle .NET Framework MSBuild host (Visual Studio) and .NET Core MSBuild host (dotnet build) if both are supported",
+            "Dependencies must not pollute the consuming project's output or references"
+          ],
+          "dod": "MSBuild tasks load and execute correctly without assembly conflicts in both dotnet CLI and Visual Studio hosts.",
+          "verifications": [
+            "Task executes successfully in 'dotnet build' (.NET SDK MSBuild)",
+            "Task executes successfully in Visual Studio (MSBuild.exe)",
+            "No assembly version conflicts with common packages (System.Text.Json, etc.)",
+            "Task dependencies do not appear in consuming project's bin/ output"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S12-T06",
+          "title": "Support NuGet Restore-Time vs Build-Time Skill Acquisition",
+          "description": "Determine and implement the correct MSBuild phase for skill acquisition, balancing between restore-time (earlier, but limited) and build-time (full access to resolved references).",
+          "requirements": [
+            "Default: run at build time after NuGet restore has resolved all packages",
+            "Ensure targets do not run during 'dotnet restore' (only during 'dotnet build')",
+            "Correctly handle the implicit restore that 'dotnet build' performs (targets should not run during the restore phase of build)",
+            "Use BeforeTargets/AfterTargets carefully to avoid circular dependencies",
+            "Support explicit 'dotnet build --no-restore' scenario (targets still work if restore was run previously)"
+          ],
+          "dod": "Skill acquisition runs at the correct build phase, after NuGet restore completes but before compilation begins.",
+          "verifications": [
+            "'dotnet restore' alone does not trigger skill acquisition",
+            "'dotnet build' triggers skill acquisition after restore completes",
+            "'dotnet build --no-restore' triggers skill acquisition using cached restore data",
+            "Targets do not cause circular dependency warnings",
+            "Skills are available before the Compile target executes"
+          ],
+          "completed": false
+        },
+        {
+          "id": "S12-T07",
+          "title": "Support Multi-Targeting and Solution-Level Builds",
+          "description": "Ensure skill acquisition works correctly for multi-targeting projects and solution-level builds without duplicate acquisition.",
+          "requirements": [
+            "Multi-targeting projects (e.g., net8.0;net9.0) should acquire skills only once, not per TFM",
+            "Use outer build vs inner build detection (TargetFrameworks vs TargetFramework) to run once",
+            "Solution-level build: skills should be acquired once per project, not duplicated across the solution",
+            "Handle projects that share the same output directory",
+            "Use a lock file or coordination mechanism to prevent parallel builds from conflicting"
+          ],
+          "dod": "Skill acquisition runs exactly once per project regardless of multi-targeting or solution-level builds.",
+          "verifications": [
+            "Multi-targeting project acquires skills once, not per TFM",
+            "Solution build with 5 projects acquires skills independently per project",
+            "Parallel project builds do not corrupt shared skill directories",
+            "Build output shows skill acquisition running once per project, not per TFM"
+          ],
+          "completed": false
+        }
+      ]
+    }
+  ]
+}
