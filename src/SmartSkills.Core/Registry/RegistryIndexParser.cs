@@ -7,6 +7,7 @@ namespace SmartSkills.Core.Registry;
 /// Parses a registry index JSON file into RegistryEntry objects.
 /// Expected format:
 /// {
+///   "repoUrl": "https://github.com/org/repo",
 ///   "skills": [
 ///     { "packagePatterns": ["Pkg.Name", "Pkg.Prefix*"], "skillPath": "skills/my-skill" }
 ///   ]
@@ -61,6 +62,9 @@ public static class RegistryIndexParser
         var root = doc.RootElement;
         var entries = new List<RegistryEntry>();
 
+        // Top-level repoUrl applies to all skills unless overridden per-skill
+        var defaultRepoUrl = root.TryGetProperty("repoUrl", out var repoUrlProp) ? repoUrlProp.GetString() : null;
+
         if (!root.TryGetProperty("skills", out var skills))
             return entries;
 
@@ -78,12 +82,15 @@ public static class RegistryIndexParser
             }
 
             var skillPath = skill.TryGetProperty("skillPath", out var sp) ? sp.GetString() : null;
+            var repoUrl = skill.TryGetProperty("repoUrl", out var ru) ? ru.GetString() : defaultRepoUrl;
+
             if (skillPath is not null && patterns.Count > 0)
             {
                 entries.Add(new RegistryEntry
                 {
                     PackagePatterns = patterns,
-                    SkillPath = skillPath
+                    SkillPath = skillPath,
+                    RepoUrl = repoUrl
                 });
             }
         }

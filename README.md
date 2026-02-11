@@ -12,7 +12,6 @@ SmartSkills scans your .NET project for installed NuGet packages and matches the
 - Fetch skills from GitHub and Azure DevOps repositories
 - Commit-SHA-based caching to skip unchanged skills
 - Configurable multi-source registries with priority ordering
-- Secure credential management via environment variables
 
 ## Installation
 
@@ -154,10 +153,10 @@ Patterns support exact match and glob syntax:
 | SS001 | Network error | Check internet connection and proxy settings |
 | SS002 | Authentication failed | Run `az login` for ADO access |
 | SS003 | .NET SDK not found | Install from https://dot.net/download |
-| SS005 | Skill validation failed | Check SKILL.md frontmatter format |
-| SS006 | Registry not found | Verify registry URL in configuration |
-| SS007 | Skill not found | Check skill path in registry index |
-| SS008 | Installation failed | Check file permissions and disk space |
+| SS004 | Skill validation failed | Check SKILL.md frontmatter format |
+| SS005 | Registry not found | Verify registry URL |
+| SS006 | Skill not found | Check skill path in registry index |
+| SS007 | Installation failed | Check file permissions and disk space |
 
 ## Project Structure
 

@@ -27,6 +27,7 @@ public class RegistryIndexParserTests
 
         Assert.Equal(2, entries.Count);
         Assert.Equal("skills/json", entries[0].SkillPath);
+        Assert.Null(entries[0].RepoUrl);
         Assert.Single(entries[0].PackagePatterns);
         Assert.Equal("skills/ef-core", entries[1].SkillPath);
         Assert.Equal(2, entries[1].PackagePatterns.Count);
@@ -53,6 +54,10 @@ public class RegistryIndexParserTests
     {
         var entries = RegistryIndexParser.LoadEmbedded();
         Assert.NotNull(entries);
+        Assert.NotEmpty(entries);
+        Assert.Contains(entries, e => e.SkillPath == ".github/skills/azure-servicebus-dotnet");
+        Assert.Contains(entries, e => e.PackagePatterns.Contains("Azure.Messaging.ServiceBus"));
+        Assert.All(entries, e => Assert.Equal("https://github.com/microsoft/skills", e.RepoUrl));
     }
 
     [Fact]
@@ -84,5 +89,42 @@ public class RegistryIndexParserTests
         {
             File.Delete(tempFile);
         }
+    }
+
+    [Fact]
+    public void Parse_TopLevelRepoUrl_AppliedToAllSkills()
+    {
+        var json = """
+        {
+          "repoUrl": "https://github.com/org/repo",
+          "skills": [
+            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
+            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b" }
+          ]
+        }
+        """;
+
+        var entries = RegistryIndexParser.Parse(json);
+
+        Assert.All(entries, e => Assert.Equal("https://github.com/org/repo", e.RepoUrl));
+    }
+
+    [Fact]
+    public void Parse_PerSkillRepoUrl_OverridesTopLevel()
+    {
+        var json = """
+        {
+          "repoUrl": "https://github.com/org/default",
+          "skills": [
+            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
+            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b", "repoUrl": "https://github.com/org/custom" }
+          ]
+        }
+        """;
+
+        var entries = RegistryIndexParser.Parse(json);
+
+        Assert.Equal("https://github.com/org/default", entries[0].RepoUrl);
+        Assert.Equal("https://github.com/org/custom", entries[1].RepoUrl);
     }
 }

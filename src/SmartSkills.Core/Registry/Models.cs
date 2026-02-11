@@ -1,3 +1,5 @@
+using SmartSkills.Core.Providers;
+
 namespace SmartSkills.Core.Registry;
 
 /// <summary>
@@ -34,6 +36,12 @@ public record RegistryEntry
 
     /// <summary>Relative path to the skill directory in the source repository.</summary>
     public required string SkillPath { get; init; }
+
+    /// <summary>URL of the repository that hosts this skill.</summary>
+    public string? RepoUrl { get; init; }
+
+    /// <summary>The source provider that can fetch this skill. Null for entries that need a default provider.</summary>
+    public ISkillSourceProvider? SourceProvider { get; init; }
 }
 
 /// <summary>

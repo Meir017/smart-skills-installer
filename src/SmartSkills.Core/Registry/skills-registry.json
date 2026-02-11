@@ -1,3 +1,121 @@
 {
-  "skills": []
+  "repoUrl": "https://github.com/microsoft/skills",
+  "skills": [
+    {
+      "packagePatterns": ["Azure.Messaging.ServiceBus"],
+      "skillPath": ".github/skills/azure-servicebus-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.AI.OpenAI"],
+      "skillPath": ".github/skills/azure-ai-openai-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.Identity", "Azure.Identity.Broker"],
+      "skillPath": ".github/skills/azure-identity-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.Messaging.EventGrid", "Azure.Messaging.EventGrid.Namespaces"],
+      "skillPath": ".github/skills/azure-eventgrid-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.Messaging.EventHubs", "Azure.Messaging.EventHubs.Processor"],
+      "skillPath": ".github/skills/azure-eventhub-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.Search.Documents"],
+      "skillPath": ".github/skills/azure-search-documents-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.Security.KeyVault.Keys"],
+      "skillPath": ".github/skills/azure-security-keyvault-keys-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.AI.DocumentIntelligence"],
+      "skillPath": ".github/skills/azure-ai-document-intelligence-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.AI.Projects", "Azure.AI.Projects.OpenAI"],
+      "skillPath": ".github/skills/azure-ai-projects-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.AI.VoiceLive"],
+      "skillPath": ".github/skills/azure-ai-voicelive-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.Maps.Search", "Azure.Maps.Routing", "Azure.Maps.Rendering", "Azure.Maps.Geolocation", "Azure.Maps.Weather"],
+      "skillPath": ".github/skills/azure-maps-search-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.AI.Agents.Persistent"],
+      "skillPath": ".github/skills/azure-ai-agents-persistent-dotnet"
+    },
+    {
+      "packagePatterns": ["Microsoft.Agents.Hosting.AspNetCore", "Microsoft.Agents.Authentication.Msal", "Microsoft.Agents.CopilotStudio.Client"],
+      "skillPath": ".github/skills/m365-agents-dotnet"
+    },
+    {
+      "packagePatterns": ["Microsoft.Azure.WebJobs.Extensions.AuthenticationEvents"],
+      "skillPath": ".github/skills/microsoft-azure-webjobs-extensions-authentication-events-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.ApiCenter"],
+      "skillPath": ".github/skills/azure-mgmt-apicenter-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.ApiManagement"],
+      "skillPath": ".github/skills/azure-mgmt-apimanagement-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.ApplicationInsights"],
+      "skillPath": ".github/skills/azure-mgmt-applicationinsights-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.ArizeAIObservabilityEval"],
+      "skillPath": ".github/skills/azure-mgmt-arizeaiobservabilityeval-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.BotService"],
+      "skillPath": ".github/skills/azure-mgmt-botservice-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.Fabric"],
+      "skillPath": ".github/skills/azure-mgmt-fabric-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.MongoDBAtlas"],
+      "skillPath": ".github/skills/azure-mgmt-mongodbatlas-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.WeightsAndBiases"],
+      "skillPath": ".github/skills/azure-mgmt-weightsandbiases-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.CosmosDB"],
+      "skillPath": ".github/skills/azure-resource-manager-cosmosdb-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.DurableTask"],
+      "skillPath": ".github/skills/azure-resource-manager-durabletask-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.MySql"],
+      "skillPath": ".github/skills/azure-resource-manager-mysql-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.Playwright"],
+      "skillPath": ".github/skills/azure-resource-manager-playwright-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.PostgreSql"],
+      "skillPath": ".github/skills/azure-resource-manager-postgresql-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.Redis"],
+      "skillPath": ".github/skills/azure-resource-manager-redis-dotnet"
+    },
+    {
+      "packagePatterns": ["Azure.ResourceManager.Sql"],
+      "skillPath": ".github/skills/azure-resource-manager-sql-dotnet"
+    }
+  ]
 }

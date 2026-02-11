@@ -20,11 +20,10 @@ public sealed class SmartSkillsException : Exception
         public const string NetworkError = "SS001";
         public const string AuthenticationFailed = "SS002";
         public const string SdkNotFound = "SS003";
-        public const string ConfigInvalid = "SS004";
-        public const string SkillValidationFailed = "SS005";
-        public const string RegistryNotFound = "SS006";
-        public const string SkillNotFound = "SS007";
-        public const string InstallFailed = "SS008";
+        public const string SkillValidationFailed = "SS004";
+        public const string RegistryNotFound = "SS005";
+        public const string SkillNotFound = "SS006";
+        public const string InstallFailed = "SS007";
     }
 
     public static SmartSkillsException NetworkError(Exception inner) =>
@@ -33,7 +32,9 @@ public sealed class SmartSkillsException : Exception
 
     public static SmartSkillsException AuthFailed(string provider) =>
         new(Codes.AuthenticationFailed, $"Authentication failed for {provider}.",
-            "Check your credentials. Set the appropriate environment variable (e.g., SMARTSKILLS_GITHUB_PAT).");
+            provider == "ado"
+                ? "Ensure you are logged in with 'az login' or have valid Azure credentials."
+                : "Ensure the repository is public or check your access permissions.");
 
     public static SmartSkillsException SdkNotFound() =>
         new(Codes.SdkNotFound, "The .NET SDK was not found.",

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using SmartSkills.Core.Providers;
+using SmartSkills.Core.Providers.GitHub;
 using SmartSkills.Core.Registry;
 using SmartSkills.Core.Scanning;
 
@@ -15,7 +16,7 @@ public sealed class SkillInstaller : ISkillInstaller
     private readonly ISkillMatcher _matcher;
     private readonly ISkillStore _store;
     private readonly ISkillMetadataParser _metadataParser;
-    private readonly IEnumerable<ISkillSourceProvider> _providers;
+    private readonly ISkillSourceProviderFactory _providerFactory;
     private readonly ILogger<SkillInstaller> _logger;
 
     public SkillInstaller(
@@ -24,7 +25,7 @@ public sealed class SkillInstaller : ISkillInstaller
         ISkillMatcher matcher,
         ISkillStore store,
         ISkillMetadataParser metadataParser,
-        IEnumerable<ISkillSourceProvider> providers,
+        ISkillSourceProviderFactory providerFactory,
         ILogger<SkillInstaller> logger)
     {
         _scanner = scanner;
@@ -32,7 +33,7 @@ public sealed class SkillInstaller : ISkillInstaller
         _matcher = matcher;
         _store = store;
         _metadataParser = metadataParser;
-        _providers = providers;
+        _providerFactory = providerFactory;
         _logger = logger;
     }
 
@@ -72,10 +73,15 @@ public sealed class SkillInstaller : ISkillInstaller
         {
             try
             {
-                var provider = _providers.FirstOrDefault();
+                // Use the provider attached to the registry entry, or create one from the RepoUrl
+                var provider = match.RegistryEntry.SourceProvider
+                    ?? (match.RegistryEntry.RepoUrl is not null
+                        ? _providerFactory.CreateFromRepoUrl(match.RegistryEntry.RepoUrl)
+                        : null);
+
                 if (provider is null)
                 {
-                    failed.Add(new SkillInstallFailure(match.RegistryEntry.SkillPath, "No source provider configured"));
+                    failed.Add(new SkillInstallFailure(match.RegistryEntry.SkillPath, "No source provider or RepoUrl configured for this skill"));
                     continue;
                 }
 

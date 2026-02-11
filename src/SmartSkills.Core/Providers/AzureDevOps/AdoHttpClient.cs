@@ -3,6 +3,7 @@ using System.Text.Json;
 using Azure.Core;
 using Azure.Identity;
 using Microsoft.Extensions.Logging;
+using SmartSkills.Core.Resilience;
 
 namespace SmartSkills.Core.Providers.AzureDevOps;
 
@@ -12,15 +13,17 @@ namespace SmartSkills.Core.Providers.AzureDevOps;
 public sealed class AdoHttpClient : IDisposable
 {
     private readonly HttpClient _httpClient;
+    private readonly RetryPolicy _retryPolicy;
     private readonly ILogger<AdoHttpClient> _logger;
     private readonly TokenCredential _credential;
     private AccessToken? _cachedToken;
 
     private static readonly string[] AdoScopes = ["499b84ac-1321-427f-aa17-267ca6975798/.default"];
 
-    public AdoHttpClient(ILogger<AdoHttpClient> logger)
+    public AdoHttpClient(ILogger<AdoHttpClient> logger, RetryPolicy? retryPolicy = null)
     {
         _logger = logger;
+        _retryPolicy = retryPolicy ?? new RetryPolicy(logger: logger);
         _credential = new DefaultAzureCredential();
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -42,28 +45,37 @@ public sealed class AdoHttpClient : IDisposable
     {
         await EnsureAuthenticatedAsync(cancellationToken);
         _logger.LogDebug("GET {Url}", url);
-        var response = await _httpClient.GetAsync(url, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-        return await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+        return await _retryPolicy.ExecuteAsync(async ct =>
+        {
+            var response = await _httpClient.GetAsync(url, ct);
+            response.EnsureSuccessStatusCode();
+            var stream = await response.Content.ReadAsStreamAsync(ct);
+            return await JsonDocument.ParseAsync(stream, cancellationToken: ct);
+        }, cancellationToken);
     }
 
     public async Task<Stream> GetStreamAsync(string url, CancellationToken cancellationToken = default)
     {
         await EnsureAuthenticatedAsync(cancellationToken);
         _logger.LogDebug("GET (stream) {Url}", url);
-        var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStreamAsync(cancellationToken);
+        return await _retryPolicy.ExecuteAsync(async ct =>
+        {
+            var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStreamAsync(ct);
+        }, cancellationToken);
     }
 
     public async Task<string> GetStringAsync(string url, CancellationToken cancellationToken = default)
     {
         await EnsureAuthenticatedAsync(cancellationToken);
         _logger.LogDebug("GET (string) {Url}", url);
-        var response = await _httpClient.GetAsync(url, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync(cancellationToken);
+        return await _retryPolicy.ExecuteAsync(async ct =>
+        {
+            var response = await _httpClient.GetAsync(url, ct);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync(ct);
+        }, cancellationToken);
     }
 
     public void Dispose() => _httpClient.Dispose();
