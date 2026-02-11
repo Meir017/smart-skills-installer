@@ -176,7 +176,7 @@
             "Schema supports regex patterns in library name triggers",
             "Invalid manifests are rejected with descriptive errors"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S03-T02",
