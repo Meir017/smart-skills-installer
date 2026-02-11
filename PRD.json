@@ -309,7 +309,7 @@
         {
           "id": "S05-T01",
           "title": "Implement GitHub HTTP Client",
-          "completed": false,
+          "completed": true,
           "description": "Create an HTTP client wrapper for GitHub REST API and raw content access (raw.githubusercontent.com), with rate limiting awareness, retry logic, and optional PAT authentication.",
           "requirements": [
             "Use HttpClient with GitHub API base URL",
