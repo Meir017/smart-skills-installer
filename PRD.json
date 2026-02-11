@@ -199,7 +199,7 @@
         {
           "id": "S03-T02",
           "title": "Implement Skill Registry Index",
-          "completed": false,
+          "completed": true,
           "description": "Create a registry index file format that maps NuGet package names/patterns to available skills. The index is hosted alongside skill directories in the remote source. Each entry maps one or more library names (or glob patterns) to a skill directory path in the repository.",
           "apiReferences": [
             "RegistryEntry",
