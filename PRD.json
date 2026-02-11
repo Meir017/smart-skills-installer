@@ -358,7 +358,7 @@
         {
           "id": "S06-T01",
           "title": "Implement ADO Authentication",
-          "completed": false,
+          "completed": true,
           "description": "Support multiple ADO authentication methods: Personal Access Token (PAT), Azure CLI credential, and Managed Identity.",
           "requirements": [
             "Support PAT-based authentication",
