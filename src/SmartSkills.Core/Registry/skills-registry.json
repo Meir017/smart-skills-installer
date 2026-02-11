@@ -116,6 +116,15 @@
     {
       "packagePatterns": ["Azure.ResourceManager.Sql"],
       "skillPath": ".github/skills/azure-resource-manager-sql-dotnet"
+    },
+    {
+      "packagePatterns": ["GitHub.Copilot.SDK"],
+      "skillPath": ".github/skills/copilot-sdk"
+    },
+    {
+      "packagePatterns": ["StackExchange.Redis", "StackExchange.Redis.*", "NRedisStack", "Microsoft.Extensions.Caching.StackExchangeRedis", "Redis.OM"],
+      "skillPath": "skills/redis-development",
+      "repoUrl": "https://github.com/redis/agent-skills"
     }
   ]
 }
