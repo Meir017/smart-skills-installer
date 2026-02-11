@@ -277,7 +277,7 @@
         {
           "id": "S04-T02",
           "title": "Implement Commit-SHA-Based Cache in Installation Engine",
-          "completed": false,
+          "completed": true,
           "description": "Before downloading a skill, call GetLatestCommitShaAsync and compare the returned SHA against the SHA stored in the local state file from the previous install. If the SHA matches, skip the download entirely and report the skill as up-to-date. Store the SHA in the local state file alongside each installed skill entry.",
           "apiReferences": [
             "InstalledSkill.CommitSha",
