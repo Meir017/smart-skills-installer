@@ -407,7 +407,7 @@
         {
           "id": "S07-T01",
           "title": "Implement 'install' Command",
-          "completed": false,
+          "completed": true,
           "description": "Add the 'install' subcommand that orchestrates the full pipeline: resolve packages \u00e2\u2020\u2019 match skills \u00e2\u2020\u2019 check cache \u00e2\u2020\u2019 fetch via provider \u00e2\u2020\u2019 validate \u00e2\u2020\u2019 install. Report which skills were installed, skipped (already up-to-date), or failed.",
           "apiReferences": [
             "ISkillInstaller",
@@ -431,7 +431,7 @@
         {
           "id": "S07-T02",
           "title": "Implement SKILL.md Frontmatter Parser & Validator",
-          "completed": false,
+          "completed": true,
           "description": "Parse YAML frontmatter from SKILL.md files and validate against the Agent Skills spec constraints: required name and description fields, name format rules, optional license (string), compatibility (\u00e2\u2030\u00a4500 chars), metadata (string\u00e2\u2020\u2019string map), and allowed-tools (space-delimited string).",
           "apiReferences": [
             "ISkillMetadataParser",
@@ -455,7 +455,7 @@
         {
           "id": "S07-T03",
           "title": "Implement Local Skill Storage",
-          "completed": false,
+          "completed": true,
           "description": "Define the local file system layout for installed skills. Each skill is stored as a directory matching its name field, containing the full directory tree from the remote source. Maintain a local state file tracking installed skills, their source provider, commit SHA, and install timestamp.",
           "apiReferences": [
             "ISkillStore",
@@ -480,7 +480,7 @@
         {
           "id": "S07-T04",
           "title": "Implement Skill Update Detection",
-          "completed": false,
+          "completed": true,
           "description": "Compare the locally cached commit SHA against the latest SHA from the provider. When the SHA differs, flag the skill as having an update available.",
           "apiReferences": [
             "InstalledSkill.CommitSha",
@@ -502,7 +502,7 @@
         {
           "id": "S07-T05",
           "title": "Implement Skill Uninstallation",
-          "completed": false,
+          "completed": true,
           "description": "Add the ability to remove installed skills cleanly by deleting the skill directory and removing its entry from the local state file.",
           "apiReferences": [
             "ISkillInstaller.UninstallAsync",

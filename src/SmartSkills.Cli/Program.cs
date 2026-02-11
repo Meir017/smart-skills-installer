@@ -50,6 +50,82 @@ var scanCommand = new Command("scan", "Scan a project or solution for installed 
 
 rootCommand.Subcommands.Add(scanCommand);
 
+// install command
+var installCommand = new Command("install", "Install skills based on detected packages")
+{
+    projectOption
+};
+
+rootCommand.Subcommands.Add(installCommand);
+
+installCommand.SetAction(async (parseResult, cancellationToken) =>
+{
+    bool verbose = parseResult.GetValue(verboseOption);
+    string? projectPath = parseResult.GetValue(projectOption);
+    bool dryRun = parseResult.GetValue(dryRunOption);
+
+    using var host = CreateHost(verbose);
+    var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
+
+    projectPath = ResolveProjectPath(projectPath);
+
+    var result = await installer.InstallAsync(new SmartSkills.Core.Installation.InstallOptions
+    {
+        ProjectPath = projectPath,
+        DryRun = dryRun
+    }, cancellationToken);
+
+    Console.WriteLine();
+    if (result.Installed.Count > 0)
+    {
+        Console.WriteLine($"Installed ({result.Installed.Count}):");
+        foreach (var s in result.Installed)
+            Console.WriteLine($"  + {s.Name}");
+    }
+    if (result.Updated.Count > 0)
+    {
+        Console.WriteLine($"Updated ({result.Updated.Count}):");
+        foreach (var s in result.Updated)
+            Console.WriteLine($"  ~ {s.Name}");
+    }
+    if (result.SkippedUpToDate.Count > 0)
+    {
+        Console.WriteLine($"Up-to-date ({result.SkippedUpToDate.Count}):");
+        foreach (var s in result.SkippedUpToDate)
+            Console.WriteLine($"  = {s}");
+    }
+    if (result.Failed.Count > 0)
+    {
+        Console.WriteLine($"Failed ({result.Failed.Count}):");
+        foreach (var f in result.Failed)
+            Console.WriteLine($"  x {f.SkillPath}: {f.Reason}");
+    }
+});
+
+// uninstall command
+var skillNameArg = new Argument<string>("skill-name")
+{
+    Description = "Name of the skill to uninstall"
+};
+var uninstallCommand = new Command("uninstall", "Remove an installed skill")
+{
+    skillNameArg
+};
+
+rootCommand.Subcommands.Add(uninstallCommand);
+
+uninstallCommand.SetAction(async (parseResult, cancellationToken) =>
+{
+    bool verbose = parseResult.GetValue(verboseOption);
+    string skillName = parseResult.GetValue(skillNameArg)!;
+
+    using var host = CreateHost(verbose);
+    var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
+
+    await installer.UninstallAsync(skillName, cancellationToken);
+    Console.WriteLine($"Uninstalled skill: {skillName}");
+});
+
 scanCommand.SetAction(async (parseResult, cancellationToken) =>
 {
     bool verbose = parseResult.GetValue(verboseOption);
