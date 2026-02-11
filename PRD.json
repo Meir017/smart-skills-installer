@@ -719,7 +719,7 @@
         {
           "id": "S11-T01",
           "title": "Unit Tests for Core Logic",
-          "completed": false,
+          "completed": true,
           "description": "Write unit tests for library detection, skill matching, manifest parsing, and configuration loading.",
           "requirements": [
             "Test IPackageResolver with mocked CLI output",
@@ -738,7 +738,7 @@
         {
           "id": "S11-T02",
           "title": "Integration Tests for Remote Fetching",
-          "completed": false,
+          "completed": true,
           "description": "Write integration tests that verify fetching from GitHub and ADO sources using recorded HTTP responses.",
           "requirements": [
             "Use recorded HTTP responses for deterministic testing",
@@ -756,7 +756,7 @@
         {
           "id": "S11-T03",
           "title": "End-to-End CLI Tests",
-          "completed": false,
+          "completed": true,
           "description": "Write E2E tests that invoke the CLI as a subprocess and verify complete workflows.",
           "requirements": [
             "Invoke CLI as a subprocess",
@@ -774,7 +774,7 @@
         {
           "id": "S11-T04",
           "title": "MSBuild Integration Tests",
-          "completed": false,
+          "completed": true,
           "description": "Write tests that invoke MSBuild with sample projects referencing the SmartSkills.MSBuild package and verify skill acquisition during build.",
           "requirements": [
             "Create sample projects that reference SmartSkills.MSBuild",

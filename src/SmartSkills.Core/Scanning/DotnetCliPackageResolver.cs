@@ -55,7 +55,7 @@ public sealed class DotnetCliPackageResolver : IPackageResolver
         return ParseJsonOutput(projectPath, stdout);
     }
 
-    internal static ProjectPackages ParseJsonOutput(string projectPath, string json)
+    public static ProjectPackages ParseJsonOutput(string projectPath, string json)
     {
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
