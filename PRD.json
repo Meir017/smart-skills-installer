@@ -221,7 +221,7 @@
         {
           "id": "S03-T03",
           "title": "Implement Library-to-Skill Matching Engine",
-          "completed": false,
+          "completed": true,
           "description": "Build the matching engine that takes a list of detected libraries (from IPackageResolver) and resolves them to applicable skills from the registry index. Support exact name matches, prefix/glob patterns, and priority ordering when multiple skills match.",
           "apiReferences": [
             "ISkillMatcher",
