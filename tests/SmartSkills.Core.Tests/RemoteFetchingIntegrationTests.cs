@@ -198,7 +198,7 @@ public class RemoteFetchingIntegrationTests
         try
         {
             var dest = Path.Combine(tempDir, "skill.json");
-            await fetcher.DownloadFileAsync("https://example.com/skill.json", dest);
+            await fetcher.DownloadFileAsync("https://example.com/skill.json", dest, TestContext.Current.CancellationToken);
 
             Assert.True(File.Exists(dest));
             var content = File.ReadAllText(dest);

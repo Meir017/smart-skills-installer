@@ -23,6 +23,7 @@ public class CliEndToEndTests : IDisposable
 
     private async Task<(int ExitCode, string StdOut, string StdErr)> RunCliAsync(string args, int timeoutMs = 30000)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var cliProject = Path.GetFullPath(
             Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..",
                 "src", "SmartSkills.Cli", "SmartSkills.Cli.csproj"));
@@ -39,10 +40,11 @@ public class CliEndToEndTests : IDisposable
         };
 
         using var process = Process.Start(psi)!;
-        var stdOut = await process.StandardOutput.ReadToEndAsync();
-        var stdErr = await process.StandardError.ReadToEndAsync();
+        var stdOut = await process.StandardOutput.ReadToEndAsync(cancellationToken);
+        var stdErr = await process.StandardError.ReadToEndAsync(cancellationToken);
 
-        using var cts = new CancellationTokenSource(timeoutMs);
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(timeoutMs);
         await process.WaitForExitAsync(cts.Token);
 
         return (process.ExitCode, stdOut, stdErr);
@@ -83,7 +85,7 @@ public class CliEndToEndTests : IDisposable
                 <TargetFramework>net8.0</TargetFramework>
               </PropertyGroup>
             </Project>
-            """);
+            """, TestContext.Current.CancellationToken);
 
         var (exitCode, stdOut, _) = await RunCliAsync($"scan --path \"{_tempDir}\"");
         Assert.Equal(0, exitCode);
@@ -103,7 +105,7 @@ public class CliEndToEndTests : IDisposable
                 <PackageReference Include="Serilog" Version="3.1.1" />
               </ItemGroup>
             </Project>
-            """);
+            """, TestContext.Current.CancellationToken);
 
         var (exitCode, stdOut, _) = await RunCliAsync($"scan --path \"{_tempDir}\"");
         Assert.Equal(0, exitCode);
@@ -124,7 +126,7 @@ public class CliEndToEndTests : IDisposable
                 <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
               </ItemGroup>
             </Project>
-            """);
+            """, TestContext.Current.CancellationToken);
 
         var (exitCode, stdOut, _) = await RunCliAsync($"scan --path \"{_tempDir}\" --output json");
         Assert.Equal(0, exitCode);
@@ -152,7 +154,7 @@ public class CliEndToEndTests : IDisposable
                 <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
               </ItemGroup>
             </Project>
-            """);
+            """, TestContext.Current.CancellationToken);
 
         var (exitCode, stdOut, _) = await RunCliAsync($"status --path \"{_tempDir}\"");
         Assert.Equal(0, exitCode);
@@ -168,7 +170,7 @@ public class CliEndToEndTests : IDisposable
                 <TargetFramework>net8.0</TargetFramework>
               </PropertyGroup>
             </Project>
-            """);
+            """, TestContext.Current.CancellationToken);
 
         // --verbose is a global option, placed before the subcommand
         var (exitCode, stdOut, stdErr) = await RunCliAsync($"--verbose scan --path \"{_tempDir}\"");
