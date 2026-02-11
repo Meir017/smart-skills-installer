@@ -125,6 +125,98 @@
       "packagePatterns": ["StackExchange.Redis", "StackExchange.Redis.*", "NRedisStack", "Microsoft.Extensions.Caching.StackExchangeRedis", "Redis.OM"],
       "skillPath": "skills/redis-development",
       "repoUrl": "https://github.com/redis/agent-skills"
+    },
+
+    {
+      "packagePatterns": ["@azure/service-bus"],
+      "skillPath": ".github/skills/azure-servicebus-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/openai"],
+      "skillPath": ".github/skills/azure-ai-projects-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/identity", "@azure/identity-*"],
+      "skillPath": ".github/skills/azure-identity-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/event-hubs"],
+      "skillPath": ".github/skills/azure-eventhub-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/search-documents"],
+      "skillPath": ".github/skills/azure-search-documents-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/keyvault-keys"],
+      "skillPath": ".github/skills/azure-keyvault-keys-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/keyvault-secrets"],
+      "skillPath": ".github/skills/azure-keyvault-secrets-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/ai-document-intelligence"],
+      "skillPath": ".github/skills/azure-ai-document-intelligence-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/cosmos"],
+      "skillPath": ".github/skills/azure-cosmos-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/storage-blob"],
+      "skillPath": ".github/skills/azure-storage-blob-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/storage-queue"],
+      "skillPath": ".github/skills/azure-storage-queue-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/storage-file-share"],
+      "skillPath": ".github/skills/azure-storage-file-share-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/app-configuration"],
+      "skillPath": ".github/skills/azure-appconfiguration-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/web-pubsub"],
+      "skillPath": ".github/skills/azure-web-pubsub-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/monitor-opentelemetry"],
+      "skillPath": ".github/skills/azure-monitor-opentelemetry-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/ai-translation-text"],
+      "skillPath": ".github/skills/azure-ai-translation-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["@azure/ai-content-safety"],
+      "skillPath": ".github/skills/azure-ai-contentsafety-ts",
+      "language": "npm"
+    },
+    {
+      "packagePatterns": ["redis", "ioredis", "@redis/*"],
+      "skillPath": "skills/redis-development",
+      "repoUrl": "https://github.com/redis/agent-skills",
+      "language": "npm"
     }
   ]
 }
