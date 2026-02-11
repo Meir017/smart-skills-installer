@@ -1,25 +1,25 @@
-# Smart Skills Installer
+# SmartSkills
 
 Automatically discover and install agent skills based on your .NET project's dependencies. Available as both a CLI tool and MSBuild integration.
 
 ## Overview
 
-Smart Skills Installer scans your .NET project for installed NuGet packages and matches them against a remote skill registry to find relevant agent skills. Skills are downloaded, verified, and installed locally.
+SmartSkills scans your .NET project for installed NuGet packages and matches them against a remote skill registry to find relevant agent skills. Skills follow the [Agent Skills specification](https://agentskills.io/specification.md) and are downloaded, validated, and installed locally.
 
 **Key features:**
-- Scan `.csproj` and `packages.lock.json` for dependencies
-- Match libraries against skill registries using glob patterns
+- Scan projects and solutions for NuGet dependencies
+- Match packages against skill registries using exact and glob patterns
 - Fetch skills from GitHub and Azure DevOps repositories
-- SHA256 checksum verification for downloads
-- Local caching with configurable TTL
-- File-based configuration with user/project precedence
+- Commit-SHA-based caching to skip unchanged skills
+- Configurable multi-source registries with priority ordering
+- Secure credential management via environment variables
 
 ## Installation
 
 ### CLI Tool
 
 ```bash
-dotnet tool install -g SmartSkills.Installer
+dotnet tool install -g SmartSkills.Cli
 ```
 
 ### MSBuild Integration
@@ -27,7 +27,7 @@ dotnet tool install -g SmartSkills.Installer
 Add the NuGet package to your project:
 
 ```xml
-<PackageReference Include="SmartSkills.MSBuild" Version="0.1.0" PrivateAssets="all" />
+<PackageReference Include="SmartSkills.MSBuild" Version="1.0.0" PrivateAssets="all" />
 ```
 
 ## CLI Usage
@@ -35,78 +35,67 @@ Add the NuGet package to your project:
 ### Scan for Dependencies
 
 ```bash
-# Scan current directory
-skills-installer scan
+# Scan current directory (auto-detects .sln or .csproj)
+smart-skills scan
 
-# Scan a specific path
-skills-installer scan --path ./src/MyProject
+# Scan a specific project
+smart-skills scan --project ./src/MyProject/MyProject.csproj
 
 # Output as JSON
-skills-installer scan --path ./src/MyProject --output json
+smart-skills scan --project ./src/MyProject --json
 ```
 
 ### Install Skills
 
 ```bash
-# Install skills from a registry
-skills-installer install --source github:org/skills-repo
+# Install skills based on detected packages
+smart-skills install
 
-# Force reinstall
-skills-installer install --source github:org/skills-repo --force
+# Install for a specific project
+smart-skills install --project ./src/MyProject
 
-# Skip confirmation
-skills-installer install --source github:org/skills-repo --yes
+# Preview without installing
+smart-skills install --dry-run
 ```
 
 ### List Installed Skills
 
 ```bash
-skills-installer list
-skills-installer list --output json
-```
-
-### Update Skills
-
-```bash
-skills-installer update --source github:org/skills-repo
-skills-installer update --source github:org/skills-repo --skill my-skill
-```
-
-### Uninstall Skills
-
-```bash
-skills-installer uninstall --skill my-skill
-skills-installer uninstall --all
+smart-skills list
+smart-skills list --json
 ```
 
 ### Check Status
 
 ```bash
-skills-installer status --path ./src/MyProject
+smart-skills status
+smart-skills status --project ./src/MyProject
+```
+
+### Uninstall a Skill
+
+```bash
+smart-skills uninstall my-skill-name
 ```
 
 ### Global Options
 
 | Option | Description |
 |--------|-------------|
-| `--verbose` | Enable verbose logging |
-| `--config <path>` | Path to configuration file |
+| `-v, --verbose` | Enable verbose logging |
+| `-c, --config <path>` | Path to configuration file |
 | `--dry-run` | Preview changes without executing |
 
 ## MSBuild Integration
 
 ### Basic Setup
 
-Add the package reference and configure the registry source:
+Add the package reference:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <SmartSkillsSources>github:your-org/skills-registry</SmartSkillsSources>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="SmartSkills.MSBuild" Version="0.1.0" PrivateAssets="all" />
+    <PackageReference Include="SmartSkills.MSBuild" Version="1.0.0" PrivateAssets="all" />
   </ItemGroup>
 </Project>
 ```
@@ -118,27 +107,7 @@ Skills are automatically resolved and installed during build.
 | Property | Default | Description |
 |----------|---------|-------------|
 | `SmartSkillsEnabled` | `true` | Enable/disable skill acquisition |
-| `SmartSkillsSources` | *(empty)* | Registry source (e.g., `github:org/repo`) |
-| `SmartSkillsInstallDir` | `$(MSBuildProjectDirectory)\.smart-skills\` | Local install directory |
-| `SmartSkillsCacheTtlMinutes` | `60` | Cache time-to-live in minutes |
-| `SmartSkillsFailOnError` | `false` | Fail build on skill acquisition error |
-| `SmartSkillsMaxParallelDownloads` | `4` | Max parallel downloads |
-| `SmartSkillsVerbose` | `false` | Enable verbose MSBuild logging |
-| `SmartSkillsAcquisitionPhase` | `build` | `build` or `restore` |
-
-### Acquisition Phase
-
-By default, skills are acquired during **build** (after `ResolvePackageAssets`). To acquire during **restore** instead:
-
-```xml
-<PropertyGroup>
-  <SmartSkillsAcquisitionPhase>restore</SmartSkillsAcquisitionPhase>
-</PropertyGroup>
-```
-
-### Multi-Targeting
-
-For multi-targeted projects (`TargetFrameworks`), skill resolution runs only once using the first target framework, avoiding redundant work.
+| `SmartSkillsOutputDirectory` | `$(MSBuildProjectDirectory)\.smartskills` | Local install directory |
 
 ### Disabling for Specific Builds
 
@@ -154,93 +123,90 @@ A skill registry is a JSON file hosted in a Git repository:
 
 ```json
 {
-  "registryVersion": "1.0",
-  "lastUpdated": "2024-01-15",
-  "sourceType": "github",
-  "entries": [
+  "skills": [
     {
-      "libraryPattern": "Microsoft.EntityFrameworkCore*",
-      "skillManifestUrls": [
-        "https://raw.githubusercontent.com/org/repo/main/skills/ef-core/manifest.json"
-      ]
+      "packagePatterns": ["Microsoft.EntityFrameworkCore*"],
+      "skillPath": "skills/ef-core"
     },
     {
-      "libraryPattern": "Serilog*",
-      "skillManifestUrls": [
-        "https://raw.githubusercontent.com/org/repo/main/skills/serilog/manifest.json"
-      ]
+      "packagePatterns": ["Serilog", "Serilog.*"],
+      "skillPath": "skills/serilog"
     }
   ]
 }
 ```
 
-### Library Patterns
+### Package Patterns
 
-Patterns use glob syntax:
+Patterns support exact match and glob syntax:
 - `Microsoft.EntityFrameworkCore*` matches any EF Core package
 - `Serilog` matches exactly `Serilog`
 - `Azure.Storage.*` matches Azure Storage packages
 
 ## Configuration File
 
-Create `.smart-skills.json` at the project or user level:
+Create `smartskills.json` at the project or user level:
 
 ```json
 {
   "sources": [
     {
-      "type": "github",
-      "location": "org/skills-registry",
-      "branch": "main"
+      "providerType": "github",
+      "url": "https://github.com/org/skills-registry",
+      "branch": "main",
+      "registryIndexPath": "skills-registry.json"
     },
     {
-      "type": "ado",
-      "location": "org/project/repo"
+      "providerType": "azuredevops",
+      "url": "https://dev.azure.com/org/project/_git/repo",
+      "credentialKey": "env:ADO_PAT"
     }
   ],
-  "cacheTtlMinutes": 60,
-  "installDirectory": ".smart-skills"
+  "skillsOutputDirectory": ".smartskills"
 }
 ```
 
-**Precedence:** CLI flags > project config > user config (`~/.smart-skills/config.json`)
+**Precedence:** CLI `--config` flag > project-level `smartskills.json` > user-level `~/.config/smartskills/smartskills.json`
 
-## Azure DevOps Support
+## Credential Management
 
-For ADO-hosted registries, set authentication:
+Credentials are never stored in plaintext config. Use environment variables:
 
 ```bash
-# Via environment variable
-export SMART_SKILLS_ADO_PAT=your-pat-token
+# GitHub PAT
+export SMARTSKILLS_GITHUB_PAT=ghp_...
 
-# Or Azure CLI (automatic)
-az login
+# Azure DevOps PAT (via credentialKey: "env:ADO_PAT")
+export ADO_PAT=your-pat-token
 ```
 
-Registry source format: `ado:org/project/repo[@branch]`
+In config, reference credentials with the `env:` prefix:
+```json
+{ "credentialKey": "env:MY_TOKEN_VAR" }
+```
 
 ## Error Codes
 
-| Code | Description |
-|------|-------------|
-| SMSK001 | Registry fetch failed |
-| SMSK002 | Skill download failed |
-| SMSK003 | Checksum verification failed |
-| SMSK004 | Manifest validation failed |
-| SMSK005 | Configuration error |
-| SMSK006 | Authentication failed |
-| SMSK007 | Installation failed |
-| SMSK008 | Network error |
+| Code | Description | Remediation |
+|------|-------------|-------------|
+| SS001 | Network error | Check internet connection and proxy settings |
+| SS002 | Authentication failed | Check credentials / environment variables |
+| SS003 | .NET SDK not found | Install from https://dot.net/download |
+| SS004 | Configuration invalid | Verify `smartskills.json` format |
+| SS005 | Skill validation failed | Check SKILL.md frontmatter format |
+| SS006 | Registry not found | Verify registry URL in configuration |
+| SS007 | Skill not found | Check skill path in registry index |
+| SS008 | Installation failed | Check file permissions and disk space |
 
 ## Project Structure
 
 ```
 src/
-  SmartSkills.Core/        # Shared library (scanning, matching, fetching)
+  SmartSkills.Core/        # Shared library (scanning, matching, fetching, installation)
   SmartSkills.Cli/         # CLI tool (System.CommandLine)
   SmartSkills.MSBuild/     # MSBuild tasks + props/targets
 tests/
-  SmartSkills.Core.Tests/  # Unit + integration tests
+  SmartSkills.Core.Tests/  # Unit tests
   SmartSkills.Cli.Tests/   # E2E CLI tests
   SmartSkills.MSBuild.Tests/ # MSBuild task tests
 ```

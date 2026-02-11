@@ -800,7 +800,7 @@
         {
           "id": "S12-T01",
           "title": "Package as .NET Global Tool",
-          "completed": false,
+          "completed": true,
           "description": "Configure the CLI project for distribution as a .NET global tool via NuGet.",
           "requirements": [
             "Set PackAsTool=true in project file",
@@ -819,7 +819,7 @@
         {
           "id": "S12-T02",
           "title": "Package MSBuild Targets as NuGet Package",
-          "completed": false,
+          "completed": true,
           "description": "Package the SmartSkills.MSBuild project as a NuGet package that delivers .props and .targets files, automatically integrating skill acquisition into any consuming project's build.",
           "requirements": [
             "Package .props and .targets files in the build/ folder of the NuGet package",
@@ -838,7 +838,7 @@
         {
           "id": "S12-T03",
           "title": "Create README and Usage Documentation",
-          "completed": false,
+          "completed": true,
           "description": "Write comprehensive README.md with installation instructions, usage examples, and configuration reference for both the MSBuild package and CLI tool.",
           "requirements": [
             "Installation instructions for both CLI tool and MSBuild package",
