@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISkillInstaller, SkillInstaller>();
         services.AddSingleton<ISkillStore>(sp =>
             new LocalSkillStore(
-                skillsOutputDirectory ?? Path.Combine(Directory.GetCurrentDirectory(), ".smartskills"),
+                skillsOutputDirectory ?? Path.Combine(Directory.GetCurrentDirectory(), ".agents", "skills"),
                 sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<LocalSkillStore>>()));
         return services;
     }

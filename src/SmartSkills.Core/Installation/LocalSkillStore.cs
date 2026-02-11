@@ -10,7 +10,7 @@ public sealed class LocalSkillStore : ISkillStore
 {
     private readonly string _baseDirectory;
     private readonly ILogger<LocalSkillStore> _logger;
-    private const string StateFileName = ".smartskills-state.json";
+    private const string StateFileName = ".agents-skills-state.json";
 
     public LocalSkillStore(string baseDirectory, ILogger<LocalSkillStore> logger)
     {

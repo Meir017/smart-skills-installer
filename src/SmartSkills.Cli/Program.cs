@@ -18,10 +18,16 @@ var dryRunOption = new Option<bool>("--dry-run")
     Recursive = true
 };
 
+var baseDirOption = new Option<string?>("--base-dir")
+{
+    Description = "Base directory where the .agents/skills directory will be created (defaults to current directory)"
+};
+
 var rootCommand = new RootCommand("SmartSkills - Intelligent skill installer for .NET projects")
 {
     verboseOption,
-    dryRunOption
+    dryRunOption,
+    baseDirOption
 };
 
 // scan command
@@ -56,8 +62,9 @@ installCommand.SetAction(async (parseResult, cancellationToken) =>
     bool verbose = parseResult.GetValue(verboseOption);
     string? projectPath = parseResult.GetValue(projectOption);
     bool dryRun = parseResult.GetValue(dryRunOption);
+    string? baseDir = parseResult.GetValue(baseDirOption);
 
-    using var host = CreateHost(verbose);
+    using var host = CreateHost(verbose, baseDir);
     var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
 
     projectPath = ResolveProjectPath(projectPath);
@@ -111,8 +118,9 @@ uninstallCommand.SetAction(async (parseResult, cancellationToken) =>
 {
     bool verbose = parseResult.GetValue(verboseOption);
     string skillName = parseResult.GetValue(skillNameArg)!;
+    string? baseDir = parseResult.GetValue(baseDirOption);
 
-    using var host = CreateHost(verbose);
+    using var host = CreateHost(verbose, baseDir);
     var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
 
     await installer.UninstallAsync(skillName, cancellationToken);
@@ -124,8 +132,9 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
     bool verbose = parseResult.GetValue(verboseOption);
     string? projectPath = parseResult.GetValue(projectOption);
     bool jsonOutput = parseResult.GetValue(jsonOption);
+    string? baseDir = parseResult.GetValue(baseDirOption);
 
-    using var host = CreateHost(verbose);
+    using var host = CreateHost(verbose, baseDir);
     var scanner = host.Services.GetRequiredService<ILibraryScanner>();
     var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
@@ -192,8 +201,9 @@ listCommand.SetAction(async (parseResult, cancellationToken) =>
 {
     bool verbose = parseResult.GetValue(verboseOption);
     bool jsonOutput = parseResult.GetValue(jsonOption);
+    string? baseDir = parseResult.GetValue(baseDirOption);
 
-    using var host = CreateHost(verbose);
+    using var host = CreateHost(verbose, baseDir);
     var store = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillStore>();
 
     var skills = await store.GetInstalledSkillsAsync(cancellationToken);
@@ -230,8 +240,9 @@ statusCommand.SetAction(async (parseResult, cancellationToken) =>
 {
     bool verbose = parseResult.GetValue(verboseOption);
     bool jsonOutput = parseResult.GetValue(jsonOption);
+    string? baseDir = parseResult.GetValue(baseDirOption);
 
-    using var host = CreateHost(verbose);
+    using var host = CreateHost(verbose, baseDir);
     var store = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillStore>();
     var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
@@ -259,8 +270,12 @@ rootCommand.SetAction(parseResult =>
 
 return await rootCommand.Parse(args).InvokeAsync();
 
-static IHost CreateHost(bool verbose)
+static IHost CreateHost(bool verbose, string? baseDir = null)
 {
+    var skillsDir = baseDir is not null
+        ? Path.Combine(Path.GetFullPath(baseDir), ".agents", "skills")
+        : null;
+
     return Host.CreateDefaultBuilder()
         .ConfigureLogging(logging =>
         {
@@ -270,7 +285,7 @@ static IHost CreateHost(bool verbose)
         })
         .ConfigureServices(services =>
         {
-            services.AddSmartSkills();
+            services.AddSmartSkills(skillsDir);
         })
         .Build();
 }

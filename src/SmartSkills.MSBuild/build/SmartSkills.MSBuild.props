@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
     <SmartSkillsEnabled Condition="'$(SmartSkillsEnabled)' == ''">true</SmartSkillsEnabled>
-    <SmartSkillsOutputDirectory Condition="'$(SmartSkillsOutputDirectory)' == ''">$(MSBuildProjectDirectory)\.smartskills</SmartSkillsOutputDirectory>
+    <SmartSkillsOutputDirectory Condition="'$(SmartSkillsOutputDirectory)' == ''">$(MSBuildProjectDirectory)\.agents\skills</SmartSkillsOutputDirectory>
   </PropertyGroup>
 </Project>

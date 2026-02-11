@@ -105,7 +105,7 @@ Skills are automatically resolved and installed during build.
 | Property | Default | Description |
 |----------|---------|-------------|
 | `SmartSkillsEnabled` | `true` | Enable/disable skill acquisition |
-| `SmartSkillsOutputDirectory` | `$(MSBuildProjectDirectory)\.smartskills` | Local install directory |
+| `SmartSkillsOutputDirectory` | `$(MSBuildProjectDirectory)\.agents\skills` | Local install directory |
 
 ### Disabling for Specific Builds
 

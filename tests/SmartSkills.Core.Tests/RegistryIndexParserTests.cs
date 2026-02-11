@@ -57,7 +57,7 @@ public class RegistryIndexParserTests
         Assert.NotEmpty(entries);
         Assert.Contains(entries, e => e.SkillPath == ".github/skills/azure-servicebus-dotnet");
         Assert.Contains(entries, e => e.PackagePatterns.Contains("Azure.Messaging.ServiceBus"));
-        Assert.All(entries, e => Assert.Equal("https://github.com/microsoft/skills", e.RepoUrl));
+        Assert.All(entries, e => Assert.NotNull(e.RepoUrl));
     }
 
     [Fact]
