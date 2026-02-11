@@ -1,4 +1,8 @@
 using System.CommandLine;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using SmartSkills.Core;
 
 var verboseOption = new Option<bool>("--verbose", "-v")
 {
@@ -27,7 +31,26 @@ var rootCommand = new RootCommand("SmartSkills - Intelligent skill installer for
 
 rootCommand.SetAction(parseResult =>
 {
-    Console.WriteLine("SmartSkills CLI - Use --help for usage information.");
+    bool verbose = parseResult.GetValue(verboseOption);
+
+    var host = Host.CreateDefaultBuilder()
+        .ConfigureLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.AddConsole();
+            logging.SetMinimumLevel(verbose ? LogLevel.Debug : LogLevel.Information);
+        })
+        .ConfigureServices(services =>
+        {
+            services.AddSmartSkills();
+        })
+        .Build();
+
+    var logger = host.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("SmartSkills CLI started");
+    logger.LogDebug("Verbose logging enabled");
+
+    host.Dispose();
 });
 
 return rootCommand.Parse(args).Invoke();

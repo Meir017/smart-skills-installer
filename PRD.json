@@ -58,7 +58,7 @@
         {
           "id": "S01-T03",
           "title": "Integrate Hosting Extensions",
-          "completed": false,
+          "completed": true,
           "description": "Set up the application using the .NET Generic Host (Microsoft.Extensions.Hosting) for dependency injection, configuration, and logging infrastructure.",
           "requirements": [
             "Use Microsoft.Extensions.Hosting for application lifecycle",
