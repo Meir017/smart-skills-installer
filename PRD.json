@@ -253,7 +253,7 @@
         {
           "id": "S04-T01",
           "title": "Define ISkillSourceProvider Interface",
-          "completed": false,
+          "completed": true,
           "description": "Define the interface in SmartSkills.Core with methods: GetRegistryIndexAsync to fetch the parsed registry index; ListSkillFilesAsync to enumerate all files in a skill directory tree; DownloadFileAsync to download a single raw file; and GetLatestCommitShaAsync to return the SHA of the most recent commit affecting the given skill directory. All methods accept a CancellationToken.",
           "apiReferences": [
             "ISkillSourceProvider",
