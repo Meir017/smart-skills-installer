@@ -132,7 +132,7 @@
             "Falls back to .csproj parsing when lock file is missing",
             "Handles multiple target frameworks in the lock file"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S02-T04",
