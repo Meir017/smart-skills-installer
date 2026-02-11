@@ -41,7 +41,7 @@
         {
           "id": "S01-T02",
           "title": "Integrate CLI Parsing Library",
-          "completed": false,
+          "completed": true,
           "description": "Add System.CommandLine NuGet package and configure root command with global options (--verbose, --config, --dry-run).",
           "requirements": [
             "Use System.CommandLine for argument parsing",
