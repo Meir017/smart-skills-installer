@@ -194,7 +194,7 @@
             "Multiple skills can be mapped to a single library",
             "A library matching multiple patterns returns all applicable skills without duplicates"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S03-T03",
