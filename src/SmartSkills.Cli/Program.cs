@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using SmartSkills.Cli;
+using SmartSkills.Core.Scanning;
 
 var verboseOption = new Option<bool>(
     "--verbose",
@@ -27,10 +28,43 @@ rootCommand.SetHandler((verbose, config, dryRun) =>
     var logger = loggerFactory.CreateLogger("SmartSkills");
 
     logger.LogInformation("Smart Skills Installer CLI started");
-    logger.LogDebug("Verbose mode enabled");
     logger.LogDebug("Config: {ConfigPath}", config?.FullName ?? "(default)");
     logger.LogDebug("Dry run: {DryRun}", dryRun);
     logger.LogInformation("No command specified. Run with --help for usage information.");
 }, verboseOption, configOption, dryRunOption);
+
+// scan command
+var pathOption = new Option<DirectoryInfo?>(
+    "--path",
+    "Path to a .NET project or solution directory");
+
+var scanCommand = new Command("scan", "Scan project for installed libraries")
+{
+    pathOption,
+};
+
+scanCommand.SetHandler((verbose, path) =>
+{
+    using var loggerFactory = LoggingSetup.CreateLoggerFactory(verbose);
+    var logger = loggerFactory.CreateLogger("SmartSkills.Scan");
+
+    var targetPath = path?.FullName ?? Directory.GetCurrentDirectory();
+    logger.LogDebug("Scanning path: {Path}", targetPath);
+
+    try
+    {
+        var resolvedPath = ProjectDiscovery.ResolvePath(targetPath);
+        logger.LogInformation("Found project: {ProjectPath}", resolvedPath);
+        logger.LogInformation("Scanning for packages...");
+        // Scanning pipeline will be implemented in subsequent tasks
+        logger.LogInformation("Scan complete.");
+    }
+    catch (Exception ex) when (ex is DirectoryNotFoundException or InvalidOperationException)
+    {
+        logger.LogError("{Message}", ex.Message);
+    }
+}, verboseOption, pathOption);
+
+rootCommand.AddCommand(scanCommand);
 
 return await rootCommand.InvokeAsync(args);

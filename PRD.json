@@ -94,7 +94,7 @@
             "'dotnet run -- scan --path ./myproject' runs against the specified path",
             "Invalid paths produce a clear error message"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S02-T02",
