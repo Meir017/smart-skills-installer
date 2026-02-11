@@ -691,7 +691,7 @@
             "Tests are isolated (no shared state between tests)",
             "Both success and error exit codes are verified"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S10-T04",
