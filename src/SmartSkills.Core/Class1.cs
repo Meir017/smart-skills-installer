@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using SmartSkills.Core.Registry;
 using SmartSkills.Core.Scanning;
 
 namespace SmartSkills.Core;
@@ -12,6 +13,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IPackageResolver, DotnetCliPackageResolver>();
         services.AddSingleton<ILibraryScanner, LibraryScanner>();
+        services.AddSingleton<ISkillMatcher, SkillMatcher>();
+        services.AddSingleton<ISkillRegistry, SkillRegistry>();
         return services;
     }
 }

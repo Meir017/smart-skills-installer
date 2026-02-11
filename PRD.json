@@ -178,7 +178,7 @@
         {
           "id": "S03-T01",
           "title": "Define Skill Manifest Schema",
-          "completed": false,
+          "completed": true,
           "description": "Adopt the Agent Skills specification as the skill format. A skill is a directory whose name matches the name frontmatter field, containing at minimum a SKILL.md file. The YAML frontmatter provides the metadata (name, description, license, compatibility, metadata map, allowed-tools). No custom manifest schema is needed \u00e2\u20ac\u201d the SKILL.md frontmatter IS the manifest.",
           "apiReferences": [
             "SkillMetadata"
