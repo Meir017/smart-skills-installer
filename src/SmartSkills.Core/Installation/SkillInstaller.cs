@@ -109,7 +109,8 @@ public sealed class SkillInstaller : ISkillInstaller
                 // Fetch and install
                 var files = await provider.ListSkillFilesAsync(match.RegistryEntry.SkillPath, cancellationToken);
                 var skillName = Path.GetFileName(match.RegistryEntry.SkillPath);
-                var installDir = Path.Combine(Path.GetDirectoryName(projectPath)!, ".agents", "skills", skillName);
+                var baseDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
+                var installDir = Path.Combine(baseDir, ".agents", "skills", skillName);
 
                 Directory.CreateDirectory(installDir);
 
