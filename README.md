@@ -1,5 +1,7 @@
 # SmartSkills
 
+[![CI](https://github.com/Meir017/smart-skills-installer/actions/workflows/ci.yml/badge.svg)](https://github.com/Meir017/smart-skills-installer/actions/workflows/ci.yml)
+
 Automatically discover and install agent skills based on your .NET project's dependencies. Available as both a CLI tool and MSBuild integration.
 
 ## Overview
