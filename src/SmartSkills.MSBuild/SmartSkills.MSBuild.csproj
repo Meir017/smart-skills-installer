@@ -1,43 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\SmartSkills.Core\SmartSkills.Core.csproj" PrivateAssets="all" />
-  </ItemGroup>
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <Version>0.1.0</Version>
-    <PackageId>SmartSkills.MSBuild</PackageId>
-    <Authors>SmartSkills Contributors</Authors>
-    <Description>MSBuild tasks for automatic agent skill acquisition during build</Description>
-    <DevelopmentDependency>true</DevelopmentDependency>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);_AddDependenciesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="all" ExcludeAssets="runtime" />
+    <ProjectReference Include="..\SmartSkills.Core\SmartSkills.Core.csproj" />
   </ItemGroup>
-
-  <!-- Pack build/buildTransitive content into NuGet -->
-  <ItemGroup>
-    <Content Include="build\**" PackagePath="build\" />
-    <Content Include="buildTransitive\**" PackagePath="buildTransitive\" />
-  </ItemGroup>
-
-  <!-- Include dependency DLLs in the NuGet lib folder alongside SmartSkills.MSBuild.dll -->
-  <Target Name="_AddDependenciesToPackage">
-    <ItemGroup>
-      <BuildOutputInPackage Include="$(OutputPath)SmartSkills.Core.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)Microsoft.Extensions.Logging.Abstractions.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
-    </ItemGroup>
-  </Target>
 
 </Project>
