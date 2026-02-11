@@ -260,7 +260,7 @@
             "Expired cache triggers a fresh fetch",
             "Invalid registry content produces a descriptive error"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S04-T03",
