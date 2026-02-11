@@ -714,7 +714,7 @@
             "Build warning mode logs warnings but does not fail the build",
             "Build error mode fails the build on acquisition failure"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },
