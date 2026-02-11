@@ -1,12 +1,12 @@
 {
   "name": "Smart Skills Installer CLI",
   "version": "1.0.0",
-  "description": "A C# toolset that inspects installed libraries in a .NET project and automatically installs relevant agent skills by fetching them from remote sources (public GitHub repositories or authenticated Azure DevOps URLs). The primary acquisition mechanism is MSBuild integration—skills are resolved and installed as part of the build pipeline via custom MSBuild targets/tasks. A companion CLI tool is provided for manual operations, diagnostics, and configuration.",
+  "description": "A C# toolset that inspects installed libraries in a .NET project and automatically installs relevant agent skills by fetching them from remote sources (public GitHub repositories or authenticated Azure DevOps URLs). The primary acquisition mechanism is MSBuild integration\u00e2\u20ac\u201dskills are resolved and installed as part of the build pipeline via custom MSBuild targets/tasks. A companion CLI tool is provided for manual operations, diagnostics, and configuration.",
   "goals": [
     "Automate the discovery and installation of agent skills based on project dependencies",
     "Provide MSBuild-native integration so skills are acquired automatically during build",
     "Support multiple remote skill sources (GitHub, Azure DevOps)",
-    "Provide a seamless developer experience with minimal configuration—just add a NuGet package",
+    "Provide a seamless developer experience with minimal configuration\u00e2\u20ac\u201djust add a NuGet package",
     "Ensure secure credential handling for authenticated sources",
     "Support incremental builds so skill acquisition only runs when dependencies change"
   ],
@@ -377,10 +377,10 @@
         {
           "id": "S06-T01",
           "title": "Implement 'install' Command",
-          "description": "Add the 'install' subcommand that orchestrates the full pipeline: scan libraries → match skills → fetch → install.",
+          "description": "Add the 'install' subcommand that orchestrates the full pipeline: scan libraries \u00e2\u2020\u2019 match skills \u00e2\u2020\u2019 fetch \u00e2\u2020\u2019 install.",
           "requirements": [
             "Command syntax: 'skills-installer install [--path <dir>] [--source <source>] [--force]'",
-            "Orchestrate: scan → match → confirm → download → install",
+            "Orchestrate: scan \u00e2\u2020\u2019 match \u00e2\u2020\u2019 confirm \u00e2\u2020\u2019 download \u00e2\u2020\u2019 install",
             "Show a preview of skills to be installed and prompt for confirmation (unless --yes flag)",
             "Support --force to reinstall/overwrite existing skills",
             "Support --source to filter to a specific registry source"
@@ -543,7 +543,7 @@
             "401 errors fail immediately without retry",
             "Max retry count is respected"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S08-T02",
@@ -563,7 +563,7 @@
             "Network failure falls back to stale cache with a warning",
             "'cache clear' removes all cached data"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S08-T03",
@@ -583,7 +583,7 @@
             "JSON error output includes code, message, and suggestion fields",
             "Exit codes distinguish between auth, network, and validation errors"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },
@@ -648,10 +648,10 @@
             "Achieve minimum 80% code coverage on core logic (scanner, matcher, config)",
             "Test edge cases: empty projects, malformed XML, invalid manifests, version edge cases"
           ],
-          "dod": "All core logic classes have unit tests with ≥80% coverage and all tests pass.",
+          "dod": "All core logic classes have unit tests with \u00e2\u2030\u00a580% coverage and all tests pass.",
           "verifications": [
             "'dotnet test' passes all unit tests",
-            "Code coverage report shows ≥80% on core logic namespaces",
+            "Code coverage report shows \u00e2\u2030\u00a580% on core logic namespaces",
             "Edge cases are explicitly tested with descriptive test names"
           ],
           "completed": false
@@ -679,7 +679,7 @@
           "title": "End-to-End CLI Tests",
           "description": "Write E2E tests that invoke the CLI as a subprocess and verify complete workflows.",
           "requirements": [
-            "Test full 'scan → install' workflow with a sample project and local file-based registry",
+            "Test full 'scan \u00e2\u2020\u2019 install' workflow with a sample project and local file-based registry",
             "Test 'list', 'status', 'update', 'uninstall' commands",
             "Test error scenarios: missing project, invalid config, unreachable source",
             "Verify exit codes and stdout/stderr output",
@@ -789,7 +789,7 @@
     {
       "id": "S12",
       "title": "MSBuild Integration - Custom Tasks & Targets",
-      "description": "Implement custom MSBuild tasks and targets that automatically acquire and install agent skills as part of the build pipeline. This is the primary skill acquisition mechanism—consumers simply add a PackageReference and skills are resolved at build time.",
+      "description": "Implement custom MSBuild tasks and targets that automatically acquire and install agent skills as part of the build pipeline. This is the primary skill acquisition mechanism\u00e2\u20ac\u201dconsumers simply add a PackageReference and skills are resolved at build time.",
       "tasks": [
         {
           "id": "S12-T01",
