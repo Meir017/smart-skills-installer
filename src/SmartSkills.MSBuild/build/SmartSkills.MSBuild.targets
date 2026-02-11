@@ -5,11 +5,20 @@
   <UsingTask TaskName="SmartSkills.MSBuild.InstallSmartSkills"
              AssemblyFile="$(MSBuildThisFileDirectory)..\lib\net8.0\SmartSkills.MSBuild.dll" />
 
-  <!-- ResolveSmartSkills: runs after NuGet restore resolves packages -->
+  <!--
+    SmartSkillsAcquisitionPhase controls when skills are acquired:
+      - "build"   (default): runs during Build, after ResolvePackageAssets
+      - "restore": runs during Restore, after CollectPackageReferences
+  -->
+
+  <!-- BUILD-TIME acquisition (default) -->
   <Target Name="ResolveSmartSkills"
           AfterTargets="ResolvePackageAssets"
           BeforeTargets="BeforeCompile"
-          Condition="'$(SmartSkillsEnabled)' == 'true' AND '$(SmartSkillsSources)' != '' AND '$(DesignTimeBuild)' != 'true'"
+          Condition="'$(SmartSkillsEnabled)' == 'true'
+                     AND '$(SmartSkillsSources)' != ''
+                     AND '$(DesignTimeBuild)' != 'true'
+                     AND '$(SmartSkillsAcquisitionPhase)' != 'restore'"
           Inputs="$(ProjectAssetsFile);$(MSBuildProjectFile)"
           Outputs="$(SmartSkillsInstallDir)installed-skills.json">
 
@@ -22,10 +31,30 @@
     </ResolveSmartSkills>
   </Target>
 
-  <!-- InstallSmartSkills: runs after resolution -->
+  <!-- RESTORE-TIME acquisition (opt-in) -->
+  <Target Name="ResolveSmartSkillsOnRestore"
+          AfterTargets="CollectPackageReferences"
+          Condition="'$(SmartSkillsEnabled)' == 'true'
+                     AND '$(SmartSkillsSources)' != ''
+                     AND '$(SmartSkillsAcquisitionPhase)' == 'restore'"
+          Inputs="$(MSBuildProjectFile)"
+          Outputs="$(SmartSkillsInstallDir)installed-skills.json">
+
+    <ResolveSmartSkills
+      PackageReferences="@(PackageReference)"
+      RegistrySources="$(SmartSkillsSources)"
+      CacheDirectory="$(SmartSkillsInstallDir)cache\"
+      Verbose="$(SmartSkillsVerbose)">
+      <Output TaskParameter="ResolvedSkills" ItemName="_SmartSkillsResolved" />
+    </ResolveSmartSkills>
+  </Target>
+
+  <!-- InstallSmartSkills: runs after resolution (either phase) -->
   <Target Name="InstallSmartSkills"
-          AfterTargets="ResolveSmartSkills"
-          Condition="'$(SmartSkillsEnabled)' == 'true' AND '@(_SmartSkillsResolved)' != '' AND '$(DesignTimeBuild)' != 'true'">
+          AfterTargets="ResolveSmartSkills;ResolveSmartSkillsOnRestore"
+          Condition="'$(SmartSkillsEnabled)' == 'true'
+                     AND '@(_SmartSkillsResolved)' != ''
+                     AND '$(DesignTimeBuild)' != 'true'">
 
     <InstallSmartSkills
       ResolvedSkills="@(_SmartSkillsResolved)"
