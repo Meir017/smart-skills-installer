@@ -12,7 +12,9 @@ public record InstalledSkill
     public required string InstallPath { get; init; }
     public required DateTimeOffset InstalledAt { get; init; }
     public required string SourceProviderType { get; init; }
+#pragma warning disable CA1056 // URI properties should not be strings
     public required string SourceUrl { get; init; }
+#pragma warning restore CA1056 // URI properties should not be strings
     public required string CommitSha { get; init; }
 }
 

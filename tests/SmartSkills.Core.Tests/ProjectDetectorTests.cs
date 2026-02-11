@@ -94,7 +94,7 @@ public class ProjectDetectorTests
             var result = _detector.Detect(dir);
 
             var dotnet = result.Single(r => r.Ecosystem == Ecosystems.Dotnet);
-            Assert.EndsWith(".sln", dotnet.ProjectFilePath);
+            Assert.EndsWith(".sln", dotnet.ProjectFilePath, StringComparison.Ordinal);
         }
         finally
         {

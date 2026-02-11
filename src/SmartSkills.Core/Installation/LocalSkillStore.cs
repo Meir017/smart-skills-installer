@@ -37,6 +37,8 @@ public sealed class LocalSkillStore : ISkillStore
 
     public async Task SaveAsync(InstalledSkill skill, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(skill);
+
         var skills = (await GetInstalledSkillsAsync(cancellationToken)).ToList();
         skills.RemoveAll(s => string.Equals(s.Name, skill.Name, StringComparison.OrdinalIgnoreCase));
         skills.Add(skill);

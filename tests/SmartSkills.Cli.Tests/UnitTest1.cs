@@ -14,9 +14,9 @@ public class CliEndToEndTests
         var (exitCode, output) = await RunCliAsync("--help");
 
         Assert.Equal(0, exitCode);
-        Assert.Contains("SmartSkills", output);
-        Assert.Contains("scan", output);
-        Assert.Contains("install", output);
+        Assert.Contains("SmartSkills", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("scan", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("install", output, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class CliEndToEndTests
         var (exitCode, output) = await RunCliAsync("list");
 
         Assert.Equal(0, exitCode);
-        Assert.Contains("No skills installed", output);
+        Assert.Contains("No skills installed", output, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

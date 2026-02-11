@@ -23,7 +23,9 @@ public sealed class GitHubHttpClient : IDisposable
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
     }
 
+#pragma warning disable CA1054 // URI parameters should not be strings
     public async Task<JsonDocument> GetJsonAsync(string url, CancellationToken cancellationToken = default)
+#pragma warning restore CA1054 // URI parameters should not be strings
     {
         _logger.LogDebug("GET {Url}", url);
         return await _retryPolicy.ExecuteAsync(async ct =>
@@ -35,7 +37,9 @@ public sealed class GitHubHttpClient : IDisposable
         }, cancellationToken);
     }
 
+#pragma warning disable CA1054 // URI parameters should not be strings
     public async Task<Stream> GetStreamAsync(string url, CancellationToken cancellationToken = default)
+#pragma warning restore CA1054 // URI parameters should not be strings
     {
         _logger.LogDebug("GET (stream) {Url}", url);
         return await _retryPolicy.ExecuteAsync(async ct =>
@@ -46,7 +50,9 @@ public sealed class GitHubHttpClient : IDisposable
         }, cancellationToken);
     }
 
+#pragma warning disable CA1054 // URI parameters should not be strings
     public async Task<string> GetStringAsync(string url, CancellationToken cancellationToken = default)
+#pragma warning restore CA1054 // URI parameters should not be strings
     {
         _logger.LogDebug("GET (string) {Url}", url);
         return await _retryPolicy.ExecuteAsync(async ct =>

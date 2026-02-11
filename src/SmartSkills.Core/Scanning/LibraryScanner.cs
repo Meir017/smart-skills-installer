@@ -28,6 +28,8 @@ public sealed class LibraryScanner : ILibraryScanner
 
     public Task<ProjectPackages> ScanProjectAsync(string projectPath, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(projectPath);
+
         if (!File.Exists(projectPath))
             throw new FileNotFoundException($"Project file not found: {projectPath}");
 
@@ -70,7 +72,9 @@ public sealed class LibraryScanner : ILibraryScanner
                 var packages = await _defaultResolver.ResolvePackagesAsync(projectPath, cancellationToken);
                 results.Add(packages);
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 _logger.LogWarning(ex, "Failed to resolve packages for {ProjectPath}", projectPath);
             }
@@ -108,7 +112,9 @@ public sealed class LibraryScanner : ILibraryScanner
                     results.Add(packages);
                 }
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 _logger.LogWarning(ex, "Failed to scan {Ecosystem} project: {Path}", project.Ecosystem, project.ProjectFilePath);
             }

@@ -37,7 +37,7 @@ public class SkillMetadataParserTests
         var result = _parser.Parse(content, out var errors);
 
         Assert.Null(result);
-        Assert.Contains(errors, e => e.Contains("frontmatter"));
+        Assert.Contains(errors, e => e.Contains("frontmatter", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class SkillMetadataParserTests
         var result = _parser.Parse(content, out var errors);
 
         Assert.Null(result);
-        Assert.Contains(errors, e => e.Contains("name"));
+        Assert.Contains(errors, e => e.Contains("name", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class SkillMetadataParserTests
         var result = _parser.Parse(content, out var errors);
 
         Assert.Null(result);
-        Assert.Contains(errors, e => e.Contains("name"));
+        Assert.Contains(errors, e => e.Contains("name", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -80,6 +80,6 @@ public class SkillMetadataParserTests
         var result = _parser.Parse(content, out var errors);
 
         Assert.Null(result);
-        Assert.Contains(errors, e => e.Contains("description"));
+        Assert.Contains(errors, e => e.Contains("description", StringComparison.OrdinalIgnoreCase));
     }
 }
