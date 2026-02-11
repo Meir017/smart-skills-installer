@@ -28,13 +28,12 @@ public class RegistryFetchService
     }
 
     /// <summary>
-    /// Fetches the skill registry from a GitHub source. Format: "github:owner/repo[@branch]"
+    /// Fetches the skill registry from the given source.
+    /// Supports "github:owner/repo[@branch]" and "ado:org/project/repo[@branch]".
     /// </summary>
     public async Task<SkillRegistry> FetchRegistryAsync(string source, CancellationToken cancellationToken = default)
     {
-        var (owner, repo, branch) = ParseGitHubSource(source);
-        var url = GitHubContentFetcher.BuildRawUrl(owner, repo, branch, "skills-registry.json");
-        var cacheKey = $"registry_{owner}_{repo}_{branch}.json";
+        var (url, cacheKey) = ResolveSourceUrl(source);
 
         // Try cache first
         var cached = TryReadCache(cacheKey);
@@ -70,6 +69,33 @@ public class RegistryFetchService
         _logger.LogDebug("Registry cached with TTL {Ttl}", _cacheTtl);
 
         return registry;
+    }
+
+    internal static (string Url, string CacheKey) ResolveSourceUrl(string source)
+    {
+        if (source.StartsWith("ado:", StringComparison.OrdinalIgnoreCase)
+            || source.Split('/').Length == 3) // heuristic for ado:org/project/repo
+        {
+            // Try ADO first if it looks like org/project/repo
+            try
+            {
+                var (org, project, repo, branch) = AdoContentFetcher.ParseAdoSource(source);
+                var url = AdoContentFetcher.BuildItemUrl(org, project, repo, "/skills-registry.json", branch);
+                var cacheKey = $"registry_ado_{org}_{project}_{repo}_{branch}.json";
+                return (url, cacheKey);
+            }
+            catch (ArgumentException)
+            {
+                // Fall through to GitHub parsing
+            }
+        }
+
+        {
+            var (owner, repo, branch) = ParseGitHubSource(source);
+            var url = GitHubContentFetcher.BuildRawUrl(owner, repo, branch, "skills-registry.json");
+            var cacheKey = $"registry_{owner}_{repo}_{branch}.json";
+            return (url, cacheKey);
+        }
     }
 
     public static (string Owner, string Repo, string Branch) ParseGitHubSource(string source)

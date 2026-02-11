@@ -27,4 +27,25 @@ public class RegistryFetchServiceTests
     {
         Assert.Throws<ArgumentException>(() => RegistryFetchService.ParseGitHubSource(source));
     }
+
+    [Fact]
+    public void ResolveSourceUrl_GitHubSource_ReturnsRawUrl()
+    {
+        var (url, cacheKey) = RegistryFetchService.ResolveSourceUrl("github:owner/repo@main");
+
+        Assert.Contains("raw.githubusercontent.com", url);
+        Assert.Contains("skills-registry.json", url);
+        Assert.Contains("owner", cacheKey);
+    }
+
+    [Fact]
+    public void ResolveSourceUrl_AdoSource_ReturnsAdoApiUrl()
+    {
+        var (url, cacheKey) = RegistryFetchService.ResolveSourceUrl("ado:myorg/myproj/myrepo@develop");
+
+        Assert.Contains("dev.azure.com", url);
+        Assert.Contains("skills-registry.json", url);
+        Assert.Contains("ado", cacheKey);
+        Assert.Contains("myorg", cacheKey);
+    }
 }

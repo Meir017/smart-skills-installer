@@ -346,7 +346,7 @@
             "Multiple ADO sources with different orgs/credentials work simultaneously",
             "Auth failures produce actionable error messages"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S05-T04",
@@ -365,7 +365,7 @@
             "Checksum verification works identically to GitHub source",
             "Download failures produce retry attempts before failing"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },
