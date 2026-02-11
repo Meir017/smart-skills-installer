@@ -151,7 +151,7 @@
         {
           "id": "S02-T04",
           "title": "Implement 'scan' CLI Command",
-          "completed": false,
+          "completed": true,
           "description": "Add a 'scan' subcommand to SmartSkills.Cli that wraps the Core scanning SDK, accepts an optional project/solution path (defaults to current directory), and displays results in a human-readable table with JSON output support.",
           "requirements": [
             "Accept optional --project/-p argument for project/solution path",
