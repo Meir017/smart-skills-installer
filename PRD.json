@@ -377,7 +377,7 @@
         {
           "id": "S06-T02",
           "title": "Implement AdoSkillSourceProvider",
-          "completed": false,
+          "completed": true,
           "description": "Implement ISkillSourceProvider using the ADO Git REST API: use the Items API (GET /items?scopePath={skillPath}&recursionLevel=Full) to list files; use the Items API with download=true to fetch raw file content; use the Commits API (GET /commits?searchCriteria.itemPath={skillPath}&$top=1) to resolve the latest commit SHA.",
           "apiReferences": [
             "ISkillSourceProvider"
