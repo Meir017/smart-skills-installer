@@ -62,8 +62,9 @@ public static class RegistryIndexParser
         var root = doc.RootElement;
         var entries = new List<RegistryEntry>();
 
-        // Top-level repoUrl applies to all skills unless overridden per-skill
+        // Top-level defaults apply to all skills unless overridden per-skill
         var defaultRepoUrl = root.TryGetProperty("repoUrl", out var repoUrlProp) ? repoUrlProp.GetString() : null;
+        var defaultLanguage = root.TryGetProperty("language", out var langProp) ? langProp.GetString() : null;
 
         if (!root.TryGetProperty("skills", out var skills))
             return entries;
@@ -83,6 +84,7 @@ public static class RegistryIndexParser
 
             var skillPath = skill.TryGetProperty("skillPath", out var sp) ? sp.GetString() : null;
             var repoUrl = skill.TryGetProperty("repoUrl", out var ru) ? ru.GetString() : defaultRepoUrl;
+            var language = skill.TryGetProperty("language", out var sl) ? sl.GetString() : defaultLanguage;
 
             if (skillPath is not null && patterns.Count > 0)
             {
@@ -90,7 +92,8 @@ public static class RegistryIndexParser
                 {
                     PackagePatterns = patterns,
                     SkillPath = skillPath,
-                    RepoUrl = repoUrl
+                    RepoUrl = repoUrl,
+                    Language = language
                 });
             }
         }

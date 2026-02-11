@@ -1,0 +1,31 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+
+importers:
+  .:
+    dependencies:
+      '@azure/identity':
+        specifier: ^3.4.0
+        version: 3.4.2
+      express:
+        specifier: ^4.18.0
+        version: 4.18.2
+
+packages:
+  '@azure/core-auth@1.5.0':
+    resolution: {integrity: sha512-abc123}
+
+  '@azure/identity@3.4.2':
+    resolution: {integrity: sha512-def456}
+
+  body-parser@1.20.1:
+    resolution: {integrity: sha512-ghi789}
+
+  express@4.18.2:
+    resolution: {integrity: sha512-jkl012}
+
+  typescript@5.3.3:
+    resolution: {integrity: sha512-mno345}
+    dev: true

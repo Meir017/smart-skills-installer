@@ -1,7 +1,7 @@
 namespace SmartSkills.Core.Scanning;
 
 /// <summary>
-/// Scans .NET projects/solutions and delegates to IPackageResolver for dependency resolution.
+/// Scans projects and solutions for resolved packages across multiple ecosystems.
 /// </summary>
 public interface ILibraryScanner
 {
@@ -14,4 +14,9 @@ public interface ILibraryScanner
     /// Scan all projects in a solution (.sln or .slnx) file.
     /// </summary>
     Task<IReadOnlyList<ProjectPackages>> ScanSolutionAsync(string solutionPath, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Scan a directory for all supported project types and resolve packages from each.
+    /// </summary>
+    Task<IReadOnlyList<ProjectPackages>> ScanDirectoryAsync(string directoryPath, CancellationToken cancellationToken = default);
 }

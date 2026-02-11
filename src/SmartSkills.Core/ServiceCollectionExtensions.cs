@@ -22,8 +22,14 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<LocalCache>>()));
 
         // Scanning
-        services.AddSingleton<IPackageResolver, DotnetCliPackageResolver>();
+        services.AddSingleton<DotnetCliPackageResolver>();
+        services.AddSingleton<IPackageResolver>(sp => sp.GetRequiredService<DotnetCliPackageResolver>());
+        services.AddSingleton<NpmPackageResolver>();
+        services.AddSingleton<YarnPackageResolver>();
+        services.AddSingleton<PnpmPackageResolver>();
+        services.AddSingleton<IPackageResolverFactory, PackageResolverFactory>();
         services.AddSingleton<ILibraryScanner, LibraryScanner>();
+        services.AddSingleton<IProjectDetector, ProjectDetector>();
 
         // Registry
         services.AddSingleton<ISkillMatcher, SkillMatcher>();

@@ -31,7 +31,7 @@ public record SkillMetadata
 /// </summary>
 public record RegistryEntry
 {
-    /// <summary>NuGet package name patterns (exact or glob) that trigger this skill.</summary>
+    /// <summary>Package name patterns (exact or glob) that trigger this skill.</summary>
     public required IReadOnlyList<string> PackagePatterns { get; init; }
 
     /// <summary>Relative path to the skill directory in the source repository.</summary>
@@ -42,6 +42,12 @@ public record RegistryEntry
 
     /// <summary>The source provider that can fetch this skill. Null for entries that need a default provider.</summary>
     public ISkillSourceProvider? SourceProvider { get; init; }
+
+    /// <summary>
+    /// Optional ecosystem filter (e.g. "dotnet", "npm"). When set, this entry only matches
+    /// packages from the specified ecosystem. When null, matches any ecosystem.
+    /// </summary>
+    public string? Language { get; init; }
 }
 
 /// <summary>

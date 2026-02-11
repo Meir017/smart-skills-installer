@@ -13,16 +13,22 @@ public sealed class SkillMatcher : ISkillMatcher
         IEnumerable<RegistryEntry> registryEntries)
     {
         var entries = registryEntries.ToList();
-        var packageNames = packages.Select(p => p.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        var packageList = packages.ToList();
         var results = new Dictionary<string, MatchedSkill>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var entry in entries)
         {
+            // Determine which packages are eligible based on the entry's language filter
+            var eligiblePackages = entry.Language is null
+                ? packageList
+                : packageList.Where(p => string.Equals(p.Ecosystem, entry.Language, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            var eligibleNames = eligiblePackages.Select(p => p.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
             var matchedPatterns = new List<string>();
 
             foreach (var pattern in entry.PackagePatterns)
             {
-                foreach (var pkgName in packageNames)
+                foreach (var pkgName in eligibleNames)
                 {
                     if (IsMatch(pkgName, pattern))
                     {

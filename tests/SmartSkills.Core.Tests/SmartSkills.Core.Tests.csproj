@@ -14,4 +14,8 @@
     <ProjectReference Include="..\..\src\SmartSkills.Core\SmartSkills.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="TestData\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

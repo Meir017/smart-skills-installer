@@ -44,8 +44,12 @@ public sealed class SkillInstaller : ISkillInstaller
 
         // 1. Resolve packages
         IReadOnlyList<ProjectPackages> projectPackages;
-        if (projectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) ||
-            projectPath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase))
+        if (Directory.Exists(projectPath))
+        {
+            projectPackages = await _scanner.ScanDirectoryAsync(projectPath, cancellationToken);
+        }
+        else if (projectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) ||
+                 projectPath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase))
         {
             projectPackages = await _scanner.ScanSolutionAsync(projectPath, cancellationToken);
         }
@@ -105,7 +109,8 @@ public sealed class SkillInstaller : ISkillInstaller
                 // Fetch and install
                 var files = await provider.ListSkillFilesAsync(match.RegistryEntry.SkillPath, cancellationToken);
                 var skillName = Path.GetFileName(match.RegistryEntry.SkillPath);
-                var installDir = Path.Combine(Path.GetDirectoryName(projectPath)!, ".agents", "skills", skillName);
+                var baseDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
+                var installDir = Path.Combine(baseDir, ".agents", "skills", skillName);
 
                 Directory.CreateDirectory(installDir);
 

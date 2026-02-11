@@ -23,7 +23,7 @@ var baseDirOption = new Option<string?>("--base-dir")
     Description = "Base directory where the .agents/skills directory will be created (defaults to current directory)"
 };
 
-var rootCommand = new RootCommand("SmartSkills - Intelligent skill installer for .NET projects")
+var rootCommand = new RootCommand("SmartSkills - Intelligent skill installer for .NET and Node.js projects")
 {
     verboseOption,
     dryRunOption,
@@ -74,8 +74,6 @@ installCommand.SetAction(async (parseResult, cancellationToken) =>
         ProjectPath = projectPath,
         DryRun = dryRun
     }, cancellationToken);
-
-    Console.WriteLine();
     if (result.Installed.Count > 0)
     {
         Console.WriteLine($"Installed ({result.Installed.Count}):");
@@ -138,20 +136,33 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
     var scanner = host.Services.GetRequiredService<ILibraryScanner>();
     var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
-    projectPath = ResolveProjectPath(projectPath);
-    logger.LogInformation("Scanning: {Path}", projectPath);
-
     IReadOnlyList<ProjectPackages> results;
 
-    if (projectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) ||
-        projectPath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase))
+    if (!string.IsNullOrEmpty(projectPath))
     {
-        results = await scanner.ScanSolutionAsync(projectPath, cancellationToken);
+        projectPath = Path.GetFullPath(projectPath);
+        logger.LogInformation("Scanning: {Path}", projectPath);
+
+        if (Directory.Exists(projectPath))
+        {
+            results = await scanner.ScanDirectoryAsync(projectPath, cancellationToken);
+        }
+        else if (projectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) ||
+                 projectPath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase))
+        {
+            results = await scanner.ScanSolutionAsync(projectPath, cancellationToken);
+        }
+        else
+        {
+            var single = await scanner.ScanProjectAsync(projectPath, cancellationToken);
+            results = [single];
+        }
     }
     else
     {
-        var single = await scanner.ScanProjectAsync(projectPath, cancellationToken);
-        results = [single];
+        var dir = Directory.GetCurrentDirectory();
+        logger.LogInformation("Scanning directory: {Path}", dir);
+        results = await scanner.ScanDirectoryAsync(dir, cancellationToken);
     }
 
     if (jsonOutput)
@@ -165,7 +176,8 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
                 p.Version,
                 p.IsTransitive,
                 p.TargetFramework,
-                p.RequestedVersion
+                p.RequestedVersion,
+                p.Ecosystem
             })
         });
         Console.WriteLine(JsonSerializer.Serialize(output, new JsonSerializerOptions { WriteIndented = true }));
@@ -176,14 +188,14 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
         {
             Console.WriteLine();
             Console.WriteLine($"Project: {project.ProjectPath}");
-            Console.WriteLine(new string('-', 80));
-            Console.WriteLine($"{"Package",-45} {"Version",-15} {"Type",-12} {"Framework"}");
-            Console.WriteLine(new string('-', 80));
+            Console.WriteLine(new string('-', 90));
+            Console.WriteLine($"{"Package",-40} {"Version",-15} {"Ecosystem",-10} {"Type",-12} {"Framework"}");
+            Console.WriteLine(new string('-', 90));
 
             foreach (var pkg in project.Packages)
             {
                 var type = pkg.IsTransitive ? "Transitive" : "Direct";
-                Console.WriteLine($"{pkg.Name,-45} {pkg.Version,-15} {type,-12} {pkg.TargetFramework}");
+                Console.WriteLine($"{pkg.Name,-40} {pkg.Version,-15} {pkg.Ecosystem,-10} {type,-12} {pkg.TargetFramework}");
             }
         }
     }
@@ -295,16 +307,6 @@ static string ResolveProjectPath(string? path)
     if (!string.IsNullOrEmpty(path))
         return Path.GetFullPath(path);
 
-    var dir = Directory.GetCurrentDirectory();
-
-    var slnFiles = Directory.GetFiles(dir, "*.sln");
-    if (slnFiles.Length == 1) return slnFiles[0];
-
-    var slnxFiles = Directory.GetFiles(dir, "*.slnx");
-    if (slnxFiles.Length == 1) return slnxFiles[0];
-
-    var csprojFiles = Directory.GetFiles(dir, "*.csproj");
-    if (csprojFiles.Length == 1) return csprojFiles[0];
-
-    throw new FileNotFoundException("No project or solution file found in the current directory. Use --project to specify one.");
+    // Default to current directory — ScanDirectoryAsync / SkillInstaller will auto-detect projects
+    return Directory.GetCurrentDirectory();
 }
