@@ -70,7 +70,7 @@
             "Running with --verbose shows Debug+ messages",
             "Log entries include timestamps and structured context"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },

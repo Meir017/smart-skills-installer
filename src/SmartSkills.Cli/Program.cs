@@ -1,4 +1,6 @@
 ﻿using System.CommandLine;
+using Microsoft.Extensions.Logging;
+using SmartSkills.Cli;
 
 var verboseOption = new Option<bool>(
     "--verbose",
@@ -21,10 +23,14 @@ var rootCommand = new RootCommand("Smart Skills Installer - Automatically instal
 
 rootCommand.SetHandler((verbose, config, dryRun) =>
 {
-    Console.WriteLine("Smart Skills Installer CLI");
-    Console.WriteLine($"  Verbose: {verbose}");
-    Console.WriteLine($"  Config:  {config?.FullName ?? "(default)"}");
-    Console.WriteLine($"  Dry Run: {dryRun}");
+    using var loggerFactory = LoggingSetup.CreateLoggerFactory(verbose);
+    var logger = loggerFactory.CreateLogger("SmartSkills");
+
+    logger.LogInformation("Smart Skills Installer CLI started");
+    logger.LogDebug("Verbose mode enabled");
+    logger.LogDebug("Config: {ConfigPath}", config?.FullName ?? "(default)");
+    logger.LogDebug("Dry run: {DryRun}", dryRun);
+    logger.LogInformation("No command specified. Run with --help for usage information.");
 }, verboseOption, configOption, dryRunOption);
 
 return await rootCommand.InvokeAsync(args);
