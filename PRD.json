@@ -307,7 +307,7 @@
             "Invalid/expired tokens produce a clear authentication error",
             "Tokens are never written to log output even in verbose mode"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S05-T02",
