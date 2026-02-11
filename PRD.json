@@ -280,7 +280,7 @@
             "Release asset download fetches the correct version",
             "Checksum mismatch aborts installation with error"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },
