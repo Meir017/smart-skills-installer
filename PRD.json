@@ -105,7 +105,7 @@
         {
           "id": "S02-T02",
           "title": "Define IPackageResolver Abstraction",
-          "completed": false,
+          "completed": true,
           "description": "Define an IPackageResolver interface in SmartSkills.Core that abstracts package resolution. The interface accepts a project path and returns a unified list of resolved packages (name, version, whether direct or transitive, target framework). Register implementations via dependency injection.",
           "apiReferences": [
             "IPackageResolver",
