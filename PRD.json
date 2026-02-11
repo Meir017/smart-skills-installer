@@ -605,7 +605,7 @@
         {
           "id": "S09-T01",
           "title": "Implement Retry Policy with Exponential Backoff",
-          "completed": false,
+          "completed": true,
           "description": "Add configurable retry logic for all HTTP operations with exponential backoff and jitter.",
           "requirements": [
             "Retry transient HTTP failures (5xx, timeouts, rate limits)",
@@ -624,7 +624,7 @@
         {
           "id": "S09-T02",
           "title": "Implement Local Cache",
-          "completed": false,
+          "completed": true,
           "description": "Cache registry indexes and skill manifests locally to reduce network calls and enable offline browsing.",
           "requirements": [
             "Cache registry index responses locally",
@@ -643,7 +643,7 @@
         {
           "id": "S09-T03",
           "title": "Implement Structured Error Reporting",
-          "completed": false,
+          "completed": true,
           "description": "Provide clear, actionable error messages with error codes and suggested fixes.",
           "requirements": [
             "Define error codes for common failure scenarios",
