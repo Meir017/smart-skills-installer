@@ -478,7 +478,7 @@
             "'config set' and 'config get' commands work correctly",
             "Missing config files use sensible defaults"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S07-T02",
@@ -497,7 +497,7 @@
             "'source add' and 'source list' commands work correctly",
             "Failed source fetches don't block other sources"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S07-T03",
@@ -516,7 +516,7 @@
             "Stored credentials are retrieved correctly for API calls",
             "No plaintext tokens appear in config files or logs"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },
