@@ -52,7 +52,7 @@
             "'dotnet run -- --version' displays the tool version",
             "Invalid options produce a meaningful error message"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S01-T03",

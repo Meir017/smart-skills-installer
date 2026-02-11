@@ -1,17 +1,30 @@
-﻿Console.WriteLine("Smart Skills Installer CLI");
-Console.WriteLine("Usage: skills-installer <command> [options]");
-Console.WriteLine();
-Console.WriteLine("Commands:");
-Console.WriteLine("  scan       Scan project for installed libraries");
-Console.WriteLine("  install    Install skills matching project libraries");
-Console.WriteLine("  list       List installed or available skills");
-Console.WriteLine("  status     Show project skill status summary");
-Console.WriteLine("  update     Update installed skills");
-Console.WriteLine("  uninstall  Remove installed skills");
-Console.WriteLine("  config     Manage configuration");
-Console.WriteLine();
-Console.WriteLine("Options:");
-Console.WriteLine("  --help       Show help information");
-Console.WriteLine("  --version    Show version information");
-Console.WriteLine("  --verbose    Enable detailed logging");
-Console.WriteLine("  --dry-run    Preview actions without executing");
+﻿using System.CommandLine;
+
+var verboseOption = new Option<bool>(
+    "--verbose",
+    "Enable detailed logging");
+
+var configOption = new Option<FileInfo?>(
+    "--config",
+    "Path to a custom configuration file");
+
+var dryRunOption = new Option<bool>(
+    "--dry-run",
+    "Preview actions without executing");
+
+var rootCommand = new RootCommand("Smart Skills Installer - Automatically install agent skills based on project dependencies")
+{
+    verboseOption,
+    configOption,
+    dryRunOption,
+};
+
+rootCommand.SetHandler((verbose, config, dryRun) =>
+{
+    Console.WriteLine("Smart Skills Installer CLI");
+    Console.WriteLine($"  Verbose: {verbose}");
+    Console.WriteLine($"  Config:  {config?.FullName ?? "(default)"}");
+    Console.WriteLine($"  Dry Run: {dryRun}");
+}, verboseOption, configOption, dryRunOption);
+
+return await rootCommand.InvokeAsync(args);
