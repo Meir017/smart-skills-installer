@@ -241,7 +241,7 @@
             "Detects rate limiting and waits/retries appropriately",
             "Authenticated requests include the token in Authorization header"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S04-T02",
