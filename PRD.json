@@ -328,7 +328,7 @@
         {
           "id": "S05-T02",
           "title": "Implement GitHubSkillSourceProvider",
-          "completed": false,
+          "completed": true,
           "description": "Implement ISkillSourceProvider using the GitHub API: use the Git Trees API (GET /repos/{owner}/{repo}/git/trees/{sha}?recursive=1) to list files; use raw content URLs to download files; use the Commits API (GET /repos/{owner}/{repo}/commits?path={skillPath}&per_page=1) to resolve the latest commit SHA.",
           "apiReferences": [
             "ISkillSourceProvider"
