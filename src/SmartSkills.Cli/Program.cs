@@ -194,7 +194,7 @@ rootCommand.SetAction(parseResult =>
 
 return await rootCommand.Parse(args).InvokeAsync();
 
-static IHost CreateHost(bool verbose)
+static IHost CreateHost(bool verbose, string? configPath = null)
 {
     return Host.CreateDefaultBuilder()
         .ConfigureLogging(logging =>
@@ -205,7 +205,7 @@ static IHost CreateHost(bool verbose)
         })
         .ConfigureServices(services =>
         {
-            services.AddSmartSkills();
+            services.AddSmartSkills(configOverridePath: configPath);
         })
         .Build();
 }

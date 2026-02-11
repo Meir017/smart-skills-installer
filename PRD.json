@@ -532,7 +532,7 @@
         {
           "id": "S08-T01",
           "title": "Implement Configuration File Support",
-          "completed": false,
+          "completed": true,
           "description": "Support a JSON/YAML configuration file for persistent settings, with user-level and project-level overrides.",
           "apiReferences": [
             "IConfigProvider",
@@ -556,7 +556,7 @@
         {
           "id": "S08-T02",
           "title": "Implement Multi-Source Registry Configuration",
-          "completed": false,
+          "completed": true,
           "description": "Allow users to configure multiple skill registry sources (mix of GitHub and ADO) with priority ordering.",
           "apiReferences": [
             "SmartSkillsConfig.Sources",
@@ -579,7 +579,7 @@
         {
           "id": "S08-T03",
           "title": "Implement Credential Storage",
-          "completed": false,
+          "completed": true,
           "description": "Provide secure storage for ADO tokens and GitHub PATs, avoiding plaintext storage in config files.",
           "requirements": [
             "Never store credentials in plaintext config files",

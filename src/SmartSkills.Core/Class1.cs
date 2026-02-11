@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using SmartSkills.Core.Configuration;
 using SmartSkills.Core.Installation;
 using SmartSkills.Core.Registry;
 using SmartSkills.Core.Scanning;
@@ -10,7 +11,7 @@ public static class ServiceCollectionExtensions
     /// <summary>
     /// Register all SmartSkills.Core services into the DI container.
     /// </summary>
-    public static IServiceCollection AddSmartSkills(this IServiceCollection services, string? skillsOutputDirectory = null)
+    public static IServiceCollection AddSmartSkills(this IServiceCollection services, string? skillsOutputDirectory = null, string? configOverridePath = null)
     {
         services.AddSingleton<IPackageResolver, DotnetCliPackageResolver>();
         services.AddSingleton<ILibraryScanner, LibraryScanner>();
@@ -18,6 +19,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISkillRegistry, SkillRegistry>();
         services.AddSingleton<ISkillMetadataParser, SkillMetadataParser>();
         services.AddSingleton<ISkillInstaller, SkillInstaller>();
+        services.AddSingleton<CredentialResolver>();
+        services.AddSingleton<IConfigProvider>(sp =>
+            new ConfigProvider(
+                configOverridePath,
+                sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<ConfigProvider>>()));
         services.AddSingleton<ISkillStore>(sp =>
             new LocalSkillStore(
                 skillsOutputDirectory ?? Path.Combine(Directory.GetCurrentDirectory(), ".smartskills"),
