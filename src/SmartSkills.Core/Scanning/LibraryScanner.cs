@@ -5,16 +5,24 @@ using Microsoft.VisualStudio.SolutionPersistence.Serializer;
 namespace SmartSkills.Core.Scanning;
 
 /// <summary>
-/// Scans .NET projects and solutions for resolved packages.
+/// Scans projects, solutions, and directories for resolved packages across ecosystems.
 /// </summary>
 public sealed class LibraryScanner : ILibraryScanner
 {
-    private readonly IPackageResolver _packageResolver;
+    private readonly IPackageResolverFactory _resolverFactory;
+    private readonly IPackageResolver _defaultResolver;
+    private readonly IProjectDetector _projectDetector;
     private readonly ILogger<LibraryScanner> _logger;
 
-    public LibraryScanner(IPackageResolver packageResolver, ILogger<LibraryScanner> logger)
+    public LibraryScanner(
+        IPackageResolverFactory resolverFactory,
+        IPackageResolver defaultResolver,
+        IProjectDetector projectDetector,
+        ILogger<LibraryScanner> logger)
     {
-        _packageResolver = packageResolver;
+        _resolverFactory = resolverFactory;
+        _defaultResolver = defaultResolver;
+        _projectDetector = projectDetector;
         _logger = logger;
     }
 
@@ -24,7 +32,13 @@ public sealed class LibraryScanner : ILibraryScanner
             throw new FileNotFoundException($"Project file not found: {projectPath}");
 
         _logger.LogInformation("Scanning project: {ProjectPath}", projectPath);
-        return _packageResolver.ResolvePackagesAsync(projectPath, cancellationToken);
+
+        var project = InferDetectedProject(projectPath);
+        var resolver = project is not null
+            ? _resolverFactory.GetResolver(project)
+            : _defaultResolver;
+
+        return resolver.ResolvePackagesAsync(projectPath, cancellationToken);
     }
 
     public async Task<IReadOnlyList<ProjectPackages>> ScanSolutionAsync(string solutionPath, CancellationToken cancellationToken = default)
@@ -53,7 +67,7 @@ public sealed class LibraryScanner : ILibraryScanner
 
             try
             {
-                var packages = await _packageResolver.ResolvePackagesAsync(projectPath, cancellationToken);
+                var packages = await _defaultResolver.ResolvePackagesAsync(projectPath, cancellationToken);
                 results.Add(packages);
             }
             catch (Exception ex)
@@ -63,5 +77,60 @@ public sealed class LibraryScanner : ILibraryScanner
         }
 
         return results;
+    }
+
+    public async Task<IReadOnlyList<ProjectPackages>> ScanDirectoryAsync(string directoryPath, CancellationToken cancellationToken = default)
+    {
+        if (!Directory.Exists(directoryPath))
+            throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
+
+        _logger.LogInformation("Scanning directory: {DirectoryPath}", directoryPath);
+
+        var detected = _projectDetector.Detect(directoryPath);
+        var results = new List<ProjectPackages>();
+
+        foreach (var project in detected)
+        {
+            try
+            {
+                // .NET solutions need the special ScanSolutionAsync path
+                if (string.Equals(project.Ecosystem, Ecosystems.Dotnet, StringComparison.OrdinalIgnoreCase)
+                    && (project.ProjectFilePath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)
+                        || project.ProjectFilePath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase)))
+                {
+                    var solutionResults = await ScanSolutionAsync(project.ProjectFilePath, cancellationToken);
+                    results.AddRange(solutionResults);
+                }
+                else
+                {
+                    var resolver = _resolverFactory.GetResolver(project);
+                    var packages = await resolver.ResolvePackagesAsync(project.ProjectFilePath, cancellationToken);
+                    results.Add(packages);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to scan {Ecosystem} project: {Path}", project.Ecosystem, project.ProjectFilePath);
+            }
+        }
+
+        return results;
+    }
+
+    private static DetectedProject? InferDetectedProject(string filePath)
+    {
+        if (filePath.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) ||
+            filePath.EndsWith(".fsproj", StringComparison.OrdinalIgnoreCase) ||
+            filePath.EndsWith(".vbproj", StringComparison.OrdinalIgnoreCase))
+        {
+            return new DetectedProject(Ecosystems.Dotnet, filePath);
+        }
+
+        if (filePath.EndsWith("package.json", StringComparison.OrdinalIgnoreCase))
+        {
+            return new DetectedProject(Ecosystems.Npm, filePath);
+        }
+
+        return null;
     }
 }
