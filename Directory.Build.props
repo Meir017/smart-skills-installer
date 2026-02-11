@@ -4,5 +4,16 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Enable .NET code analyzers -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- Code quality settings - use 'Recommended' to enable standard analyzers -->
+    <AnalysisMode>Recommended</AnalysisMode>
+    
+    <!-- Exclude CA (code analysis) warnings from being treated as errors to allow gradual adoption -->
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);CA1031;CA1032;CA1034;CA1054;CA1056;CA1062;CA1307;CA1310;CA1707;CA1848;CA1849;CA1859;CA1869</WarningsNotAsErrors>
   </PropertyGroup>
 </Project>
