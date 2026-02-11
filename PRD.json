@@ -83,7 +83,7 @@
         {
           "id": "S02-T01",
           "title": "Implement Library Scanner SDK in SmartSkills.Core",
-          "completed": false,
+          "completed": true,
           "description": "Build the core scanning API in SmartSkills.Core that accepts a project or solution (.sln/.slnx) path and returns a list of detected packages. This is the reusable SDK consumed by both the CLI and MSBuild tasks. Use Microsoft.VisualStudio.SolutionPersistence NuGet package for parsing solution files \u00e2\u20ac\u201d it supports both .sln and .slnx formats via a unified SolutionModel API.",
           "apiReferences": [
             "ILibraryScanner",
