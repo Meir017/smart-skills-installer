@@ -126,7 +126,7 @@
         {
           "id": "S02-T03",
           "title": "Implement DotnetCliPackageResolver",
-          "completed": false,
+          "completed": true,
           "description": "Implement IPackageResolver by shelling out to 'dotnet list package --include-transitive --format json'. This leverages the .NET SDK's own NuGet restore and resolution engine, which correctly handles all MSBuild evaluation complexity (.props/.targets imports, Central Package Management, conditional references, multi-targeting, etc.). Parse the JSON output (available since .NET SDK 7.0.200) to extract the full resolved dependency graph.",
           "apiReferences": [
             "IPackageResolver",
