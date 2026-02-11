@@ -782,7 +782,7 @@
             "Configuration reference covers all supported settings and MSBuild properties",
             "Installation instructions work on Windows, macOS, and Linux"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },
