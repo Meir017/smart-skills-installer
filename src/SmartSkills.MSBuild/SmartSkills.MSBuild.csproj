@@ -5,9 +5,29 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version>0.1.0</Version>
+    <PackageId>SmartSkills.MSBuild</PackageId>
+    <Authors>SmartSkills Contributors</Authors>
+    <Description>MSBuild tasks for automatic agent skill acquisition during build</Description>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.0.2" PrivateAssets="all" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <!-- Pack build/buildTransitive content into NuGet -->
+  <ItemGroup>
+    <Content Include="build\**" PackagePath="build\" />
+    <Content Include="buildTransitive\**" PackagePath="buildTransitive\" />
+  </ItemGroup>
 
 </Project>

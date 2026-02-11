@@ -654,7 +654,7 @@
             "Code coverage report shows \u00e2\u2030\u00a580% on core logic namespaces",
             "Edge cases are explicitly tested with descriptive test names"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S10-T02",
@@ -811,7 +811,7 @@
             "Task handles empty PackageReference list gracefully (no-op)",
             "Task respects build cancellation"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S12-T02",
@@ -833,7 +833,7 @@
             "Parallel downloads work correctly without file corruption",
             "Network failures produce MSBuild warnings or errors depending on configuration"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S12-T03",
@@ -858,7 +858,7 @@
             "Incremental build: adding a new PackageReference triggers re-acquisition",
             "Targets run in correct order relative to NuGet restore and compile"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S12-T04",

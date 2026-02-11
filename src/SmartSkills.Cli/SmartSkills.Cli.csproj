@@ -18,6 +18,13 @@
     <AssemblyName>skills-installer</AssemblyName>
     <RootNamespace>SmartSkills.Cli</RootNamespace>
     <Version>0.1.0</Version>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>skills-installer</ToolCommandName>
+    <PackageId>SmartSkills.Installer</PackageId>
+    <Authors>SmartSkills Contributors</Authors>
+    <Description>CLI tool that inspects installed libraries and automatically installs relevant agent skills</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/meir017/smark-skills-installer</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
