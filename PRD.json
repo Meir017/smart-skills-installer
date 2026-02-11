@@ -214,7 +214,7 @@
             "Version constraints filter out incompatible skills",
             "Duplicate skills from multiple library matches are deduplicated"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },
