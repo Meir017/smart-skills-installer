@@ -880,7 +880,7 @@
             "Errors and warnings use proper MSBuild error/warning format with codes",
             "Error codes appear in Visual Studio Error List when building from IDE"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S12-T05",
