@@ -1,6 +1,15 @@
 namespace SmartSkills.Core.Scanning;
 
 /// <summary>
+/// Well-known ecosystem identifiers for package managers.
+/// </summary>
+public static class Ecosystems
+{
+    public const string Dotnet = "dotnet";
+    public const string Npm = "npm";
+}
+
+/// <summary>
 /// Represents a resolved package in a project's dependency graph.
 /// </summary>
 public record ResolvedPackage
@@ -10,6 +19,12 @@ public record ResolvedPackage
     public required bool IsTransitive { get; init; }
     public string? TargetFramework { get; init; }
     public string? RequestedVersion { get; init; }
+
+    /// <summary>
+    /// Identifies the package ecosystem (e.g. "dotnet", "npm").
+    /// Defaults to "dotnet" for backward compatibility.
+    /// </summary>
+    public string Ecosystem { get; init; } = Ecosystems.Dotnet;
 }
 
 /// <summary>
