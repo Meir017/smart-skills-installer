@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SmartSkills.Cli/SmartSkills.Cli.csproj" />
+    <Project Path="src/SmartSkills.Core/SmartSkills.Core.csproj" />
+    <Project Path="src/SmartSkills.MSBuild/SmartSkills.MSBuild.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SmartSkills.Cli.Tests/SmartSkills.Cli.Tests.csproj" />
+    <Project Path="tests/SmartSkills.Core.Tests/SmartSkills.Core.Tests.csproj" />
+    <Project Path="tests/SmartSkills.MSBuild.Tests/SmartSkills.MSBuild.Tests.csproj" />
+  </Folder>
+</Solution>
