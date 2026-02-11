@@ -150,7 +150,7 @@
             "JSON output is valid and parseable",
             "Summary line shows correct count of detected packages"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },

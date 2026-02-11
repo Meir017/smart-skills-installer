@@ -38,15 +38,21 @@ var pathOption = new Option<DirectoryInfo?>(
     "--path",
     "Path to a .NET project or solution directory");
 
+var outputOption = new Option<string?>(
+    "--output",
+    "Output format (table or json)");
+
 var scanCommand = new Command("scan", "Scan project for installed libraries")
 {
     pathOption,
+    outputOption,
 };
 
-scanCommand.SetHandler((verbose, path) =>
+scanCommand.SetHandler(async (verbose, path, output) =>
 {
     using var loggerFactory = LoggingSetup.CreateLoggerFactory(verbose);
     var logger = loggerFactory.CreateLogger("SmartSkills.Scan");
+    var scanner = new ProjectScanner(loggerFactory.CreateLogger<ProjectScanner>());
 
     var targetPath = path?.FullName ?? Directory.GetCurrentDirectory();
     logger.LogDebug("Scanning path: {Path}", targetPath);
@@ -55,15 +61,23 @@ scanCommand.SetHandler((verbose, path) =>
     {
         var resolvedPath = ProjectDiscovery.ResolvePath(targetPath);
         logger.LogInformation("Found project: {ProjectPath}", resolvedPath);
-        logger.LogInformation("Scanning for packages...");
-        // Scanning pipeline will be implemented in subsequent tasks
-        logger.LogInformation("Scan complete.");
+
+        var packages = await scanner.ScanAsync(resolvedPath);
+
+        if (string.Equals(output, "json", StringComparison.OrdinalIgnoreCase))
+        {
+            ScanOutputFormatter.WriteJson(packages, Console.Out);
+        }
+        else
+        {
+            ScanOutputFormatter.WriteTable(packages, Console.Out);
+        }
     }
     catch (Exception ex) when (ex is DirectoryNotFoundException or InvalidOperationException)
     {
         logger.LogError("{Message}", ex.Message);
     }
-}, verboseOption, pathOption);
+}, verboseOption, pathOption, outputOption);
 
 rootCommand.AddCommand(scanCommand);
 
