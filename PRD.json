@@ -864,7 +864,7 @@
         {
           "id": "S13-T01",
           "title": "Implement ResolveSmartSkills MSBuild Task",
-          "completed": false,
+          "completed": true,
           "description": "Create a custom MSBuild task (extending Microsoft.Build.Utilities.Task) that reads the project's PackageReference items, queries the skill registry, and outputs a list of skills to install.",
           "requirements": [
             "Extend Microsoft.Build.Utilities.Task",
@@ -883,7 +883,7 @@
         {
           "id": "S13-T02",
           "title": "Implement InstallSmartSkills MSBuild Task",
-          "completed": false,
+          "completed": true,
           "description": "Create a custom MSBuild task that takes the resolved skills list and downloads/installs each skill to the configured output directory.",
           "requirements": [
             "Accept resolved skills list from ResolveSmartSkills output",
@@ -902,7 +902,7 @@
         {
           "id": "S13-T03",
           "title": "Author .props and .targets Files",
-          "completed": false,
+          "completed": true,
           "description": "Create the MSBuild .props and .targets files that wire the custom tasks into the build pipeline with correct ordering, default property values, and incremental build support.",
           "requirements": [
             "Create .props file with default property values",
@@ -922,7 +922,7 @@
         {
           "id": "S13-T04",
           "title": "Implement MSBuild Diagnostic Logging & Build Output",
-          "completed": false,
+          "completed": true,
           "description": "Provide clear build output showing skill acquisition progress, using MSBuild message importance levels appropriately.",
           "requirements": [
             "Use MessageImportance.High for skill install/skip summary",
@@ -941,7 +941,7 @@
         {
           "id": "S13-T05",
           "title": "Handle MSBuild Task Assembly Loading & Dependencies",
-          "completed": false,
+          "completed": true,
           "description": "Ensure the MSBuild task DLL and its dependencies (SmartSkills.Core, HTTP libraries, etc.) load correctly in the MSBuild process without conflicting with the host project's assemblies.",
           "requirements": [
             "Use MSBuildSdkResolver or assembly resolution hooks if needed",
@@ -960,7 +960,7 @@
         {
           "id": "S13-T06",
           "title": "Support NuGet Restore-Time vs Build-Time Skill Acquisition",
-          "completed": false,
+          "completed": true,
           "description": "Determine and implement the correct MSBuild phase for skill acquisition, balancing between restore-time (earlier, but limited) and build-time (full access to resolved references).",
           "requirements": [
             "Evaluate restore-time vs build-time tradeoffs",
@@ -978,7 +978,7 @@
         {
           "id": "S13-T07",
           "title": "Support Multi-Targeting and Solution-Level Builds",
-          "completed": false,
+          "completed": true,
           "description": "Ensure skill acquisition works correctly for multi-targeting projects and solution-level builds without duplicate acquisition.",
           "requirements": [
             "Deduplicate skill acquisition across target frameworks in multi-targeting projects",

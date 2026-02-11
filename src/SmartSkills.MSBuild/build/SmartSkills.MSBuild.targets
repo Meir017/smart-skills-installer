@@ -4,19 +4,23 @@
   <UsingTask TaskName="SmartSkills.MSBuild.InstallSmartSkills"
              AssemblyFile="$(MSBuildThisFileDirectory)..\lib\net10.0\SmartSkills.MSBuild.dll" />
 
+  <!-- Only run once for multi-targeting projects -->
   <Target Name="ResolveSmartSkills"
           BeforeTargets="BeforeBuild"
-          Condition="'$(SmartSkillsEnabled)' == 'true'">
+          Condition="'$(SmartSkillsEnabled)' == 'true' AND '$(TargetFramework)' != '' AND '$(SmartSkillsResolved)' != 'true'">
     <ResolveSmartSkills ProjectPath="$(MSBuildProjectFullPath)"
                         OutputDirectory="$(SmartSkillsOutputDirectory)">
-      <Output TaskParameter="ResolvedSkills" ItemName="SmartSkillsResolved" />
+      <Output TaskParameter="ResolvedSkills" ItemName="SmartSkillsResolvedItems" />
     </ResolveSmartSkills>
+    <PropertyGroup>
+      <SmartSkillsResolved>true</SmartSkillsResolved>
+    </PropertyGroup>
   </Target>
 
   <Target Name="InstallSmartSkills"
           AfterTargets="ResolveSmartSkills"
-          Condition="'$(SmartSkillsEnabled)' == 'true' AND '@(SmartSkillsResolved)' != ''">
-    <InstallSmartSkills Skills="@(SmartSkillsResolved)"
+          Condition="'$(SmartSkillsEnabled)' == 'true' AND '@(SmartSkillsResolvedItems)' != ''">
+    <InstallSmartSkills Skills="@(SmartSkillsResolvedItems)"
                         OutputDirectory="$(SmartSkillsOutputDirectory)" />
   </Target>
 </Project>
