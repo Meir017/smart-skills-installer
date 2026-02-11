@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
         // Scanning
         services.AddSingleton<IPackageResolver, DotnetCliPackageResolver>();
         services.AddSingleton<ILibraryScanner, LibraryScanner>();
+        services.AddSingleton<IProjectDetector, ProjectDetector>();
 
         // Registry
         services.AddSingleton<ISkillMatcher, SkillMatcher>();
