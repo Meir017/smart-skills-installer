@@ -900,7 +900,7 @@
             "No assembly version conflicts with common packages (System.Text.Json, etc.)",
             "Task dependencies do not appear in consuming project's bin/ output"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S12-T06",
