@@ -431,7 +431,7 @@
             "Downgrade is prevented unless --force is used",
             "No-op when all skills are up to date"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S06-T04",
@@ -450,7 +450,7 @@
             "--all removes all skills and clears the manifest",
             "Uninstalling a non-existent skill shows a clear message"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },

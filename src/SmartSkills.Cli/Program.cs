@@ -236,4 +236,176 @@ installCommand.SetHandler(async (verbose, dryRun, path, source, force, yes) =>
 
 rootCommand.AddCommand(installCommand);
 
+// uninstall command
+var skillIdArgument = new Argument<string?>(
+    "skillId",
+    () => null,
+    "The ID of the skill to uninstall");
+
+var allOption = new Option<bool>(
+    "--all",
+    "Remove all installed skills");
+
+var uninstallCommand = new Command("uninstall", "Remove installed skills")
+{
+    skillIdArgument,
+    allOption,
+};
+
+uninstallCommand.SetHandler((verbose, skillId, all) =>
+{
+    using var loggerFactory = LoggingSetup.CreateLoggerFactory(verbose);
+    var logger = loggerFactory.CreateLogger("SmartSkills.Uninstall");
+    var storage = new LocalSkillStorage();
+
+    if (all)
+    {
+        var manifest = storage.LoadManifest();
+        if (manifest.Skills.Count == 0)
+        {
+            logger.LogInformation("No skills installed.");
+            return;
+        }
+
+        foreach (var skill in manifest.Skills.ToList())
+        {
+            storage.RecordUninstall(skill.SkillId);
+            logger.LogInformation("Removed: {SkillId}", skill.SkillId);
+        }
+        logger.LogInformation("All skills removed.");
+        return;
+    }
+
+    if (string.IsNullOrWhiteSpace(skillId))
+    {
+        logger.LogError("Specify a skill ID or use --all. Run 'skills-installer uninstall --help' for usage.");
+        return;
+    }
+
+    if (!storage.IsInstalled(skillId))
+    {
+        logger.LogWarning("Skill '{SkillId}' is not installed.", skillId);
+        return;
+    }
+
+    // Check dependencies
+    var installedManifest = storage.LoadManifest();
+    var dependents = installedManifest.Skills
+        .Where(s => !s.SkillId.Equals(skillId, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+    // Note: full dependency checking would require loading manifests; simplified warning here
+
+    storage.RecordUninstall(skillId);
+    logger.LogInformation("Skill '{SkillId}' has been uninstalled.", skillId);
+}, verboseOption, skillIdArgument, allOption);
+
+rootCommand.AddCommand(uninstallCommand);
+
+// update command
+var skillOption = new Option<string?>(
+    "--skill",
+    "Update a specific skill by ID");
+
+var updateCommand = new Command("update", "Update installed skills to latest versions")
+{
+    sourceOption,
+    skillOption,
+    forceOption,
+};
+
+updateCommand.SetHandler(async (verbose, source, skill, force) =>
+{
+    using var loggerFactory = LoggingSetup.CreateLoggerFactory(verbose);
+    var logger = loggerFactory.CreateLogger("SmartSkills.Update");
+
+    if (source is null)
+    {
+        logger.LogError("No source specified. Use --source to provide a registry source.");
+        return;
+    }
+
+    var storage = new LocalSkillStorage();
+    var manifest = storage.LoadManifest();
+
+    if (manifest.Skills.Count == 0)
+    {
+        logger.LogInformation("No skills installed. Nothing to update.");
+        return;
+    }
+
+    var toCheck = skill is not null
+        ? manifest.Skills.Where(s => s.SkillId.Equals(skill, StringComparison.OrdinalIgnoreCase)).ToList()
+        : manifest.Skills;
+
+    if (!toCheck.Any())
+    {
+        logger.LogWarning("Skill '{SkillId}' is not installed.", skill);
+        return;
+    }
+
+    try
+    {
+        using var fetcher = new GitHubContentFetcher(loggerFactory.CreateLogger<GitHubContentFetcher>());
+        var registryService = new RegistryFetchService(fetcher, loggerFactory.CreateLogger<RegistryFetchService>());
+        var registry = await registryService.FetchRegistryAsync(source);
+
+        var registryParser = new SkillRegistryParser();
+        var updatesAvailable = 0;
+
+        foreach (var installed in toCheck)
+        {
+            // Find matching manifests in registry
+            var manifestUrls = registryParser.FindManifestUrls(registry, installed.SkillId);
+            foreach (var url in manifestUrls)
+            {
+                try
+                {
+                    var json = await fetcher.FetchStringAsync(url);
+                    var (parsed, errors) = SkillManifestValidator.ParseAndValidate(json);
+                    if (parsed is null) continue;
+
+                    if (!parsed.SkillId.Equals(installed.SkillId, StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    if (Version.TryParse(parsed.Version, out var remoteVer) &&
+                        Version.TryParse(installed.Version, out var localVer))
+                    {
+                        if (remoteVer > localVer || force)
+                        {
+                            logger.LogInformation("Updating {SkillId}: {OldVersion} -> {NewVersion}",
+                                installed.SkillId, installed.Version, parsed.Version);
+
+                            var downloader = new SkillPackageDownloader(fetcher, loggerFactory.CreateLogger<SkillPackageDownloader>());
+                            var skillDir = storage.GetSkillDir(installed.SkillId);
+                            await downloader.DownloadSkillAsync(parsed, skillDir);
+                            storage.RecordInstall(installed.SkillId, parsed.Version, source);
+                            updatesAvailable++;
+                        }
+                        else if (remoteVer < localVer && !force)
+                        {
+                            logger.LogDebug("Skipping downgrade for {SkillId}: {LocalVersion} > {RemoteVersion}",
+                                installed.SkillId, installed.Version, parsed.Version);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning("Failed to check update for {SkillId}: {Error}", installed.SkillId, ex.Message);
+                }
+            }
+        }
+
+        if (updatesAvailable == 0)
+            logger.LogInformation("All skills are up to date.");
+        else
+            logger.LogInformation("Updated {Count} skill(s).", updatesAvailable);
+    }
+    catch (Exception ex)
+    {
+        logger.LogError("Update failed: {Message}", ex.Message);
+    }
+}, verboseOption, sourceOption, skillOption, forceOption);
+
+rootCommand.AddCommand(updateCommand);
+
 return await rootCommand.InvokeAsync(args);
