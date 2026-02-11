@@ -408,4 +408,100 @@ updateCommand.SetHandler(async (verbose, source, skill, force) =>
 
 rootCommand.AddCommand(updateCommand);
 
+// list command
+var installedFlag = new Option<bool>(
+    "--installed",
+    () => true,
+    "Show installed skills (default)");
+
+var listCommand = new Command("list", "List installed or available skills")
+{
+    installedFlag,
+    outputOption,
+};
+
+listCommand.SetHandler((verbose, installed, output) =>
+{
+    using var loggerFactory = LoggingSetup.CreateLoggerFactory(verbose);
+    var logger = loggerFactory.CreateLogger("SmartSkills.List");
+    var storage = new LocalSkillStorage();
+    var manifest = storage.LoadManifest();
+
+    if (manifest.Skills.Count == 0)
+    {
+        logger.LogInformation("No skills installed.");
+        return;
+    }
+
+    if (string.Equals(output, "json", StringComparison.OrdinalIgnoreCase))
+    {
+        var json = System.Text.Json.JsonSerializer.Serialize(manifest.Skills,
+            new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+        Console.WriteLine(json);
+    }
+    else
+    {
+        var idWidth = Math.Max("Skill ID".Length, manifest.Skills.Max(s => s.SkillId.Length));
+        var verWidth = Math.Max("Version".Length, manifest.Skills.Max(s => s.Version.Length));
+
+        Console.WriteLine($"{"Skill ID".PadRight(idWidth)}  {"Version".PadRight(verWidth)}  {"Installed At",-25}  Source");
+        Console.WriteLine(new string('-', idWidth + verWidth + 40));
+
+        foreach (var skill in manifest.Skills.OrderBy(s => s.SkillId))
+        {
+            Console.WriteLine($"{skill.SkillId.PadRight(idWidth)}  {skill.Version.PadRight(verWidth)}  {skill.InstalledAt:yyyy-MM-dd HH:mm:ss,-25}  {skill.Source}");
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"Total: {manifest.Skills.Count} skill(s) installed.");
+    }
+}, verboseOption, installedFlag, outputOption);
+
+rootCommand.AddCommand(listCommand);
+
+// status command
+var statusCommand = new Command("status", "Show project skill status summary")
+{
+    pathOption,
+};
+
+statusCommand.SetHandler(async (verbose, path) =>
+{
+    using var loggerFactory = LoggingSetup.CreateLoggerFactory(verbose);
+    var logger = loggerFactory.CreateLogger("SmartSkills.Status");
+    var storage = new LocalSkillStorage();
+
+    var targetPath = path?.FullName ?? Directory.GetCurrentDirectory();
+
+    try
+    {
+        var resolvedPath = ProjectDiscovery.ResolvePath(targetPath);
+        var scanner = new ProjectScanner(loggerFactory.CreateLogger<ProjectScanner>());
+        var packages = await scanner.ScanAsync(resolvedPath);
+        var installed = storage.LoadManifest();
+
+        Console.WriteLine("Smart Skills Status");
+        Console.WriteLine(new string('=', 40));
+        Console.WriteLine($"  Project:             {resolvedPath}");
+        Console.WriteLine($"  Detected libraries:  {packages.Count}");
+        Console.WriteLine($"  Installed skills:    {installed.Skills.Count}");
+        Console.WriteLine();
+
+        if (installed.Skills.Count > 0)
+        {
+            Console.WriteLine("Installed skills:");
+            foreach (var skill in installed.Skills)
+            {
+                Console.WriteLine($"  ✓ {skill.SkillId} v{skill.Version}");
+            }
+        }
+    }
+    catch (Exception ex) when (ex is DirectoryNotFoundException or InvalidOperationException)
+    {
+        logger.LogError("{Message}", ex.Message);
+    }
+}, verboseOption, pathOption);
+
+rootCommand.AddCommand(statusCommand);
+
 return await rootCommand.InvokeAsync(args);

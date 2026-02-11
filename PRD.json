@@ -610,7 +610,7 @@
             "'list --outdated' shows only skills with available updates",
             "JSON output is valid and includes all relevant fields"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S09-T02",
@@ -629,7 +629,7 @@
             "Unreachable sources are reported without blocking the command",
             "Command completes within 5 seconds for typical projects"
           ],
-          "completed": false
+          "completed": true
         }
       ]
     },
