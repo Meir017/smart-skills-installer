@@ -44,8 +44,12 @@ public sealed class SkillInstaller : ISkillInstaller
 
         // 1. Resolve packages
         IReadOnlyList<ProjectPackages> projectPackages;
-        if (projectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) ||
-            projectPath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase))
+        if (Directory.Exists(projectPath))
+        {
+            projectPackages = await _scanner.ScanDirectoryAsync(projectPath, cancellationToken);
+        }
+        else if (projectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) ||
+                 projectPath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase))
         {
             projectPackages = await _scanner.ScanSolutionAsync(projectPath, cancellationToken);
         }
