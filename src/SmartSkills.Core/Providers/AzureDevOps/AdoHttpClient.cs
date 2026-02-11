@@ -1,33 +1,46 @@
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace SmartSkills.Core.Providers.AzureDevOps;
 
 /// <summary>
-/// HTTP client wrapper for Azure DevOps REST API with PAT authentication.
+/// HTTP client wrapper for Azure DevOps REST API using DefaultAzureCredential.
 /// </summary>
 public sealed class AdoHttpClient : IDisposable
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<AdoHttpClient> _logger;
+    private readonly TokenCredential _credential;
+    private AccessToken? _cachedToken;
 
-    public AdoHttpClient(string? personalAccessToken, ILogger<AdoHttpClient> logger)
+    private static readonly string[] AdoScopes = ["499b84ac-1321-427f-aa17-267ca6975798/.default"];
+
+    public AdoHttpClient(ILogger<AdoHttpClient> logger)
     {
         _logger = logger;
+        _credential = new DefaultAzureCredential();
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    }
 
-        if (!string.IsNullOrEmpty(personalAccessToken))
+    private async Task EnsureAuthenticatedAsync(CancellationToken cancellationToken)
+    {
+        if (_cachedToken is null || _cachedToken.Value.ExpiresOn <= DateTimeOffset.UtcNow.AddMinutes(5))
         {
-            var encoded = Convert.ToBase64String(Encoding.ASCII.GetBytes($":{personalAccessToken}"));
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", encoded);
+            _logger.LogDebug("Acquiring ADO token via DefaultAzureCredential");
+            _cachedToken = await _credential.GetTokenAsync(
+                new TokenRequestContext(AdoScopes), cancellationToken);
         }
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", _cachedToken.Value.Token);
     }
 
     public async Task<JsonDocument> GetJsonAsync(string url, CancellationToken cancellationToken = default)
     {
+        await EnsureAuthenticatedAsync(cancellationToken);
         _logger.LogDebug("GET {Url}", url);
         var response = await _httpClient.GetAsync(url, cancellationToken);
         response.EnsureSuccessStatusCode();
@@ -37,6 +50,7 @@ public sealed class AdoHttpClient : IDisposable
 
     public async Task<Stream> GetStreamAsync(string url, CancellationToken cancellationToken = default)
     {
+        await EnsureAuthenticatedAsync(cancellationToken);
         _logger.LogDebug("GET (stream) {Url}", url);
         var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
         response.EnsureSuccessStatusCode();
@@ -45,6 +59,7 @@ public sealed class AdoHttpClient : IDisposable
 
     public async Task<string> GetStringAsync(string url, CancellationToken cancellationToken = default)
     {
+        await EnsureAuthenticatedAsync(cancellationToken);
         _logger.LogDebug("GET (string) {Url}", url);
         var response = await _httpClient.GetAsync(url, cancellationToken);
         response.EnsureSuccessStatusCode();

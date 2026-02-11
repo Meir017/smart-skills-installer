@@ -5,24 +5,19 @@ using Microsoft.Extensions.Logging;
 namespace SmartSkills.Core.Providers.GitHub;
 
 /// <summary>
-/// HTTP client wrapper for GitHub REST API with PAT authentication and rate limiting.
+/// HTTP client wrapper for GitHub REST API (public repos only).
 /// </summary>
 public sealed class GitHubHttpClient : IDisposable
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<GitHubHttpClient> _logger;
 
-    public GitHubHttpClient(string? personalAccessToken, ILogger<GitHubHttpClient> logger)
+    public GitHubHttpClient(ILogger<GitHubHttpClient> logger)
     {
         _logger = logger;
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("SmartSkills", "1.0"));
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-
-        if (!string.IsNullOrEmpty(personalAccessToken))
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", personalAccessToken);
-        }
     }
 
     public async Task<JsonDocument> GetJsonAsync(string url, CancellationToken cancellationToken = default)

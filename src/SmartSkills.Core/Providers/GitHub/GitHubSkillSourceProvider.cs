@@ -23,7 +23,6 @@ public sealed class GitHubSkillSourceProvider : ISkillSourceProvider, IDisposabl
         string repo,
         string? branch,
         string? registryIndexPath,
-        string? personalAccessToken,
         ILogger<GitHubSkillSourceProvider> logger,
         ILogger<GitHubHttpClient> httpClientLogger)
     {
@@ -32,7 +31,7 @@ public sealed class GitHubSkillSourceProvider : ISkillSourceProvider, IDisposabl
         _branch = branch ?? "main";
         _registryIndexPath = registryIndexPath ?? "skills-registry.json";
         _logger = logger;
-        _client = new GitHubHttpClient(personalAccessToken, httpClientLogger);
+        _client = new GitHubHttpClient(httpClientLogger);
     }
 
     public async Task<IReadOnlyList<RegistryEntry>> GetRegistryIndexAsync(CancellationToken cancellationToken = default)

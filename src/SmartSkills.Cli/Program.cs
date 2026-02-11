@@ -12,12 +12,6 @@ var verboseOption = new Option<bool>("--verbose", "-v")
     Recursive = true
 };
 
-var configOption = new Option<string?>("--config", "-c")
-{
-    Description = "Path to a custom configuration file",
-    Recursive = true
-};
-
 var dryRunOption = new Option<bool>("--dry-run")
 {
     Description = "Preview actions without executing them",
@@ -27,7 +21,6 @@ var dryRunOption = new Option<bool>("--dry-run")
 var rootCommand = new RootCommand("SmartSkills - Intelligent skill installer for .NET projects")
 {
     verboseOption,
-    configOption,
     dryRunOption
 };
 
@@ -266,7 +259,7 @@ rootCommand.SetAction(parseResult =>
 
 return await rootCommand.Parse(args).InvokeAsync();
 
-static IHost CreateHost(bool verbose, string? configPath = null)
+static IHost CreateHost(bool verbose)
 {
     return Host.CreateDefaultBuilder()
         .ConfigureLogging(logging =>
@@ -277,7 +270,7 @@ static IHost CreateHost(bool verbose, string? configPath = null)
         })
         .ConfigureServices(services =>
         {
-            services.AddSmartSkills(configOverridePath: configPath);
+            services.AddSmartSkills();
         })
         .Build();
 }

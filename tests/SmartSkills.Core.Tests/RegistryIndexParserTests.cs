@@ -47,4 +47,42 @@ public class RegistryIndexParserTests
         var entries = RegistryIndexParser.Parse(json);
         Assert.Empty(entries);
     }
+
+    [Fact]
+    public void LoadEmbedded_ReturnsEntriesFromEmbeddedResource()
+    {
+        var entries = RegistryIndexParser.LoadEmbedded();
+        Assert.NotNull(entries);
+    }
+
+    [Fact]
+    public void LoadMerged_WithNoAdditionalPaths_ReturnsEmbeddedEntries()
+    {
+        var entries = RegistryIndexParser.LoadMerged();
+        Assert.NotNull(entries);
+    }
+
+    [Fact]
+    public void LoadMerged_WithAdditionalFile_MergesEntries()
+    {
+        var tempFile = Path.GetTempFileName();
+        try
+        {
+            File.WriteAllText(tempFile, """
+            {
+              "skills": [
+                { "packagePatterns": ["Extra.Package"], "skillPath": "skills/extra" }
+              ]
+            }
+            """);
+
+            var entries = RegistryIndexParser.LoadMerged([tempFile]);
+
+            Assert.Contains(entries, e => e.SkillPath == "skills/extra");
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
 }

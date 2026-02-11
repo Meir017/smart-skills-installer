@@ -83,7 +83,6 @@ smart-skills uninstall my-skill-name
 | Option | Description |
 |--------|-------------|
 | `-v, --verbose` | Enable verbose logging |
-| `-c, --config <path>` | Path to configuration file |
 | `--dry-run` | Preview changes without executing |
 
 ## MSBuild Integration
@@ -143,56 +142,18 @@ Patterns support exact match and glob syntax:
 - `Serilog` matches exactly `Serilog`
 - `Azure.Storage.*` matches Azure Storage packages
 
-## Configuration File
+## Authentication
 
-Create `smartskills.json` at the project or user level:
-
-```json
-{
-  "sources": [
-    {
-      "providerType": "github",
-      "url": "https://github.com/org/skills-registry",
-      "branch": "main",
-      "registryIndexPath": "skills-registry.json"
-    },
-    {
-      "providerType": "azuredevops",
-      "url": "https://dev.azure.com/org/project/_git/repo",
-      "credentialKey": "env:ADO_PAT"
-    }
-  ],
-  "skillsOutputDirectory": ".smartskills"
-}
-```
-
-**Precedence:** CLI `--config` flag > project-level `smartskills.json` > user-level `~/.config/smartskills/smartskills.json`
-
-## Credential Management
-
-Credentials are never stored in plaintext config. Use environment variables:
-
-```bash
-# GitHub PAT
-export SMARTSKILLS_GITHUB_PAT=ghp_...
-
-# Azure DevOps PAT (via credentialKey: "env:ADO_PAT")
-export ADO_PAT=your-pat-token
-```
-
-In config, reference credentials with the `env:` prefix:
-```json
-{ "credentialKey": "env:MY_TOKEN_VAR" }
-```
+- **GitHub**: Public repositories only — no authentication required.
+- **Azure DevOps**: Uses `DefaultAzureCredential` from [Azure.Identity](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential). This automatically picks up credentials from Azure CLI (`az login`), environment variables, managed identity, etc.
 
 ## Error Codes
 
 | Code | Description | Remediation |
 |------|-------------|-------------|
 | SS001 | Network error | Check internet connection and proxy settings |
-| SS002 | Authentication failed | Check credentials / environment variables |
+| SS002 | Authentication failed | Run `az login` for ADO access |
 | SS003 | .NET SDK not found | Install from https://dot.net/download |
-| SS004 | Configuration invalid | Verify `smartskills.json` format |
 | SS005 | Skill validation failed | Check SKILL.md frontmatter format |
 | SS006 | Registry not found | Verify registry URL in configuration |
 | SS007 | Skill not found | Check skill path in registry index |

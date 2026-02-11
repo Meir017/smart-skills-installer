@@ -25,7 +25,6 @@ public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
         string repository,
         string? branch,
         string? registryIndexPath,
-        string? personalAccessToken,
         ILogger<AdoSkillSourceProvider> logger,
         ILogger<AdoHttpClient> httpClientLogger)
     {
@@ -35,7 +34,7 @@ public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
         _branch = branch ?? "main";
         _registryIndexPath = registryIndexPath ?? "skills-registry.json";
         _logger = logger;
-        _client = new AdoHttpClient(personalAccessToken, httpClientLogger);
+        _client = new AdoHttpClient(httpClientLogger);
     }
 
     private string BaseUrl => $"https://dev.azure.com/{_organization}/{_project}/_apis/git/repositories/{_repository}";
