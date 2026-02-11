@@ -393,7 +393,7 @@
             "--dry-run shows what would be installed without making changes",
             "--force reinstalls already-installed skills"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S06-T02",
@@ -412,7 +412,7 @@
             "Custom install directory via env var works correctly",
             "Concurrent installs don't corrupt the manifest (file locking)"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S06-T03",
