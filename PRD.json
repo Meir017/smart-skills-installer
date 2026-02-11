@@ -761,7 +761,7 @@
             "Adding PackageReference to SmartSkills.MSBuild in a test project causes skill acquisition on build",
             "Package works with both 'dotnet build' CLI and Visual Studio"
           ],
-          "completed": false
+          "completed": true
         },
         {
           "id": "S11-T03",
