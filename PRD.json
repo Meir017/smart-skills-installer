@@ -234,7 +234,7 @@
         {
           "id": "S04-T04",
           "title": "CLI Integration Tests",
-          "completed": false,
+          "completed": true,
           "description": "Test the --recursive flag end-to-end for both scan and install commands.",
           "requirements": [
             "Test scan --recursive in a directory with nested projects",
