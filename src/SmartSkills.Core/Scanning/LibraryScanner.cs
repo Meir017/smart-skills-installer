@@ -81,18 +81,26 @@ public sealed class LibraryScanner : ILibraryScanner
         return results;
     }
 
-    public async Task<IReadOnlyList<ProjectPackages>> ScanDirectoryAsync(string directoryPath, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<ProjectPackages>> ScanDirectoryAsync(string directoryPath, CancellationToken cancellationToken = default) =>
+        ScanDirectoryAsync(directoryPath, new ProjectDetectionOptions(), cancellationToken);
+
+    public async Task<IReadOnlyList<ProjectPackages>> ScanDirectoryAsync(string directoryPath, ProjectDetectionOptions options, CancellationToken cancellationToken = default)
     {
         if (!Directory.Exists(directoryPath))
             throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
 
         _logger.LogInformation("Scanning directory: {DirectoryPath}", directoryPath);
 
-        var detected = _projectDetector.Detect(directoryPath);
+        var detected = _projectDetector.Detect(directoryPath, options);
         var results = new List<ProjectPackages>();
+        var seenProjectPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var project in detected)
         {
+            // Deduplicate by project file path
+            if (!seenProjectPaths.Add(Path.GetFullPath(project.ProjectFilePath)))
+                continue;
+
             try
             {
                 // .NET solutions need the special ScanSolutionAsync path
@@ -101,7 +109,11 @@ public sealed class LibraryScanner : ILibraryScanner
                         || project.ProjectFilePath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase)))
                 {
                     var solutionResults = await ScanSolutionAsync(project.ProjectFilePath, cancellationToken);
-                    results.AddRange(solutionResults);
+                    foreach (var sr in solutionResults)
+                    {
+                        if (seenProjectPaths.Add(Path.GetFullPath(sr.ProjectPath)))
+                            results.Add(sr);
+                    }
                 }
                 else
                 {
