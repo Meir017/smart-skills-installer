@@ -146,15 +146,11 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
         if (trimmed.StartsWith('@'))
         {
             // Scoped package: find '@' after the scope
-#pragma warning disable CA1307 // Specify StringComparison for clarity
             atIndex = trimmed.IndexOf('@', 1);
-#pragma warning restore CA1307 // Specify StringComparison for clarity
         }
         else
         {
-#pragma warning disable CA1307 // Specify StringComparison for clarity
-            atIndex = trimmed.IndexOf('@');
-#pragma warning restore CA1307 // Specify StringComparison for clarity
+            atIndex = trimmed.IndexOf('@', StringComparison.Ordinal);
         }
 
         if (atIndex <= 0)
@@ -164,9 +160,7 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
         var version = trimmed[(atIndex + 1)..];
 
         // pnpm may append parenthesized peer info like "express@4.18.2(supports-color@5.5.0)"
-#pragma warning disable CA1307 // Specify StringComparison for clarity
-        var parenIndex = version.IndexOf('(');
-#pragma warning restore CA1307 // Specify StringComparison for clarity
+        var parenIndex = version.IndexOf('(', StringComparison.Ordinal);
         if (parenIndex > 0)
             version = version[..parenIndex];
 

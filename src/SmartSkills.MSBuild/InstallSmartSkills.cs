@@ -34,14 +34,12 @@ public class InstallSmartSkills : Microsoft.Build.Utilities.Task
                 // In a full implementation, this would download and install the skill.
                 Log.LogMessage(MessageImportance.Normal, "SmartSkills: Skill installed: {0}", skillPath);
             }
-#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
-#pragma warning restore CA1031 // Do not catch general exception types
             {
-                Log.LogWarning("SmartSkills: Failed to install skill {0}: {1}", skillPath, ex.Message);
+                Log.LogWarningFromException(ex, showStackTrace: true);
             }
         }
 
-        return true;
+        return !Log.HasLoggedErrors;
     }
 }

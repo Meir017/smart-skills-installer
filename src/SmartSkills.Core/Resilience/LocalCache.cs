@@ -1,8 +1,22 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace SmartSkills.Core.Resilience;
+
+/// <summary>
+/// Configuration options for <see cref="LocalCache"/>.
+/// </summary>
+public sealed class LocalCacheOptions
+{
+    /// <summary>
+    /// The directory where cache files are stored.
+    /// Defaults to {LocalApplicationData}/SmartSkills/cache.
+    /// </summary>
+    public string CacheDirectory { get; set; } =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SmartSkills", "cache");
+}
 
 /// <summary>
 /// File-system-based cache for registry indexes and skill manifests.
@@ -12,9 +26,10 @@ public sealed class LocalCache
     private readonly string _cacheDirectory;
     private readonly ILogger<LocalCache> _logger;
 
-    public LocalCache(string cacheDirectory, ILogger<LocalCache> logger)
+    public LocalCache(IOptions<LocalCacheOptions> options, ILogger<LocalCache> logger)
     {
-        _cacheDirectory = cacheDirectory;
+        ArgumentNullException.ThrowIfNull(options);
+        _cacheDirectory = options.Value.CacheDirectory;
         _logger = logger;
         Directory.CreateDirectory(_cacheDirectory);
     }

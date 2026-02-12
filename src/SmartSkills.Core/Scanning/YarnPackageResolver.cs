@@ -130,9 +130,7 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
                 continue;
 
             // Entry header: starts with a quote, not indented
-#pragma warning disable CA1307 // Specify StringComparison for clarity
-            if (!line.StartsWith(' ') && line.Contains('@'))
-#pragma warning restore CA1307 // Specify StringComparison for clarity
+            if (!line.StartsWith(' ') && line.Contains('@', StringComparison.Ordinal))
             {
                 currentName = ExtractPackageNameFromBerryHeader(line);
                 continue;
@@ -200,15 +198,11 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
         int atIndex;
         if (descriptor.StartsWith('@'))
         {
-#pragma warning disable CA1307 // Specify StringComparison for clarity
             atIndex = descriptor.IndexOf('@', 1);
-#pragma warning restore CA1307 // Specify StringComparison for clarity
         }
         else
         {
-#pragma warning disable CA1307 // Specify StringComparison for clarity
-            atIndex = descriptor.IndexOf('@');
-#pragma warning restore CA1307 // Specify StringComparison for clarity
+            atIndex = descriptor.IndexOf('@', StringComparison.Ordinal);
         }
 
         return atIndex > 0 ? descriptor[..atIndex] : descriptor;

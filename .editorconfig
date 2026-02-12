@@ -304,8 +304,8 @@ dotnet_diagnostic.IDE0011.severity = none
 dotnet_diagnostic.IDE2001.severity = none
 dotnet_diagnostic.IDE2003.severity = none
 
-# CA1031: Do not catch general exception types - downgrade to warning
-dotnet_diagnostic.CA1031.severity = warning
+# CA1031: Do not catch general exception types - downgrade to suggestion (intentional for resilience)
+dotnet_diagnostic.CA1031.severity = suggestion
 
 # CA1032: Implement standard exception constructors - downgrade to warning
 dotnet_diagnostic.CA1032.severity = warning
@@ -313,11 +313,11 @@ dotnet_diagnostic.CA1032.severity = warning
 # CA1034: Nested types should not be visible - downgrade to warning
 dotnet_diagnostic.CA1034.severity = warning
 
-# CA1054: URI parameters should not be strings - downgrade to warning
-dotnet_diagnostic.CA1054.severity = warning
+# CA1054: URI parameters should not be strings - downgrade to suggestion (URLs come from JSON config/APIs)
+dotnet_diagnostic.CA1054.severity = suggestion
 
-# CA1056: URI properties should not be strings - downgrade to warning
-dotnet_diagnostic.CA1056.severity = warning
+# CA1056: URI properties should not be strings - downgrade to suggestion (URLs come from JSON config/APIs)
+dotnet_diagnostic.CA1056.severity = suggestion
 
 # CA1062: Validate arguments of public methods - downgrade to warning (nullable enabled handles this)
 dotnet_diagnostic.CA1062.severity = warning

@@ -16,10 +16,7 @@ public static class ServiceCollectionExtensions
     {
         // Resilience
         services.AddSingleton<RetryPolicy>();
-        services.AddSingleton(sp =>
-            new LocalCache(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SmartSkills", "cache"),
-                sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<LocalCache>>()));
+        services.AddSingleton<LocalCache>();
 
         // Scanning
         services.AddSingleton<DotnetCliPackageResolver>();

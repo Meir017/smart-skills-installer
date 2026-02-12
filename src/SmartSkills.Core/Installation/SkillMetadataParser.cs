@@ -39,9 +39,7 @@ public sealed partial class SkillMetadataParser : ISkillMetadataParser
         {
             dto = YamlDeserializer.Deserialize<FrontmatterDto>(frontmatter) ?? new();
         }
-#pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception ex)
-#pragma warning restore CA1031 // Do not catch general exception types
         {
             errors.Add($"Failed to parse YAML: {ex.Message}");
             return null;
