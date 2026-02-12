@@ -27,6 +27,10 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<NpmPackageResolver>();
         services.AddSingleton<YarnPackageResolver>();
         services.AddSingleton<PnpmPackageResolver>();
+        services.AddSingleton<UvLockPackageResolver>();
+        services.AddSingleton<PoetryLockPackageResolver>();
+        services.AddSingleton<PipfileLockPackageResolver>();
+        services.AddSingleton<RequirementsTxtPackageResolver>();
         services.AddSingleton<IPackageResolverFactory, PackageResolverFactory>();
         services.AddSingleton<ILibraryScanner, LibraryScanner>();
         services.AddSingleton<IProjectDetector, ProjectDetector>();

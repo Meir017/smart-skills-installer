@@ -1,0 +1,288 @@
+{
+  "name": "Multi-Language Support: Python (pip / poetry / uv / pipenv)",
+  "version": "1.0.0",
+  "description": "Extend SmartSkills to detect and install agent skills for Python projects. Adds a python ecosystem constant, four package resolvers (uv.lock, poetry.lock, Pipfile.lock, requirements.txt), project detection for Python markers, and 40 embedded Python skill registry entries.",
+  "apiSurface": "api.cs",
+  "goals": [
+    "Auto-detect Python projects by the presence of pyproject.toml, requirements.txt, or setup.py",
+    "Resolve Python dependencies from lock files: uv.lock, poetry.lock, Pipfile.lock, and requirements.txt",
+    "Add the python ecosystem constant and register Python skill entries in the embedded registry",
+    "Maintain full backward compatibility with existing .NET and Node.js workflows",
+    "Support the same CLI commands (scan, install, list, status) for Python projects with no special flags"
+  ],
+  "stories": [
+    {
+      "id": "S01",
+      "title": "Python Ecosystem Constant & Detection",
+      "description": "Add the Python ecosystem to the existing multi-language infrastructure.",
+      "tasks": [
+        {
+          "id": "S01-T01",
+          "title": "Add Python Ecosystem Constant",
+          "completed": true,
+          "description": "Add 'public const string Python = \"python\";' to the Ecosystems class in Scanning/Models.cs.",
+          "apiReferences": ["Ecosystems"],
+          "requirements": [
+            "Add Python = \"python\" constant to Ecosystems class"
+          ],
+          "dod": "Constant exists, dotnet build succeeds.",
+          "verifications": ["dotnet build passes"]
+        },
+        {
+          "id": "S01-T02",
+          "title": "Extend ProjectDetector for Python",
+          "completed": true,
+          "description": "Add Python project detection to the existing ProjectDetector.Detect method. Detect pyproject.toml (preferred), setup.py, or requirements.txt.",
+          "apiReferences": ["IProjectDetector", "ProjectDetector", "Ecosystems"],
+          "requirements": [
+            "Detect pyproject.toml as primary Python marker",
+            "Fall back to setup.py, then requirements.txt",
+            "Exclude venv/, .venv/, __pycache__/ directories",
+            "Return DetectedProject(Ecosystems.Python, filePath)"
+          ],
+          "dod": "ProjectDetector returns Python projects alongside .NET/Node.js in polyglot directories.",
+          "verifications": [
+            "Unit test: directory with pyproject.toml returns DetectedProject(\"python\", ...)",
+            "Unit test: directory with requirements.txt returns DetectedProject(\"python\", ...)",
+            "Unit test: pyproject.toml preferred over setup.py",
+            "Unit test: polyglot directory returns three results",
+            "Existing detection tests still pass"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Python Package Resolvers",
+      "description": "Implement IPackageResolver for Python lock files.",
+      "tasks": [
+        {
+          "id": "S02-T01",
+          "title": "Implement PyPI Package Name Normalization",
+          "completed": true,
+          "description": "Create a shared utility for normalizing Python package names per PEP 503: lowercase, replace underscores/dots/consecutive-hyphens with single hyphens.",
+          "apiReferences": ["PypiNameNormalizer"],
+          "requirements": [
+            "Normalize to lowercase",
+            "Replace underscores, dots, and consecutive hyphens with a single hyphen",
+            "Expose as static method: PypiNameNormalizer.Normalize(string name)"
+          ],
+          "dod": "Normalizer handles all PEP 503 edge cases.",
+          "verifications": [
+            "Unit test: Azure_Identity → azure-identity",
+            "Unit test: my.package → my-package",
+            "Unit test: already-normal → already-normal",
+            "Unit test: UPPER__CASE → upper-case"
+          ]
+        },
+        {
+          "id": "S02-T02",
+          "title": "Implement Direct Dependency Extraction from pyproject.toml",
+          "completed": true,
+          "description": "Parse pyproject.toml to identify direct dependencies for transitive classification in lock file resolvers.",
+          "apiReferences": ["PyprojectParser"],
+          "requirements": [
+            "Parse [project.dependencies] array for PEP 621 projects",
+            "Parse [tool.poetry.dependencies] for Poetry projects",
+            "Handle PEP 508 dependency specifiers (strip version constraints)",
+            "Return a set of normalized package names"
+          ],
+          "dod": "Correctly extracts direct dependency names from pyproject.toml.",
+          "verifications": [
+            "Unit test: PEP 621 [project.dependencies] parsed correctly",
+            "Unit test: Poetry [tool.poetry.dependencies] parsed correctly",
+            "Unit test: version specifiers stripped, names normalized"
+          ]
+        },
+        {
+          "id": "S02-T03",
+          "title": "Implement UvLockPackageResolver",
+          "completed": true,
+          "description": "Implement IPackageResolver for uv.lock (TOML format). Each [[package]] table has name and version fields.",
+          "apiReferences": ["IPackageResolver", "UvLockPackageResolver", "ResolvedPackage"],
+          "requirements": [
+            "Parse uv.lock TOML: each [[package]] table has name and version",
+            "Cross-reference with pyproject.toml for IsTransitive classification",
+            "Normalize all package names via PypiNameNormalizer",
+            "Set Ecosystem = Ecosystems.Python",
+            "Fall back to pyproject.toml/requirements.txt direct deps when uv.lock is missing"
+          ],
+          "dod": "UvLockPackageResolver returns resolved packages from uv.lock.",
+          "verifications": [
+            "Unit test with sample uv.lock: correct packages and versions",
+            "Unit test: direct vs transitive classification matches pyproject.toml",
+            "Unit test: package names are normalized"
+          ]
+        },
+        {
+          "id": "S02-T04",
+          "title": "Implement PoetryLockPackageResolver",
+          "completed": true,
+          "description": "Implement IPackageResolver for poetry.lock (TOML format).",
+          "apiReferences": ["IPackageResolver", "PoetryLockPackageResolver", "ResolvedPackage"],
+          "requirements": [
+            "Parse poetry.lock TOML: each [[package]] table has name, version, and category",
+            "Use category = main vs dev where available",
+            "Cross-reference with pyproject.toml for direct dependency classification",
+            "Normalize all package names",
+            "Set Ecosystem = Ecosystems.Python"
+          ],
+          "dod": "PoetryLockPackageResolver parses Poetry lock files.",
+          "verifications": [
+            "Unit test with sample poetry.lock: correct packages and versions",
+            "Unit test: direct vs transitive classification",
+            "Unit test: dev dependencies included"
+          ]
+        },
+        {
+          "id": "S02-T05",
+          "title": "Implement PipfileLockPackageResolver",
+          "completed": true,
+          "description": "Implement IPackageResolver for Pipfile.lock (JSON format).",
+          "apiReferences": ["IPackageResolver", "PipfileLockPackageResolver", "ResolvedPackage"],
+          "requirements": [
+            "Parse Pipfile.lock JSON: default section for prod deps, develop for dev deps",
+            "Strip version prefix (==) from version strings",
+            "All entries are direct (Pipfile.lock is flat)",
+            "Normalize all package names",
+            "Set Ecosystem = Ecosystems.Python"
+          ],
+          "dod": "PipfileLockPackageResolver correctly parses Pipfile.lock.",
+          "verifications": [
+            "Unit test with sample Pipfile.lock: correct packages and versions",
+            "Unit test: default and develop sections both parsed",
+            "Unit test: version prefix stripped"
+          ]
+        },
+        {
+          "id": "S02-T06",
+          "title": "Implement RequirementsTxtPackageResolver",
+          "completed": true,
+          "description": "Implement IPackageResolver for requirements.txt (plain text format).",
+          "apiReferences": ["IPackageResolver", "RequirementsTxtPackageResolver", "ResolvedPackage"],
+          "requirements": [
+            "Parse each line as a PEP 508 requirement",
+            "Skip comments (#), blank lines, and option lines (-r, --index-url, etc.)",
+            "Handle -r other-file.txt includes recursively",
+            "All entries are direct (IsTransitive = false)",
+            "Handle extras (pkg[extra]>=1.0) — strip extras from name",
+            "Normalize all package names",
+            "Set Ecosystem = Ecosystems.Python"
+          ],
+          "dod": "RequirementsTxtPackageResolver handles real-world requirements.txt files.",
+          "verifications": [
+            "Unit test: standard pkg==1.2.3 lines parsed",
+            "Unit test: comments and blank lines skipped",
+            "Unit test: -r includes followed",
+            "Unit test: extras stripped from name"
+          ]
+        },
+        {
+          "id": "S02-T07",
+          "title": "Extend PackageResolverFactory for Python",
+          "completed": true,
+          "description": "Add Python ecosystem routing to the existing PackageResolverFactory.",
+          "apiReferences": ["IPackageResolverFactory", "PackageResolverFactory"],
+          "requirements": [
+            "For Ecosystem == python: route by lock file presence (uv.lock → UvLock, poetry.lock → Poetry, Pipfile.lock → Pipfile, default → RequirementsTxt)",
+            "Register all Python resolvers as singletons in DI"
+          ],
+          "dod": "Factory routes to the correct Python resolver.",
+          "verifications": [
+            "Unit test: python project with uv.lock → UvLockPackageResolver",
+            "Unit test: python project with poetry.lock → PoetryLockPackageResolver",
+            "Unit test: python project with Pipfile.lock → PipfileLockPackageResolver",
+            "Unit test: python project with only requirements.txt → RequirementsTxtPackageResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Python Skill Registry Entries",
+      "description": "Populate the embedded registry with Python/PyPI skill entries.",
+      "tasks": [
+        {
+          "id": "S03-T01",
+          "title": "Add Python Skill Entries to Embedded Registry",
+          "completed": true,
+          "description": "Add entries for the 40 Python skills available in microsoft/skills.",
+          "apiReferences": ["RegistryIndexParser", "RegistryEntry"],
+          "requirements": [
+            "Map PyPI package names to skill paths for all 40 Python skills",
+            "Each entry must include language: python",
+            "Verify skill paths exist in the referenced repositories"
+          ],
+          "dod": "Embedded registry includes Python entries loaded at startup.",
+          "verifications": [
+            "RegistryIndexParser.LoadEmbedded() returns entries with Language == python",
+            "Python entries don't break existing .NET and npm entry loading"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Testing",
+      "description": "Comprehensive tests for Python functionality.",
+      "tasks": [
+        {
+          "id": "S04-T01",
+          "title": "Unit Tests for Package Name Normalization",
+          "completed": true,
+          "description": "Test PypiNameNormalizer.Normalize with edge cases.",
+          "requirements": [
+            "Test underscore → hyphen conversion",
+            "Test dot → hyphen conversion",
+            "Test uppercase → lowercase",
+            "Test consecutive separator collapse",
+            "Test already-normalized names unchanged"
+          ],
+          "dod": "Full test coverage for normalization.",
+          "verifications": ["dotnet test --filter FullyQualifiedName~PypiNameNormalizer passes"]
+        },
+        {
+          "id": "S04-T02",
+          "title": "Unit Tests for Python Resolvers",
+          "completed": true,
+          "description": "Test each resolver with sample lock files in TestData/Python/.",
+          "requirements": [
+            "Test UvLockPackageResolver with sample uv.lock",
+            "Test PoetryLockPackageResolver with sample poetry.lock",
+            "Test PipfileLockPackageResolver with sample Pipfile.lock",
+            "Test RequirementsTxtPackageResolver with sample requirements.txt",
+            "Test fallback behavior when lock files are missing",
+            "Place sample files in tests/SmartSkills.Core.Tests/TestData/Python/"
+          ],
+          "dod": "All four resolvers have tests with real sample lock files.",
+          "verifications": ["dotnet test --filter FullyQualifiedName~Python passes"]
+        },
+        {
+          "id": "S04-T03",
+          "title": "Unit Tests for Python Project Detection",
+          "completed": true,
+          "description": "Extend ProjectDetectorTests for Python scenarios.",
+          "requirements": [
+            "Test: pyproject.toml only → Python detected",
+            "Test: requirements.txt only → Python detected",
+            "Test: pyproject.toml preferred over setup.py",
+            "Test: polyglot dir returns three results"
+          ],
+          "dod": "Detection tests cover all Python project markers.",
+          "verifications": ["dotnet test --filter FullyQualifiedName~ProjectDetector passes"]
+        },
+        {
+          "id": "S04-T04",
+          "title": "Unit Tests for Factory Routing",
+          "completed": true,
+          "description": "Extend PackageResolverFactory tests for Python routing.",
+          "requirements": [
+            "Test: python project with each lock file type routes to the correct resolver"
+          ],
+          "dod": "Factory tests cover Python routing.",
+          "verifications": ["dotnet test --filter FullyQualifiedName~ResolverFactory passes"]
+        }
+      ]
+    }
+  ]
+}

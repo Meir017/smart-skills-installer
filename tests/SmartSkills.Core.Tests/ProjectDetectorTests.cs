@@ -109,6 +109,89 @@ public class ProjectDetectorTests
         Assert.Empty(result);
     }
 
+    [Fact]
+    public void Detect_PythonPyprojectToml_ReturnsPython()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "pyproject.toml"), "[project]\nname = \"test\"");
+
+            var result = _detector.Detect(dir);
+
+            Assert.Single(result);
+            Assert.Equal(Ecosystems.Python, result[0].Ecosystem);
+            Assert.EndsWith("pyproject.toml", result[0].ProjectFilePath, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void Detect_PythonRequirementsTxt_ReturnsPython()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "requirements.txt"), "requests==2.31.0");
+
+            var result = _detector.Detect(dir);
+
+            Assert.Single(result);
+            Assert.Equal(Ecosystems.Python, result[0].Ecosystem);
+            Assert.EndsWith("requirements.txt", result[0].ProjectFilePath, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void Detect_PythonPrefersPyprojectOverSetupPy()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "pyproject.toml"), "[project]\nname = \"test\"");
+            File.WriteAllText(Path.Combine(dir, "setup.py"), "from setuptools import setup");
+
+            var result = _detector.Detect(dir);
+
+            var python = result.Single(r => r.Ecosystem == Ecosystems.Python);
+            Assert.EndsWith("pyproject.toml", python.ProjectFilePath, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void Detect_PolyglotDirectory_ReturnsThree()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "MyApp.sln"), "");
+            File.WriteAllText(Path.Combine(dir, "package.json"), "{}");
+            File.WriteAllText(Path.Combine(dir, "pyproject.toml"), "[project]\nname = \"test\"");
+
+            var result = _detector.Detect(dir);
+
+            Assert.Equal(3, result.Count);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Dotnet);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Npm);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Python);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
     private static string CreateTempDir()
     {
         var dir = Path.Combine(Path.GetTempPath(), $"smartskills-test-{Guid.NewGuid():N}");

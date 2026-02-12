@@ -7,6 +7,7 @@ public static class Ecosystems
 {
     public const string Dotnet = "dotnet";
     public const string Npm = "npm";
+    public const string Python = "python";
 }
 
 /// <summary>

@@ -10,6 +10,10 @@ public sealed class PackageResolverFactory(
     NpmPackageResolver npmResolver,
     YarnPackageResolver yarnResolver,
     PnpmPackageResolver pnpmResolver,
+    UvLockPackageResolver uvLockResolver,
+    PoetryLockPackageResolver poetryLockResolver,
+    PipfileLockPackageResolver pipfileLockResolver,
+    RequirementsTxtPackageResolver requirementsTxtResolver,
     ILogger<PackageResolverFactory> logger) : IPackageResolverFactory
 {
     public IPackageResolver GetResolver(DetectedProject project)
@@ -25,6 +29,11 @@ public sealed class PackageResolverFactory(
         if (string.Equals(project.Ecosystem, Ecosystems.Npm, StringComparison.OrdinalIgnoreCase))
         {
             return SelectNodeJsResolver(project);
+        }
+
+        if (string.Equals(project.Ecosystem, Ecosystems.Python, StringComparison.OrdinalIgnoreCase))
+        {
+            return SelectPythonResolver(project);
         }
 
         throw new NotSupportedException($"Unsupported ecosystem: {project.Ecosystem}");
@@ -48,5 +57,31 @@ public sealed class PackageResolverFactory(
 
         logger.LogDebug("Using NpmPackageResolver for {Path}", project.ProjectFilePath);
         return npmResolver;
+    }
+
+    private IPackageResolver SelectPythonResolver(DetectedProject project)
+    {
+        var dir = Path.GetDirectoryName(project.ProjectFilePath) ?? Directory.GetCurrentDirectory();
+
+        if (File.Exists(Path.Combine(dir, "uv.lock")))
+        {
+            logger.LogDebug("Detected uv.lock, using UvLockPackageResolver for {Path}", project.ProjectFilePath);
+            return uvLockResolver;
+        }
+
+        if (File.Exists(Path.Combine(dir, "poetry.lock")))
+        {
+            logger.LogDebug("Detected poetry.lock, using PoetryLockPackageResolver for {Path}", project.ProjectFilePath);
+            return poetryLockResolver;
+        }
+
+        if (File.Exists(Path.Combine(dir, "Pipfile.lock")))
+        {
+            logger.LogDebug("Detected Pipfile.lock, using PipfileLockPackageResolver for {Path}", project.ProjectFilePath);
+            return pipfileLockResolver;
+        }
+
+        logger.LogDebug("Using RequirementsTxtPackageResolver for {Path}", project.ProjectFilePath);
+        return requirementsTxtResolver;
     }
 }

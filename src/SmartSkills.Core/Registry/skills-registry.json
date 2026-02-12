@@ -217,6 +217,213 @@
       "skillPath": "skills/redis-development",
       "repoUrl": "https://github.com/redis/agent-skills",
       "language": "npm"
+    },
+
+    {
+      "packagePatterns": ["azure-ai-projects"],
+      "skillPath": ".github/skills/agent-framework-azure-ai-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-contentsafety"],
+      "skillPath": ".github/skills/azure-ai-contentsafety-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-contentunderstanding"],
+      "skillPath": ".github/skills/azure-ai-contentunderstanding-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-ml", "azure-ai-ml-*"],
+      "skillPath": ".github/skills/azure-ai-ml-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-projects", "azure-ai-inference"],
+      "skillPath": ".github/skills/azure-ai-projects-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-textanalytics"],
+      "skillPath": ".github/skills/azure-ai-textanalytics-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-cognitiveservices-speech"],
+      "skillPath": ".github/skills/azure-ai-transcription-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-translation-document"],
+      "skillPath": ".github/skills/azure-ai-translation-document-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-translation-text"],
+      "skillPath": ".github/skills/azure-ai-translation-text-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-vision-imageanalysis"],
+      "skillPath": ".github/skills/azure-ai-vision-imageanalysis-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-voicelive"],
+      "skillPath": ".github/skills/azure-ai-voicelive-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-appconfiguration"],
+      "skillPath": ".github/skills/azure-appconfiguration-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-containerregistry"],
+      "skillPath": ".github/skills/azure-containerregistry-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-cosmos"],
+      "skillPath": ".github/skills/azure-cosmos-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-mgmt-cosmosdb"],
+      "skillPath": ".github/skills/azure-cosmos-db-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-data-tables"],
+      "skillPath": ".github/skills/azure-data-tables-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-eventgrid"],
+      "skillPath": ".github/skills/azure-eventgrid-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-eventhub"],
+      "skillPath": ".github/skills/azure-eventhub-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-identity"],
+      "skillPath": ".github/skills/azure-identity-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-keyvault-secrets", "azure-keyvault-keys", "azure-keyvault-certificates"],
+      "skillPath": ".github/skills/azure-keyvault-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-messaging-webpubsubservice"],
+      "skillPath": ".github/skills/azure-messaging-webpubsubservice-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-mgmt-apicenter"],
+      "skillPath": ".github/skills/azure-mgmt-apicenter-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-mgmt-apimanagement"],
+      "skillPath": ".github/skills/azure-mgmt-apimanagement-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-mgmt-botservice"],
+      "skillPath": ".github/skills/azure-mgmt-botservice-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-mgmt-fabric"],
+      "skillPath": ".github/skills/azure-mgmt-fabric-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-monitor-ingestion"],
+      "skillPath": ".github/skills/azure-monitor-ingestion-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-monitor-opentelemetry-exporter"],
+      "skillPath": ".github/skills/azure-monitor-opentelemetry-exporter-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-monitor-opentelemetry"],
+      "skillPath": ".github/skills/azure-monitor-opentelemetry-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-monitor-query"],
+      "skillPath": ".github/skills/azure-monitor-query-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-search-documents"],
+      "skillPath": ".github/skills/azure-search-documents-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-servicebus"],
+      "skillPath": ".github/skills/azure-servicebus-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-cognitiveservices-speech"],
+      "skillPath": ".github/skills/azure-speech-to-text-rest-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-storage-blob"],
+      "skillPath": ".github/skills/azure-storage-blob-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-storage-file-datalake"],
+      "skillPath": ".github/skills/azure-storage-file-datalake-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-storage-file-share"],
+      "skillPath": ".github/skills/azure-storage-file-share-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-storage-queue"],
+      "skillPath": ".github/skills/azure-storage-queue-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["fastapi"],
+      "skillPath": ".github/skills/fastapi-router-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["azure-ai-agents"],
+      "skillPath": ".github/skills/hosted-agents-v2-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["microsoft-agents-*"],
+      "skillPath": ".github/skills/m365-agents-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["pydantic"],
+      "skillPath": ".github/skills/pydantic-models-py",
+      "language": "python"
+    },
+    {
+      "packagePatterns": ["redis", "redis-py-cluster"],
+      "skillPath": "skills/redis-development",
+      "repoUrl": "https://github.com/redis/agent-skills",
+      "language": "python"
     }
   ]
 }

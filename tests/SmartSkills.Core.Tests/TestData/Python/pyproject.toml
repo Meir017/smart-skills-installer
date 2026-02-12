@@ -1,0 +1,13 @@
+[project]
+name = "my-python-app"
+version = "1.0.0"
+dependencies = [
+    "azure-identity>=1.16.0",
+    "fastapi>=0.100.0",
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
