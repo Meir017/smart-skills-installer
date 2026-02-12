@@ -379,9 +379,7 @@ statusCommand.SetAction(async (parseResult, cancellationToken) =>
                     updateAvailableCount++;
                 }
             }
-#pragma warning disable CA1031
             catch
-#pragma warning restore CA1031
             {
                 status += " (remote check failed)";
             }

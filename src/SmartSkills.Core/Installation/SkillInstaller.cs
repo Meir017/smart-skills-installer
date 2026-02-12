@@ -159,9 +159,7 @@ public sealed class SkillInstaller : ISkillInstaller
 
                 _logger.LogInformation("Installed skill: {Skill}", skillName);
             }
-#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
-#pragma warning restore CA1031 // Do not catch general exception types
             {
                 _logger.LogError(ex, "Failed to install skill: {Skill}", match.RegistryEntry.SkillPath);
                 failed.Add(new SkillInstallFailure(match.RegistryEntry.SkillPath, ex.Message));
@@ -256,9 +254,7 @@ public sealed class SkillInstaller : ISkillInstaller
                 restored.Add(skillName);
                 _logger.LogInformation("Restored skill: {Skill}", skillName);
             }
-#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
-#pragma warning restore CA1031 // Do not catch general exception types
             {
                 _logger.LogError(ex, "Failed to restore skill: {Skill}", skillName);
                 failed.Add(new SkillInstallFailure(skillName, ex.Message));
