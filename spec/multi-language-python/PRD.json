@@ -59,7 +59,7 @@
         {
           "id": "S02-T01",
           "title": "Implement PyPI Package Name Normalization",
-          "completed": false,
+          "completed": true,
           "description": "Create a shared utility for normalizing Python package names per PEP 503: lowercase, replace underscores/dots/consecutive-hyphens with single hyphens.",
           "apiReferences": ["PypiNameNormalizer"],
           "requirements": [
