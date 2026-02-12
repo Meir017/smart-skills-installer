@@ -36,7 +36,7 @@
         {
           "id": "S01-T02",
           "title": "Add Detect Overload with Options",
-          "completed": false,
+          "completed": true,
           "description": "Add an overload of IProjectDetector.Detect that accepts ProjectDetectionOptions. The existing parameterless overload delegates to the new one with default options.",
           "apiReferences": [
             "IProjectDetector",

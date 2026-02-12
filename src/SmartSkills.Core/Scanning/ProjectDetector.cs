@@ -10,7 +10,10 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
     private static readonly string[] DotnetSolutionExtensions = [".sln", ".slnx"];
     private static readonly string[] DotnetProjectExtensions = [".csproj", ".fsproj", ".vbproj"];
 
-    public IReadOnlyList<DetectedProject> Detect(string directoryPath)
+    public IReadOnlyList<DetectedProject> Detect(string directoryPath) =>
+        Detect(directoryPath, new ProjectDetectionOptions());
+
+    public IReadOnlyList<DetectedProject> Detect(string directoryPath, ProjectDetectionOptions options)
     {
         if (!Directory.Exists(directoryPath))
             return [];

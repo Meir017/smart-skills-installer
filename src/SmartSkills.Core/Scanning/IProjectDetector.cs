@@ -15,4 +15,9 @@ public interface IProjectDetector
     /// May return multiple results for polyglot repositories.
     /// </summary>
     IReadOnlyList<DetectedProject> Detect(string directoryPath);
+
+    /// <summary>
+    /// Inspect a directory and return all detected projects, optionally recursing into subdirectories.
+    /// </summary>
+    IReadOnlyList<DetectedProject> Detect(string directoryPath, ProjectDetectionOptions options);
 }
