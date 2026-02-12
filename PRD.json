@@ -219,7 +219,7 @@
         {
           "id": "S04-T03",
           "title": "Unit Tests for Recursive LibraryScanner",
-          "completed": false,
+          "completed": true,
           "description": "Test ScanDirectoryAsync with recursive options discovers and resolves packages from nested projects, with deduplication.",
           "requirements": [
             "Mock IProjectDetector to return projects at various depths",
