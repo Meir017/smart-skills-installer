@@ -97,7 +97,7 @@
         {
           "id": "S02-T03",
           "title": "Implement UvLockPackageResolver",
-          "completed": false,
+          "completed": true,
           "description": "Implement IPackageResolver for uv.lock (TOML format). Each [[package]] table has name and version fields.",
           "apiReferences": ["IPackageResolver", "UvLockPackageResolver", "ResolvedPackage"],
           "requirements": [
