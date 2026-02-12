@@ -205,7 +205,7 @@
         {
           "id": "S03-T01",
           "title": "Add Python Skill Entries to Embedded Registry",
-          "completed": false,
+          "completed": true,
           "description": "Add entries for the 40 Python skills available in microsoft/skills.",
           "apiReferences": ["RegistryIndexParser", "RegistryEntry"],
           "requirements": [
