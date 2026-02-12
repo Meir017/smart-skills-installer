@@ -15,14 +15,14 @@ public class EcosystemModelTests
     [Fact]
     public void ResolvedPackage_SetEcosystem_Npm()
     {
-        var pkg = new ResolvedPackage { Name = "express", Version = "4.18.0", IsTransitive = false, Ecosystem = Ecosystems.Npm };
-        Assert.Equal("npm", pkg.Ecosystem);
+        var pkg = new ResolvedPackage { Name = "express", Version = "4.18.0", IsTransitive = false, Ecosystem = Ecosystems.JavaScript };
+        Assert.Equal("javascript", pkg.Ecosystem);
     }
 
     [Fact]
     public void Ecosystems_Constants_AreCorrect()
     {
         Assert.Equal("dotnet", Ecosystems.Dotnet);
-        Assert.Equal("npm", Ecosystems.Npm);
+        Assert.Equal("javascript", Ecosystems.JavaScript);
     }
 }

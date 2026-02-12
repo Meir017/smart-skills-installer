@@ -130,93 +130,93 @@
     {
       "packagePatterns": ["@azure/service-bus"],
       "skillPath": ".github/skills/azure-servicebus-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/openai"],
       "skillPath": ".github/skills/azure-ai-projects-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/identity", "@azure/identity-*"],
       "skillPath": ".github/skills/azure-identity-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/event-hubs"],
       "skillPath": ".github/skills/azure-eventhub-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/search-documents"],
       "skillPath": ".github/skills/azure-search-documents-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/keyvault-keys"],
       "skillPath": ".github/skills/azure-keyvault-keys-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/keyvault-secrets"],
       "skillPath": ".github/skills/azure-keyvault-secrets-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/ai-document-intelligence"],
       "skillPath": ".github/skills/azure-ai-document-intelligence-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/cosmos"],
       "skillPath": ".github/skills/azure-cosmos-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/storage-blob"],
       "skillPath": ".github/skills/azure-storage-blob-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/storage-queue"],
       "skillPath": ".github/skills/azure-storage-queue-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/storage-file-share"],
       "skillPath": ".github/skills/azure-storage-file-share-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/app-configuration"],
       "skillPath": ".github/skills/azure-appconfiguration-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/web-pubsub"],
       "skillPath": ".github/skills/azure-web-pubsub-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/monitor-opentelemetry"],
       "skillPath": ".github/skills/azure-monitor-opentelemetry-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/ai-translation-text"],
       "skillPath": ".github/skills/azure-ai-translation-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["@azure/ai-content-safety"],
       "skillPath": ".github/skills/azure-ai-contentsafety-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["redis", "ioredis", "@redis/*"],
       "skillPath": "skills/redis-development",
       "repoUrl": "https://github.com/redis/agent-skills",
-      "language": "npm"
+      "language": "javascript"
     },
 
     {

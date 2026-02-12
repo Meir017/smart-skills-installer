@@ -17,7 +17,7 @@ public class YarnPackageResolverTests
         var packages = YarnPackageResolver.ParseYarnLock(lockText, directDeps);
 
         Assert.NotEmpty(packages);
-        Assert.All(packages, p => Assert.Equal(Ecosystems.Npm, p.Ecosystem));
+        Assert.All(packages, p => Assert.Equal(Ecosystems.JavaScript, p.Ecosystem));
     }
 
     [Fact]

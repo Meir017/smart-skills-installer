@@ -104,7 +104,7 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
     private void DetectInDirectory(string directoryPath, List<DetectedProject> results)
     {
         DetectDotnet(directoryPath, results);
-        DetectNodeJs(directoryPath, results);
+        DetectJavaScript(directoryPath, results);
         DetectPython(directoryPath, results);
         DetectJava(directoryPath, results);
 
@@ -138,7 +138,7 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
         }
     }
 
-    private void DetectNodeJs(string directoryPath, List<DetectedProject> results)
+    private void DetectJavaScript(string directoryPath, List<DetectedProject> results)
     {
         var packageJson = Path.Combine(directoryPath, "package.json");
         if (!File.Exists(packageJson))
@@ -149,8 +149,8 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
         if (ExcludedDirectories.NodeJs.Contains(dirName))
             return;
 
-        results.Add(new DetectedProject(Ecosystems.Npm, packageJson));
-        logger.LogDebug("Detected Node.js project: {Path}", packageJson);
+        results.Add(new DetectedProject(Ecosystems.JavaScript, packageJson));
+        logger.LogDebug("Detected JavaScript/TypeScript project: {Path}", packageJson);
     }
 
     private void DetectPython(string directoryPath, List<DetectedProject> results)

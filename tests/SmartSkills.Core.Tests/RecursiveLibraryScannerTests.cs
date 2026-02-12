@@ -26,12 +26,12 @@ public class RecursiveLibraryScannerTests : IDisposable
     {
         var detected = new List<DetectedProject>
         {
-            new(Ecosystems.Npm, Path.Combine(_root, "package.json"))
+            new(Ecosystems.JavaScript, Path.Combine(_root, "package.json"))
         };
 
         var packages = new ProjectPackages(
             Path.Combine(_root, "package.json"),
-            [new ResolvedPackage { Name = "express", Version = "4.18.0", IsTransitive = false, Ecosystem = Ecosystems.Npm }]);
+            [new ResolvedPackage { Name = "express", Version = "4.18.0", IsTransitive = false, Ecosystem = Ecosystems.JavaScript }]);
 
         var detector = new FakeProjectDetector(detected);
         var resolver = new FakePackageResolver(packages);
@@ -49,13 +49,13 @@ public class RecursiveLibraryScannerTests : IDisposable
     [Fact]
     public async Task ScanDirectoryAsync_WithRecursiveOptions_PassesOptionsToDetector()
     {
-        var project1 = new DetectedProject(Ecosystems.Npm, Path.Combine(_root, "package.json"));
-        var project2 = new DetectedProject(Ecosystems.Npm, Path.Combine(_root, "sub", "package.json"));
+        var project1 = new DetectedProject(Ecosystems.JavaScript, Path.Combine(_root, "package.json"));
+        var project2 = new DetectedProject(Ecosystems.JavaScript, Path.Combine(_root, "sub", "package.json"));
 
         var detector = new FakeProjectDetector([project1, project2]);
         var resolver = new FakePackageResolver(path => new ProjectPackages(
             path,
-            [new ResolvedPackage { Name = $"pkg-{Path.GetDirectoryName(path)!.Split(Path.DirectorySeparatorChar)[^1]}", Version = "1.0.0", IsTransitive = false, Ecosystem = Ecosystems.Npm }]));
+            [new ResolvedPackage { Name = $"pkg-{Path.GetDirectoryName(path)!.Split(Path.DirectorySeparatorChar)[^1]}", Version = "1.0.0", IsTransitive = false, Ecosystem = Ecosystems.JavaScript }]));
         var resolverFactory = new FakePackageResolverFactory(resolver);
         var scanner = new LibraryScanner(resolverFactory, resolver, detector, NullLogger<LibraryScanner>.Instance);
 

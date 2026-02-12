@@ -10,6 +10,7 @@ public sealed class PackageResolverFactory(
     NpmPackageResolver npmResolver,
     YarnPackageResolver yarnResolver,
     PnpmPackageResolver pnpmResolver,
+    BunPackageResolver bunResolver,
     UvLockPackageResolver uvLockResolver,
     PoetryLockPackageResolver poetryLockResolver,
     PipfileLockPackageResolver pipfileLockResolver,
@@ -28,9 +29,9 @@ public sealed class PackageResolverFactory(
             return dotnetResolver;
         }
 
-        if (string.Equals(project.Ecosystem, Ecosystems.Npm, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(project.Ecosystem, Ecosystems.JavaScript, StringComparison.OrdinalIgnoreCase))
         {
-            return SelectNodeJsResolver(project);
+            return SelectJavaScriptResolver(project);
         }
 
         if (string.Equals(project.Ecosystem, Ecosystems.Python, StringComparison.OrdinalIgnoreCase))
@@ -46,9 +47,15 @@ public sealed class PackageResolverFactory(
         throw new NotSupportedException($"Unsupported ecosystem: {project.Ecosystem}");
     }
 
-    private IPackageResolver SelectNodeJsResolver(DetectedProject project)
+    private IPackageResolver SelectJavaScriptResolver(DetectedProject project)
     {
         var dir = Path.GetDirectoryName(project.ProjectFilePath) ?? Directory.GetCurrentDirectory();
+
+        if (File.Exists(Path.Combine(dir, "bun.lock")) || File.Exists(Path.Combine(dir, "bun.lockb")))
+        {
+            logger.LogDebug("Detected bun lockfile, using BunPackageResolver for {Path}", project.ProjectFilePath);
+            return bunResolver;
+        }
 
         if (File.Exists(Path.Combine(dir, "pnpm-lock.yaml")))
         {

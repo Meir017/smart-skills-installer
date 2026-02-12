@@ -6,7 +6,7 @@ namespace SmartSkills.Core.Scanning;
 public static class Ecosystems
 {
     public const string Dotnet = "dotnet";
-    public const string Npm = "npm";
+    public const string JavaScript = "javascript";
     public const string Python = "python";
     public const string Java = "java";
 }
@@ -23,7 +23,7 @@ public record ResolvedPackage
     public string? RequestedVersion { get; init; }
 
     /// <summary>
-    /// Identifies the package ecosystem (e.g. "dotnet", "npm").
+    /// Identifies the package ecosystem (e.g. "dotnet", "javascript").
     /// Defaults to "dotnet" for backward compatibility.
     /// </summary>
     public string Ecosystem { get; init; } = Ecosystems.Dotnet;
