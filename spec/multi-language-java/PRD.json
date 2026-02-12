@@ -35,7 +35,7 @@
         {
           "id": "S01-T02",
           "title": "Extend ProjectDetector for Java",
-          "completed": false,
+          "completed": true,
           "description": "Add Java project detection to the existing ProjectDetector.Detect method. Detect pom.xml for Maven projects and build.gradle or build.gradle.kts for Gradle projects.",
           "apiReferences": [
             "IProjectDetector",
