@@ -229,7 +229,7 @@
         {
           "id": "S04-T04",
           "title": "Unit Tests for Factory Routing",
-          "completed": false,
+          "completed": true,
           "description": "Extend PackageResolverFactory tests for Java routing.",
           "requirements": [
             "Test: java project with pom.xml routes to MavenPomPackageResolver",
