@@ -39,3 +39,10 @@ public record InstallResult
 }
 
 public record SkillInstallFailure(string SkillPath, string Reason);
+
+public record RestoreResult
+{
+    public required IReadOnlyList<string> Restored { get; init; }
+    public required IReadOnlyList<string> SkippedUpToDate { get; init; }
+    public required IReadOnlyList<SkillInstallFailure> Failed { get; init; }
+}

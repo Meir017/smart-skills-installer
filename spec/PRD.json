@@ -1115,7 +1115,7 @@
         {
           "id": "S14-T05",
           "title": "Implement Restore Command",
-          "completed": false,
+          "completed": true,
           "description": "Add a 'restore' CLI command that reproduces the exact skill set from the lock file without re-resolving packages or querying registries. Downloads skills at the specific commitSha recorded in the lock file for full reproducibility.",
           "requirements": [
             "Read lock file and iterate all skill entries",

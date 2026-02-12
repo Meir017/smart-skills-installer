@@ -208,6 +208,68 @@ public sealed class SkillInstaller : ISkillInstaller
         await _store.RemoveAsync(skillName, cancellationToken);
     }
 
+    public async Task<RestoreResult> RestoreAsync(string projectPath, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+
+        var baseDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
+        var lockFile = await _lockFileStore.LoadAsync(baseDir, cancellationToken);
+
+        if (lockFile.Skills.Count == 0)
+        {
+            _logger.LogInformation("Lock file is empty or not found. Nothing to restore.");
+            return new RestoreResult { Restored = [], SkippedUpToDate = [], Failed = [] };
+        }
+
+        var restored = new List<string>();
+        var skipped = new List<string>();
+        var failed = new List<SkillInstallFailure>();
+
+        foreach (var (skillName, entry) in lockFile.Skills)
+        {
+            try
+            {
+                var installDir = Path.Combine(baseDir, ".agents", "skills", skillName);
+
+                // Check if already up-to-date
+                if (Directory.Exists(installDir))
+                {
+                    var currentHash = SkillContentHasher.ComputeHash(installDir);
+                    if (currentHash == entry.LocalContentHash)
+                    {
+                        _logger.LogInformation("Skill {Skill} is up-to-date", skillName);
+                        skipped.Add(skillName);
+                        continue;
+                    }
+                }
+
+                // Download at the specific commit SHA
+                var provider = _providerFactory.CreateFromRepoUrl(entry.RemoteUrl);
+                await DownloadSkillAsync(provider, entry.SkillPath, installDir, cancellationToken, entry.CommitSha);
+
+                // Verify content hash
+                var downloadedHash = SkillContentHasher.ComputeHash(installDir);
+                if (downloadedHash != entry.LocalContentHash)
+                {
+                    _logger.LogWarning("Content hash mismatch for {Skill} after restore (expected {Expected}, got {Actual})",
+                        skillName, entry.LocalContentHash, downloadedHash);
+                }
+
+                restored.Add(skillName);
+                _logger.LogInformation("Restored skill: {Skill}", skillName);
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
+            {
+                _logger.LogError(ex, "Failed to restore skill: {Skill}", skillName);
+                failed.Add(new SkillInstallFailure(skillName, ex.Message));
+            }
+        }
+
+        return new RestoreResult { Restored = restored, SkippedUpToDate = skipped, Failed = failed };
+    }
+
     private static async Task DownloadSkillAsync(ISkillSourceProvider provider, string skillPath, string installDir, CancellationToken cancellationToken, string? commitSha = null)
     {
         var files = await provider.ListSkillFilesAsync(skillPath, commitSha, cancellationToken);
