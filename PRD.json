@@ -186,7 +186,7 @@
         {
           "id": "S04-T01",
           "title": "Unit Tests for ExcludedDirectories",
-          "completed": false,
+          "completed": true,
           "description": "Verify the exclusion list is complete and correct, including case-insensitive lookup.",
           "requirements": [
             "Test that All contains every expected directory name",
