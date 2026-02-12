@@ -95,7 +95,7 @@
         {
           "id": "S02-T02",
           "title": "Implement GradlePackageResolver",
-          "completed": false,
+          "completed": true,
           "description": "Implement IPackageResolver that resolves Gradle packages by parsing build.gradle or build.gradle.kts files. Extracts dependency declarations from the dependencies block.",
           "apiReferences": [
             "IPackageResolver",
