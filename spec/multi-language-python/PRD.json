@@ -274,7 +274,7 @@
         {
           "id": "S04-T04",
           "title": "Unit Tests for Factory Routing",
-          "completed": false,
+          "completed": true,
           "description": "Extend PackageResolverFactory tests for Python routing.",
           "requirements": [
             "Test: python project with each lock file type routes to the correct resolver"
