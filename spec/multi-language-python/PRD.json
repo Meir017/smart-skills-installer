@@ -117,7 +117,7 @@
         {
           "id": "S02-T04",
           "title": "Implement PoetryLockPackageResolver",
-          "completed": false,
+          "completed": true,
           "description": "Implement IPackageResolver for poetry.lock (TOML format).",
           "apiReferences": ["IPackageResolver", "PoetryLockPackageResolver", "ResolvedPackage"],
           "requirements": [
