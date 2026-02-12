@@ -1060,7 +1060,7 @@
         {
           "id": "S14-T03",
           "title": "Implement Lock File Reader/Writer",
-          "completed": false,
+          "completed": true,
           "description": "Implement ISkillLockFileStore that reads and writes smart-skills.lock.json from/to disk. Replaces the existing ISkillStore/LocalSkillStore for state tracking.",
           "requirements": [
             "Define ISkillLockFileStore interface with LoadAsync, SaveAsync, and file path resolution",
