@@ -1191,7 +1191,7 @@
         {
           "id": "S14-T08",
           "title": "Migrate from .agents-skills-state.json",
-          "completed": false,
+          "completed": true,
           "description": "Remove the old LocalSkillStore/.agents-skills-state.json state file mechanism and replace all usages with the new lock file store. Add one-time migration logic to convert existing state files to lock file format.",
           "requirements": [
             "Detect existing .agents-skills-state.json on first run with new code",
