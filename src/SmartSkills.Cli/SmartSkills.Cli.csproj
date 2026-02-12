@@ -6,10 +6,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>smart-skills</ToolCommandName>
     <PackageId>SmartSkills.Cli</PackageId>
-    <Version>1.0.0</Version>
-    <Authors>SmartSkills Contributors</Authors>
     <Description>Intelligent skill installer for .NET projects - CLI tool</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>dotnet;skills;agent;ai;cli</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
