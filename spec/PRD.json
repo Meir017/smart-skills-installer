@@ -1219,7 +1219,7 @@
         {
           "id": "S14-T09",
           "title": "Add Provider Support for Fetching at Specific Commit",
-          "completed": false,
+          "completed": true,
           "description": "Extend ISkillSourceProvider with the ability to fetch skill files at a specific git commit SHA (not just latest). Required by the 'restore' command to reproduce exact skill versions from the lock file.",
           "requirements": [
             "Add optional commitSha parameter to ListSkillFilesAsync and DownloadFileAsync",

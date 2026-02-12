@@ -42,12 +42,13 @@ public sealed class GitHubSkillSourceProvider : ISkillSourceProvider, IDisposabl
         return RegistryIndexParser.Parse(json);
     }
 
-    public async Task<IReadOnlyList<string>> ListSkillFilesAsync(string skillPath, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<string>> ListSkillFilesAsync(string skillPath, string? commitSha = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(skillPath);
 
+        var treeRef = commitSha ?? _branch;
         // Use Git Trees API for recursive listing
-        var url = $"https://api.github.com/repos/{_owner}/{_repo}/git/trees/{_branch}?recursive=1";
+        var url = $"https://api.github.com/repos/{_owner}/{_repo}/git/trees/{treeRef}?recursive=1";
         using var doc = await _client.GetJsonAsync(url, cancellationToken);
 
         var files = new List<string>();
@@ -70,9 +71,10 @@ public sealed class GitHubSkillSourceProvider : ISkillSourceProvider, IDisposabl
         return files;
     }
 
-    public async Task<Stream> DownloadFileAsync(string filePath, CancellationToken cancellationToken = default)
+    public async Task<Stream> DownloadFileAsync(string filePath, string? commitSha = null, CancellationToken cancellationToken = default)
     {
-        var url = $"https://raw.githubusercontent.com/{_owner}/{_repo}/{_branch}/{filePath}";
+        var fileRef = commitSha ?? _branch;
+        var url = $"https://raw.githubusercontent.com/{_owner}/{_repo}/{fileRef}/{filePath}";
         return await _client.GetStreamAsync(url, cancellationToken);
     }
 

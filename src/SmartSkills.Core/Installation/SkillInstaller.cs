@@ -208,15 +208,15 @@ public sealed class SkillInstaller : ISkillInstaller
         await _store.RemoveAsync(skillName, cancellationToken);
     }
 
-    private static async Task DownloadSkillAsync(ISkillSourceProvider provider, string skillPath, string installDir, CancellationToken cancellationToken)
+    private static async Task DownloadSkillAsync(ISkillSourceProvider provider, string skillPath, string installDir, CancellationToken cancellationToken, string? commitSha = null)
     {
-        var files = await provider.ListSkillFilesAsync(skillPath, cancellationToken);
+        var files = await provider.ListSkillFilesAsync(skillPath, commitSha, cancellationToken);
         Directory.CreateDirectory(installDir);
 
         foreach (var file in files)
         {
             var remotePath = $"{skillPath}/{file}";
-            using var stream = await provider.DownloadFileAsync(remotePath, cancellationToken);
+            using var stream = await provider.DownloadFileAsync(remotePath, commitSha, cancellationToken);
             var localPath = Path.Combine(installDir, file.Replace('/', Path.DirectorySeparatorChar));
             Directory.CreateDirectory(Path.GetDirectoryName(localPath)!);
             using var fs = File.Create(localPath);
