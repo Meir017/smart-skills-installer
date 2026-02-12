@@ -8,8 +8,10 @@ namespace SmartSkills.Core.Scanning;
 /// </summary>
 public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : IPackageResolver
 {
-    public Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
+    public async Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(projectPath);
+
         var packageJsonPath = projectPath.EndsWith("package.json", StringComparison.OrdinalIgnoreCase)
             ? projectPath
             : Path.Combine(projectPath, "package.json");
@@ -18,7 +20,7 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
             throw new FileNotFoundException($"package.json not found: {packageJsonPath}");
 
         var projectDir = Path.GetDirectoryName(packageJsonPath)!;
-        var packageJsonText = File.ReadAllText(packageJsonPath);
+        var packageJsonText = await File.ReadAllTextAsync(packageJsonPath, cancellationToken).ConfigureAwait(false);
         var directDeps = NpmPackageResolver.ParseDirectDependencies(packageJsonText);
 
         var lockFilePath = Path.Combine(projectDir, "pnpm-lock.yaml");
@@ -27,7 +29,7 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
         if (File.Exists(lockFilePath))
         {
             logger.LogDebug("Parsing pnpm-lock.yaml at {Path}", lockFilePath);
-            var lockText = File.ReadAllText(lockFilePath);
+            var lockText = await File.ReadAllTextAsync(lockFilePath, cancellationToken).ConfigureAwait(false);
             packages = ParsePnpmLock(lockText, directDeps);
         }
         else
@@ -43,7 +45,7 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
         }
 
         logger.LogInformation("Resolved {Count} pnpm packages from {Path}", packages.Count, packageJsonPath);
-        return Task.FromResult(new ProjectPackages(packageJsonPath, packages));
+        return new ProjectPackages(packageJsonPath, packages);
     }
 
     /// <summary>
@@ -144,11 +146,15 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
         if (trimmed.StartsWith('@'))
         {
             // Scoped package: find '@' after the scope
+#pragma warning disable CA1307 // Specify StringComparison for clarity
             atIndex = trimmed.IndexOf('@', 1);
+#pragma warning restore CA1307 // Specify StringComparison for clarity
         }
         else
         {
+#pragma warning disable CA1307 // Specify StringComparison for clarity
             atIndex = trimmed.IndexOf('@');
+#pragma warning restore CA1307 // Specify StringComparison for clarity
         }
 
         if (atIndex <= 0)
@@ -158,7 +164,9 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
         var version = trimmed[(atIndex + 1)..];
 
         // pnpm may append parenthesized peer info like "express@4.18.2(supports-color@5.5.0)"
+#pragma warning disable CA1307 // Specify StringComparison for clarity
         var parenIndex = version.IndexOf('(');
+#pragma warning restore CA1307 // Specify StringComparison for clarity
         if (parenIndex > 0)
             version = version[..parenIndex];
 

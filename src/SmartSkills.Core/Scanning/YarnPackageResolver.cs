@@ -8,8 +8,10 @@ namespace SmartSkills.Core.Scanning;
 /// </summary>
 public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> logger) : IPackageResolver
 {
-    public Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
+    public async Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(projectPath);
+
         var packageJsonPath = projectPath.EndsWith("package.json", StringComparison.OrdinalIgnoreCase)
             ? projectPath
             : Path.Combine(projectPath, "package.json");
@@ -18,7 +20,7 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
             throw new FileNotFoundException($"package.json not found: {packageJsonPath}");
 
         var projectDir = Path.GetDirectoryName(packageJsonPath)!;
-        var packageJsonText = File.ReadAllText(packageJsonPath);
+        var packageJsonText = await File.ReadAllTextAsync(packageJsonPath, cancellationToken).ConfigureAwait(false);
         var directDeps = NpmPackageResolver.ParseDirectDependencies(packageJsonText);
 
         var yarnLockPath = Path.Combine(projectDir, "yarn.lock");
@@ -27,7 +29,7 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
         if (File.Exists(yarnLockPath))
         {
             logger.LogDebug("Parsing yarn.lock at {Path}", yarnLockPath);
-            var lockText = File.ReadAllText(yarnLockPath);
+            var lockText = await File.ReadAllTextAsync(yarnLockPath, cancellationToken).ConfigureAwait(false);
             packages = ParseYarnLock(lockText, directDeps);
         }
         else
@@ -43,7 +45,7 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
         }
 
         logger.LogInformation("Resolved {Count} yarn packages from {Path}", packages.Count, packageJsonPath);
-        return Task.FromResult(new ProjectPackages(packageJsonPath, packages));
+        return new ProjectPackages(packageJsonPath, packages);
     }
 
     /// <summary>
@@ -53,7 +55,7 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
     internal static List<ResolvedPackage> ParseYarnLock(string lockText, Dictionary<string, string> directDeps)
     {
         // Yarn Berry v2+ starts with __metadata:
-        if (lockText.Contains("__metadata:"))
+        if (lockText.Contains("__metadata:", StringComparison.Ordinal))
             return ParseYarnBerry(lockText, directDeps);
 
         return ParseYarnClassic(lockText, directDeps);
@@ -88,7 +90,7 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
             }
 
             // Version line inside an entry
-            if (currentName is not null && line.TrimStart().StartsWith("version "))
+            if (currentName is not null && line.TrimStart().StartsWith("version ", StringComparison.Ordinal))
             {
                 var version = ExtractQuotedValue(line);
                 if (version is not null && seen.Add(currentName))
@@ -128,14 +130,16 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
                 continue;
 
             // Entry header: starts with a quote, not indented
+#pragma warning disable CA1307 // Specify StringComparison for clarity
             if (!line.StartsWith(' ') && line.Contains('@'))
+#pragma warning restore CA1307 // Specify StringComparison for clarity
             {
                 currentName = ExtractPackageNameFromBerryHeader(line);
                 continue;
             }
 
             // Version line
-            if (currentName is not null && line.TrimStart().StartsWith("version:"))
+            if (currentName is not null && line.TrimStart().StartsWith("version:", StringComparison.Ordinal))
             {
                 var version = line.Split(':', 2)[1].Trim().Trim('"');
                 if (seen.Add(currentName))
@@ -196,11 +200,15 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
         int atIndex;
         if (descriptor.StartsWith('@'))
         {
+#pragma warning disable CA1307 // Specify StringComparison for clarity
             atIndex = descriptor.IndexOf('@', 1);
+#pragma warning restore CA1307 // Specify StringComparison for clarity
         }
         else
         {
+#pragma warning disable CA1307 // Specify StringComparison for clarity
             atIndex = descriptor.IndexOf('@');
+#pragma warning restore CA1307 // Specify StringComparison for clarity
         }
 
         return atIndex > 0 ? descriptor[..atIndex] : descriptor;

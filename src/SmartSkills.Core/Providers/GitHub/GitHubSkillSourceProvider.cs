@@ -44,6 +44,8 @@ public sealed class GitHubSkillSourceProvider : ISkillSourceProvider, IDisposabl
 
     public async Task<IReadOnlyList<string>> ListSkillFilesAsync(string skillPath, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(skillPath);
+
         // Use Git Trees API for recursive listing
         var url = $"https://api.github.com/repos/{_owner}/{_repo}/git/trees/{_branch}?recursive=1";
         using var doc = await _client.GetJsonAsync(url, cancellationToken);

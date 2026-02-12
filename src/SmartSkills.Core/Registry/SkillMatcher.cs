@@ -53,9 +53,10 @@ public sealed class SkillMatcher : ISkillMatcher
 
     private static bool IsMatch(string packageName, string pattern)
     {
-        if (pattern.Contains('*') || pattern.Contains('?'))
+        // Note: Contains with char doesn't have StringComparison overload in .NET, using culture-invariant comparison
+        if (pattern.Contains('*', StringComparison.Ordinal) || pattern.Contains('?', StringComparison.Ordinal))
         {
-            var regex = "^" + Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".") + "$";
+            var regex = "^" + Regex.Escape(pattern).Replace("\\*", ".*", StringComparison.Ordinal).Replace("\\?", ".", StringComparison.Ordinal) + "$";
             return Regex.IsMatch(packageName, regex, RegexOptions.IgnoreCase);
         }
 

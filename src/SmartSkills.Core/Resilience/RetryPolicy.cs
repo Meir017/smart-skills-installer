@@ -21,6 +21,8 @@ public sealed class RetryPolicy
 
     public async Task<T> ExecuteAsync<T>(Func<CancellationToken, Task<T>> action, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(action);
+
         for (int attempt = 0; ; attempt++)
         {
             try
@@ -53,7 +55,8 @@ public sealed class RetryPolicy
 
     private static bool IsTransient(HttpRequestException ex)
     {
-        if (ex.StatusCode is null) return true; // Network-level failure
+        if (ex.StatusCode is null)
+            return true; // Network-level failure
         return ex.StatusCode >= HttpStatusCode.InternalServerError ||
                ex.StatusCode == HttpStatusCode.RequestTimeout ||
                ex.StatusCode == (HttpStatusCode)429; // Too Many Requests

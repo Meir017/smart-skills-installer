@@ -49,6 +49,8 @@ public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
 
     public async Task<IReadOnlyList<string>> ListSkillFilesAsync(string skillPath, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(skillPath);
+
         var url = $"{BaseUrl}/items?scopePath={Uri.EscapeDataString(skillPath)}&recursionLevel=Full&versionDescriptor.version={_branch}&api-version=7.0";
         using var doc = await _client.GetJsonAsync(url, cancellationToken);
 
@@ -60,7 +62,8 @@ public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
             foreach (var item in items.EnumerateArray())
             {
                 var isFolder = item.TryGetProperty("isFolder", out var f) && f.GetBoolean();
-                if (isFolder) continue;
+                if (isFolder)
+                    continue;
 
                 var path = item.GetProperty("path").GetString()!;
                 if (path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))

@@ -57,7 +57,7 @@ public static class RegistryIndexParser
         return ParseDocument(doc);
     }
 
-    private static IReadOnlyList<RegistryEntry> ParseDocument(JsonDocument doc)
+    private static List<RegistryEntry> ParseDocument(JsonDocument doc)
     {
         var root = doc.RootElement;
         var entries = new List<RegistryEntry>();

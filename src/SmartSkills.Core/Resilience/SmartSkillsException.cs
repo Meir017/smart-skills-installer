@@ -8,6 +8,21 @@ public sealed class SmartSkillsException : Exception
     public string ErrorCode { get; }
     public string? Remediation { get; }
 
+    public SmartSkillsException() : base()
+    {
+        ErrorCode = string.Empty;
+    }
+
+    public SmartSkillsException(string message) : base(message)
+    {
+        ErrorCode = string.Empty;
+    }
+
+    public SmartSkillsException(string message, Exception innerException) : base(message, innerException)
+    {
+        ErrorCode = string.Empty;
+    }
+
     public SmartSkillsException(string errorCode, string message, string? remediation = null, Exception? innerException = null)
         : base(message, innerException)
     {
@@ -15,7 +30,7 @@ public sealed class SmartSkillsException : Exception
         Remediation = remediation;
     }
 
-    public static class Codes
+    internal static class Codes
     {
         public const string NetworkError = "SS001";
         public const string AuthenticationFailed = "SS002";
@@ -26,9 +41,12 @@ public sealed class SmartSkillsException : Exception
         public const string InstallFailed = "SS007";
     }
 
-    public static SmartSkillsException NetworkError(Exception inner) =>
-        new(Codes.NetworkError, $"Network error: {inner.Message}",
+    public static SmartSkillsException NetworkError(Exception inner)
+    {
+        ArgumentNullException.ThrowIfNull(inner);
+        return new(Codes.NetworkError, $"Network error: {inner.Message}",
             "Check your internet connection and proxy settings.", inner);
+    }
 
     public static SmartSkillsException AuthFailed(string provider) =>
         new(Codes.AuthenticationFailed, $"Authentication failed for {provider}.",
