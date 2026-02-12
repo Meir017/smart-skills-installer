@@ -37,7 +37,7 @@ public class ResolveSmartSkills : Microsoft.Build.Utilities.Task
         {
             Log.LogWarningFromException(ex, showStackTrace: true);
             ResolvedSkills = [];
-            return true; // Don't fail the build
+            return !Log.HasLoggedErrors; // Don't fail the build for warnings
         }
     }
 }

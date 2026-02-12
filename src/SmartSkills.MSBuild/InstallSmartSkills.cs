@@ -42,6 +42,6 @@ public class InstallSmartSkills : Microsoft.Build.Utilities.Task
             }
         }
 
-        return true;
+        return !Log.HasLoggedErrors;
     }
 }
