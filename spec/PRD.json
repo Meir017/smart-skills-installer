@@ -1,13 +1,13 @@
 {
   "name": "Smart Skills Installer CLI",
   "version": "1.0.0",
-  "description": "A C# toolset that inspects installed libraries in a .NET project and automatically installs relevant agent skills by fetching them from remote sources (public GitHub repositories or authenticated Azure DevOps URLs). The primary acquisition mechanism is MSBuild integration\u00e2\u20ac\u201dskills are resolved and installed as part of the build pipeline via custom MSBuild targets/tasks. A companion CLI tool is provided for manual operations, diagnostics, and configuration.",
+  "description": "A C# toolset that inspects installed libraries in a .NET project and automatically installs relevant agent skills by fetching them from remote sources (public GitHub repositories or authenticated Azure DevOps URLs). The primary acquisition mechanism is MSBuild integrationâ€”skills are resolved and installed as part of the build pipeline via custom MSBuild targets/tasks. A companion CLI tool is provided for manual operations, diagnostics, and configuration.",
   "apiSurface": "api.cs",
   "goals": [
     "Automate the discovery and installation of agent skills based on project dependencies",
     "Provide MSBuild-native integration so skills are acquired automatically during build",
     "Support multiple remote skill sources (GitHub, Azure DevOps)",
-    "Provide a seamless developer experience with minimal configuration\u00e2\u20ac\u201djust add a NuGet package",
+    "Provide a seamless developer experience with minimal configurationâ€”just add a NuGet package",
     "Ensure secure credential handling for authenticated sources",
     "Support incremental builds so skill acquisition only runs when dependencies change"
   ],
@@ -84,7 +84,7 @@
           "id": "S02-T01",
           "title": "Implement Library Scanner SDK in SmartSkills.Core",
           "completed": true,
-          "description": "Build the core scanning API in SmartSkills.Core that accepts a project or solution (.sln/.slnx) path and returns a list of detected packages. This is the reusable SDK consumed by both the CLI and MSBuild tasks. Use Microsoft.VisualStudio.SolutionPersistence NuGet package for parsing solution files \u00e2\u20ac\u201d it supports both .sln and .slnx formats via a unified SolutionModel API.",
+          "description": "Build the core scanning API in SmartSkills.Core that accepts a project or solution (.sln/.slnx) path and returns a list of detected packages. This is the reusable SDK consumed by both the CLI and MSBuild tasks. Use Microsoft.VisualStudio.SolutionPersistence NuGet package for parsing solution files â€” it supports both .sln and .slnx formats via a unified SolutionModel API.",
           "apiReferences": [
             "ILibraryScanner",
             "ProjectPackages"
@@ -173,20 +173,20 @@
     {
       "id": "S03",
       "title": "Skill Registry & Mapping Configuration",
-      "description": "Define and manage the mapping between library names and their corresponding agent skills. Skills follow the open Agent Skills specification (https://agentskills.io/specification.md) \u00e2\u20ac\u201d each skill is a directory containing a SKILL.md file with YAML frontmatter followed by Markdown instructions.",
+      "description": "Define and manage the mapping between library names and their corresponding agent skills. Skills follow the open Agent Skills specification (https://agentskills.io/specification.md) â€” each skill is a directory containing a SKILL.md file with YAML frontmatter followed by Markdown instructions.",
       "tasks": [
         {
           "id": "S03-T01",
           "title": "Define Skill Manifest Schema",
           "completed": true,
-          "description": "Adopt the Agent Skills specification as the skill format. A skill is a directory whose name matches the name frontmatter field, containing at minimum a SKILL.md file. The YAML frontmatter provides the metadata (name, description, license, compatibility, metadata map, allowed-tools). No custom manifest schema is needed \u00e2\u20ac\u201d the SKILL.md frontmatter IS the manifest.",
+          "description": "Adopt the Agent Skills specification as the skill format. A skill is a directory whose name matches the name frontmatter field, containing at minimum a SKILL.md file. The YAML frontmatter provides the metadata (name, description, license, compatibility, metadata map, allowed-tools). No custom manifest schema is needed â€” the SKILL.md frontmatter IS the manifest.",
           "apiReferences": [
             "SkillMetadata"
           ],
           "requirements": [
             "Use Agent Skills spec as the manifest format (SKILL.md frontmatter)",
             "Required fields: name (1-64 chars, lowercase alphanumeric + hyphens), description (1-1024 chars)",
-            "Optional fields: license, compatibility (\u00e2\u2030\u00a4500 chars), metadata (string\u00e2\u2020\u2019string map), allowed-tools (space-delimited)",
+            "Optional fields: license, compatibility (â‰¤500 chars), metadata (stringâ†’string map), allowed-tools (space-delimited)",
             "Skill directory name must match the name field"
           ],
           "dod": "SkillMetadata record correctly models the Agent Skills spec frontmatter fields.",
@@ -402,13 +402,13 @@
     {
       "id": "S07",
       "title": "Skill Installation Engine",
-      "description": "Implement the core logic for installing, updating, and managing agent skills on the local system. The installation pipeline: resolve packages \u00e2\u2020\u2019 match skills \u00e2\u2020\u2019 check cache \u00e2\u2020\u2019 download \u00e2\u2020\u2019 parse & validate \u00e2\u2020\u2019 write to disk \u00e2\u2020\u2019 track state.",
+      "description": "Implement the core logic for installing, updating, and managing agent skills on the local system. The installation pipeline: resolve packages â†’ match skills â†’ check cache â†’ download â†’ parse & validate â†’ write to disk â†’ track state.",
       "tasks": [
         {
           "id": "S07-T01",
           "title": "Implement 'install' Command",
           "completed": true,
-          "description": "Add the 'install' subcommand that orchestrates the full pipeline: resolve packages \u00e2\u2020\u2019 match skills \u00e2\u2020\u2019 check cache \u00e2\u2020\u2019 fetch via provider \u00e2\u2020\u2019 validate \u00e2\u2020\u2019 install. Report which skills were installed, skipped (already up-to-date), or failed.",
+          "description": "Add the 'install' subcommand that orchestrates the full pipeline: resolve packages â†’ match skills â†’ check cache â†’ fetch via provider â†’ validate â†’ install. Report which skills were installed, skipped (already up-to-date), or failed.",
           "apiReferences": [
             "ISkillInstaller",
             "InstallOptions",
@@ -432,7 +432,7 @@
           "id": "S07-T02",
           "title": "Implement SKILL.md Frontmatter Parser & Validator",
           "completed": true,
-          "description": "Parse YAML frontmatter from SKILL.md files and validate against the Agent Skills spec constraints: required name and description fields, name format rules, optional license (string), compatibility (\u00e2\u2030\u00a4500 chars), metadata (string\u00e2\u2020\u2019string map), and allowed-tools (space-delimited string).",
+          "description": "Parse YAML frontmatter from SKILL.md files and validate against the Agent Skills spec constraints: required name and description fields, name format rules, optional license (string), compatibility (â‰¤500 chars), metadata (stringâ†’string map), and allowed-tools (space-delimited string).",
           "apiReferences": [
             "ISkillMetadataParser",
             "SkillMetadata"
@@ -440,7 +440,7 @@
           "requirements": [
             "Parse YAML frontmatter between --- delimiters",
             "Validate required fields: name (1-64 chars, lowercase alphanumeric + hyphens), description (1-1024 chars)",
-            "Validate optional fields: license, compatibility (\u00e2\u2030\u00a4500 chars), metadata, allowed-tools",
+            "Validate optional fields: license, compatibility (â‰¤500 chars), metadata, allowed-tools",
             "Return validation errors list for invalid skills",
             "Reject skills that fail validation with clear error messages"
           ],
@@ -859,7 +859,7 @@
     {
       "id": "S13",
       "title": "MSBuild Integration - Custom Tasks & Targets",
-      "description": "Implement custom MSBuild tasks and targets that automatically acquire and install agent skills as part of the build pipeline. This is the primary skill acquisition mechanism \u00e2\u20ac\u201d consumers simply add a PackageReference and skills are resolved at build time.",
+      "description": "Implement custom MSBuild tasks and targets that automatically acquire and install agent skills as part of the build pipeline. This is the primary skill acquisition mechanism â€” consumers simply add a PackageReference and skills are resolved at build time.",
       "tasks": [
         {
           "id": "S13-T01",
@@ -991,6 +991,253 @@
             "Multi-targeting project acquires skills only once",
             "Solution build doesn't duplicate skill acquisition across projects",
             "Skills are available to all target frameworks after acquisition"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S14",
+      "title": "Skills Lock File",
+      "description": "Introduce a version-controlled lock file (smart-skills.lock.json) that records the exact fetch coordinates and integrity hashes of all tracked skills. Replaces the internal .agents-skills-state.json with a committable, deterministic, cross-platform file that enables reproducible skill installations and local edit detection. See spec/lock-file.md for full specification.",
+      "tasks": [
+        {
+          "id": "S14-T01",
+          "title": "Define Lock File Model & Serialization",
+          "completed": true,
+          "description": "Create the data model for smart-skills.lock.json (SkillsLockFile, SkillLockEntry records) and implement deterministic JSON serialization/deserialization. The lock file uses a flat skill-name-keyed map with alphabetically sorted keys for stable diffs.",
+          "requirements": [
+            "Define SkillsLockFile record with Version (int) and Skills (dictionary of string to SkillLockEntry)",
+            "Define SkillLockEntry record with RemoteUrl, SkillPath, Language (optional), CommitSha, LocalContentHash fields",
+            "Serialize with sorted keys (ordinal), indented JSON, camelCase property naming",
+            "Deserialize with validation: reject unknown version numbers, require all mandatory fields",
+            "Use System.Text.Json with custom options for deterministic output",
+            "File name constant: smart-skills.lock.json"
+          ],
+          "dod": "SkillsLockFile model round-trips through JSON serialization producing identical, deterministic output.",
+          "verifications": [
+            "Serialization produces alphabetically sorted skill keys",
+            "Round-trip serialize/deserialize produces identical object",
+            "Missing required fields cause clear validation errors",
+            "Unknown version number is rejected with descriptive error",
+            "Null/empty Language field is omitted from JSON output"
+          ],
+          "apiReferences": [
+            "SkillsLockFile",
+            "SkillLockEntry"
+          ]
+        },
+        {
+          "id": "S14-T02",
+          "title": "Implement Cross-Platform Content Hashing",
+          "completed": false,
+          "description": "Implement the SkillContentHasher that computes a deterministic SHA256 content hash over a skill directory. The hash must be identical on Windows, macOS, and Linux. Algorithm: enumerate files recursively (excluding hidden), normalize paths to forward-slash NFC form, sort ordinally, hash each file's raw bytes, concatenate '<path>\\n<hash>\\n', then SHA256 the result.",
+          "requirements": [
+            "Enumerate all files recursively, excluding hidden files/directories (starting with '.')",
+            "Normalize relative paths: forward slashes, NFC Unicode normalization (String.Normalize(NormalizationForm.FormC))",
+            "Sort paths using StringComparison.Ordinal",
+            "Read file content as raw bytes (no line-ending conversion)",
+            "Compute SHA256 of each file's raw bytes as lowercase hex",
+            "Concatenate entries as UTF-8: '<relative-path>\\n<file-sha256>\\n' using literal \\n",
+            "Compute final SHA256 of concatenated UTF-8 bytes",
+            "Return result as 'sha256:<lowercase-hex>'",
+            "Handle empty directories (return hash of empty input)"
+          ],
+          "dod": "SkillContentHasher produces identical hashes for the same directory content on Windows, macOS, and Linux.",
+          "verifications": [
+            "Same directory produces identical hash across repeated calls",
+            "Adding a file changes the hash",
+            "Modifying file content changes the hash",
+            "Renaming a file changes the hash",
+            "Path separators do not affect hash (backslash vs forward slash)",
+            "Files with different line endings but same raw bytes produce same hash",
+            "Hidden files (starting with '.') are excluded",
+            "Empty directory produces a consistent hash"
+          ],
+          "apiReferences": [
+            "SkillContentHasher"
+          ]
+        },
+        {
+          "id": "S14-T03",
+          "title": "Implement Lock File Reader/Writer",
+          "completed": false,
+          "description": "Implement ISkillLockFileStore that reads and writes smart-skills.lock.json from/to disk. Replaces the existing ISkillStore/LocalSkillStore for state tracking.",
+          "requirements": [
+            "Define ISkillLockFileStore interface with LoadAsync, SaveAsync, and file path resolution",
+            "LoadAsync returns empty SkillsLockFile when file does not exist",
+            "SaveAsync writes deterministic JSON (sorted keys, indented, camelCase)",
+            "Resolve lock file path relative to the project/solution root directory",
+            "Validate schema version on load and reject unsupported versions"
+          ],
+          "dod": "ISkillLockFileStore correctly reads and writes smart-skills.lock.json with deterministic output.",
+          "verifications": [
+            "Loading non-existent file returns default empty lock file",
+            "Save then load round-trip produces identical object",
+            "Output JSON has sorted keys and consistent formatting",
+            "Unsupported version number throws descriptive exception",
+            "Lock file is written next to the project/solution file"
+          ],
+          "apiReferences": [
+            "ISkillLockFileStore",
+            "SkillsLockFile"
+          ]
+        },
+        {
+          "id": "S14-T04",
+          "title": "Integrate Lock File into Install Workflow",
+          "completed": false,
+          "description": "Refactor SkillInstaller to use the lock file for change detection during install. For each matched skill: check lock file for existing entry, compare remote commit SHA, compute local content hash to detect edits, download only when needed, and update lock file entries.",
+          "requirements": [
+            "Read existing lock file before installing",
+            "For skills in lock file: fetch remote commit SHA and compare against recorded commitSha",
+            "If commitSha matches: compute local content hash and compare against localContentHash",
+            "If localContentHash differs: warn about local modifications, skip unless --force flag is set",
+            "If commitSha differs: download new version and update lock entry",
+            "For new skills not in lock file: download, compute content hash, add lock entry",
+            "Write updated lock file after all operations (sorted, deterministic)",
+            "Support --force flag to overwrite locally modified skills"
+          ],
+          "dod": "Install command uses lock file for incremental change detection and updates lock file after installation.",
+          "verifications": [
+            "Skill with matching commitSha and localContentHash is skipped",
+            "Skill with different remote commitSha is re-downloaded and lock entry updated",
+            "Locally modified skill shows warning and is skipped without --force",
+            "Locally modified skill is overwritten with --force",
+            "New skill is downloaded and added to lock file",
+            "Lock file is written with sorted keys after install"
+          ],
+          "apiReferences": [
+            "ISkillInstaller",
+            "SkillsLockFile",
+            "SkillContentHasher"
+          ]
+        },
+        {
+          "id": "S14-T05",
+          "title": "Implement Restore Command",
+          "completed": false,
+          "description": "Add a 'restore' CLI command that reproduces the exact skill set from the lock file without re-resolving packages or querying registries. Downloads skills at the specific commitSha recorded in the lock file for full reproducibility.",
+          "requirements": [
+            "Read lock file and iterate all skill entries",
+            "If skill directory exists and localContentHash matches: skip",
+            "Otherwise: download skill files at the exact recorded commitSha (not latest)",
+            "Requires ISkillSourceProvider support for fetching at a specific git ref",
+            "Recompute and verify localContentHash after download",
+            "Report restored, skipped, and failed skills",
+            "Fail gracefully if lock file does not exist"
+          ],
+          "dod": "'smart-skills restore' reproduces the exact skill set from the lock file.",
+          "verifications": [
+            "Missing skills are downloaded at the recorded commitSha",
+            "Up-to-date skills (matching content hash) are skipped",
+            "Content hash is verified after download",
+            "Missing lock file produces a clear error message",
+            "Restored skills match the original content hash"
+          ],
+          "apiReferences": [
+            "ISkillInstaller",
+            "SkillsLockFile",
+            "ISkillSourceProvider"
+          ]
+        },
+        {
+          "id": "S14-T06",
+          "title": "Integrate Lock File into Status Command",
+          "completed": false,
+          "description": "Update the 'status' CLI command to report lock file state: which skills are up-to-date, locally modified, or have remote updates available.",
+          "requirements": [
+            "Read lock file and check each skill entry",
+            "Compute current local content hash and compare against lock file localContentHash",
+            "Report skills as: up-to-date, locally modified, missing from disk, or not in lock file",
+            "Optionally fetch remote commit SHA to detect available updates (with --check-remote flag)",
+            "Show summary counts (total, up-to-date, modified, updates available)"
+          ],
+          "dod": "'smart-skills status' reports lock file state including local modification detection.",
+          "verifications": [
+            "Unmodified skills show as up-to-date",
+            "Modified local files are detected and reported",
+            "Missing skill directories are reported",
+            "Remote update detection works when --check-remote is specified"
+          ],
+          "apiReferences": [
+            "SkillsLockFile",
+            "SkillContentHasher"
+          ]
+        },
+        {
+          "id": "S14-T07",
+          "title": "Integrate Lock File into Uninstall Command",
+          "completed": false,
+          "description": "Update the 'uninstall' command to remove the skill entry from the lock file in addition to deleting the skill directory from disk.",
+          "requirements": [
+            "Remove skill directory from disk",
+            "Remove skill entry from lock file",
+            "Write updated lock file (sorted, deterministic)",
+            "Handle gracefully: skill not in lock file, skill directory already missing"
+          ],
+          "dod": "'smart-skills uninstall' removes both the skill directory and the lock file entry.",
+          "verifications": [
+            "Skill entry is removed from lock file after uninstall",
+            "Skill directory is deleted from disk",
+            "Lock file is rewritten with sorted keys",
+            "Uninstalling a skill not in lock file does not error",
+            "Uninstalling a skill with missing directory still removes lock entry"
+          ],
+          "apiReferences": [
+            "ISkillInstaller",
+            "ISkillLockFileStore"
+          ]
+        },
+        {
+          "id": "S14-T08",
+          "title": "Migrate from .agents-skills-state.json",
+          "completed": false,
+          "description": "Remove the old LocalSkillStore/.agents-skills-state.json state file mechanism and replace all usages with the new lock file store. Add one-time migration logic to convert existing state files to lock file format.",
+          "requirements": [
+            "Detect existing .agents-skills-state.json on first run with new code",
+            "Convert InstalledSkill entries to SkillLockEntry format (map SourceUrl to remoteUrl, CommitSha to commitSha, etc.)",
+            "Compute localContentHash for each already-installed skill directory",
+            "Write smart-skills.lock.json with migrated entries",
+            "Delete .agents-skills-state.json after successful migration",
+            "Remove LocalSkillStore class and ISkillStore interface once migration is in place",
+            "Log migration activity for user awareness"
+          ],
+          "dod": "Old state file is automatically migrated to lock file format; LocalSkillStore/ISkillStore removed.",
+          "verifications": [
+            "Existing .agents-skills-state.json is detected and migrated",
+            "Migrated lock file contains equivalent entries with correct content hashes",
+            "Old state file is deleted after migration",
+            "Projects without old state file work normally (no migration needed)",
+            "ISkillStore references are replaced throughout codebase"
+          ],
+          "apiReferences": [
+            "ISkillLockFileStore",
+            "SkillsLockFile",
+            "LocalSkillStore"
+          ]
+        },
+        {
+          "id": "S14-T09",
+          "title": "Add Provider Support for Fetching at Specific Commit",
+          "completed": false,
+          "description": "Extend ISkillSourceProvider with the ability to fetch skill files at a specific git commit SHA (not just latest). Required by the 'restore' command to reproduce exact skill versions from the lock file.",
+          "requirements": [
+            "Add optional commitSha parameter to ListSkillFilesAsync and DownloadFileAsync",
+            "GitHubSkillSourceProvider: use Git Trees API with specific SHA ref instead of default branch",
+            "AdoSkillSourceProvider: use Items API with versionDescriptor for specific commit",
+            "Fall back to latest if commitSha is not provided (backward compatible)"
+          ],
+          "dod": "ISkillSourceProvider implementations can fetch files at a specific commit SHA.",
+          "verifications": [
+            "GitHub provider fetches files at a specific commit SHA",
+            "ADO provider fetches files at a specific commit SHA",
+            "Omitting commitSha fetches from default branch (backward compatible)",
+            "Invalid commit SHA produces clear error message"
+          ],
+          "apiReferences": [
+            "ISkillSourceProvider",
+            "GitHubSkillSourceProvider",
+            "AdoSkillSourceProvider"
           ]
         }
       ]
