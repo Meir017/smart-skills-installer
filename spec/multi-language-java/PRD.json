@@ -195,7 +195,7 @@
         {
           "id": "S04-T02",
           "title": "Unit Tests for GradlePackageResolver",
-          "completed": false,
+          "completed": true,
           "description": "Test GradlePackageResolver with sample Gradle build files.",
           "requirements": [
             "Test Groovy DSL (build.gradle) parsing",
