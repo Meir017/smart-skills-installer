@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using SmartSkills.Core.Providers.AzureDevOps;
 using SmartSkills.Core.Providers.GitHub;
@@ -11,7 +12,7 @@ namespace SmartSkills.Core.Providers;
 public sealed class SkillSourceProviderFactory : ISkillSourceProviderFactory
 {
     private readonly ILoggerFactory _loggerFactory;
-    private readonly Dictionary<string, ISkillSourceProvider> _cache = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<string, ISkillSourceProvider> _cache = new(StringComparer.OrdinalIgnoreCase);
 
     public SkillSourceProviderFactory(ILoggerFactory loggerFactory)
     {
@@ -20,11 +21,12 @@ public sealed class SkillSourceProviderFactory : ISkillSourceProviderFactory
 
     public ISkillSourceProvider CreateFromRepoUrl(string repoUrl)
     {
-        if (_cache.TryGetValue(repoUrl, out var cached))
-            return cached;
+        return _cache.GetOrAdd(repoUrl, CreateProvider);
+    }
 
+    private ISkillSourceProvider CreateProvider(string repoUrl)
+    {
         var uri = new Uri(repoUrl);
-        ISkillSourceProvider provider;
 
         if (uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase))
         {
@@ -33,7 +35,7 @@ public sealed class SkillSourceProviderFactory : ISkillSourceProviderFactory
             if (segments.Length < 2)
                 throw new ArgumentException($"Invalid GitHub URL: {repoUrl}. Expected format: https://github.com/owner/repo");
 
-            provider = new GitHubSkillSourceProvider(
+            return new GitHubSkillSourceProvider(
                 segments[0],
                 segments[1],
                 branch: "main",
@@ -58,7 +60,7 @@ public sealed class SkillSourceProviderFactory : ISkillSourceProviderFactory
                 throw new ArgumentException($"Invalid Azure DevOps URL: {repoUrl}. Expected format: https://dev.azure.com/org/project/_git/repo");
             }
 
-            provider = new AdoSkillSourceProvider(
+            return new AdoSkillSourceProvider(
                 org, project, repo,
                 branch: "main",
                 registryIndexPath: null,
@@ -69,8 +71,5 @@ public sealed class SkillSourceProviderFactory : ISkillSourceProviderFactory
         {
             throw new ArgumentException($"Unsupported repository host: {uri.Host}. Supported: github.com, dev.azure.com");
         }
-
-        _cache[repoUrl] = provider;
-        return provider;
     }
 }
