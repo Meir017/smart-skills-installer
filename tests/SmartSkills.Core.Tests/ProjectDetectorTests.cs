@@ -288,7 +288,7 @@ public class ProjectDetectorTests
 
             Assert.Equal(4, result.Count);
             Assert.Contains(result, r => r.Ecosystem == Ecosystems.Dotnet);
-            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Npm);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.JavaScript);
             Assert.Contains(result, r => r.Ecosystem == Ecosystems.Python);
             Assert.Contains(result, r => r.Ecosystem == Ecosystems.Java);
         }

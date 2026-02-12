@@ -57,7 +57,7 @@ public class RecursiveProjectDetectorTests : IDisposable
         var result = _detector.Detect(_root, new ProjectDetectionOptions { Recursive = true });
 
         Assert.Contains(result, r => r.Ecosystem == Ecosystems.Dotnet && r.ProjectFilePath.EndsWith(".sln", StringComparison.Ordinal));
-        Assert.Contains(result, r => r.Ecosystem == Ecosystems.Npm);
+        Assert.Contains(result, r => r.Ecosystem == Ecosystems.JavaScript);
         Assert.Contains(result, r => r.Ecosystem == Ecosystems.Dotnet && r.ProjectFilePath.EndsWith(".csproj", StringComparison.Ordinal));
         Assert.Contains(result, r => r.Ecosystem == Ecosystems.Python);
     }
@@ -74,7 +74,7 @@ public class RecursiveProjectDetectorTests : IDisposable
         var result = _detector.Detect(_root, new ProjectDetectionOptions { Recursive = true });
 
         // Only the root package.json should be found
-        var npmResults = result.Where(r => r.Ecosystem == Ecosystems.Npm).ToList();
+        var npmResults = result.Where(r => r.Ecosystem == Ecosystems.JavaScript).ToList();
         Assert.Single(npmResults);
         Assert.DoesNotContain(npmResults, r => r.ProjectFilePath.Contains("node_modules", StringComparison.Ordinal));
     }
@@ -136,7 +136,7 @@ public class RecursiveProjectDetectorTests : IDisposable
         var result = _detector.Detect(_root, new ProjectDetectionOptions { Recursive = true });
 
         Assert.Contains(result, r => r.Ecosystem == Ecosystems.Dotnet);
-        Assert.Contains(result, r => r.Ecosystem == Ecosystems.Npm);
+        Assert.Contains(result, r => r.Ecosystem == Ecosystems.JavaScript);
     }
 
     [Fact]
