@@ -40,7 +40,7 @@ public sealed class NpmPackageResolver(ILogger<NpmPackageResolver> logger) : IPa
                 Name = kvp.Key,
                 Version = kvp.Value,
                 IsTransitive = false,
-                Ecosystem = Ecosystems.Npm
+                Ecosystem = Ecosystems.JavaScript
             }).ToList();
         }
 
@@ -106,7 +106,7 @@ public sealed class NpmPackageResolver(ILogger<NpmPackageResolver> logger) : IPa
                     Name = name,
                     Version = version,
                     IsTransitive = !directDeps.ContainsKey(name),
-                    Ecosystem = Ecosystems.Npm
+                    Ecosystem = Ecosystems.JavaScript
                 });
             }
         }
@@ -136,7 +136,7 @@ public sealed class NpmPackageResolver(ILogger<NpmPackageResolver> logger) : IPa
                 Name = entry.Name,
                 Version = version,
                 IsTransitive = !directDeps.ContainsKey(entry.Name),
-                Ecosystem = Ecosystems.Npm
+                Ecosystem = Ecosystems.JavaScript
             });
 
             // Recurse into nested dependencies

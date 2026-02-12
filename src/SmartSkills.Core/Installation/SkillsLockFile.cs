@@ -28,7 +28,7 @@ public sealed class SkillLockEntry
     /// <summary>Relative path to the skill directory within the remote repository.</summary>
     public required string SkillPath { get; set; }
 
-    /// <summary>Ecosystem filter (e.g. "dotnet", "npm"). Null if not ecosystem-specific.</summary>
+    /// <summary>Ecosystem filter (e.g. "dotnet", "javascript"). Null if not ecosystem-specific.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Language { get; set; }
 

@@ -249,7 +249,7 @@ A skill registry is a JSON file that maps packages to skill locations:
     {
       "packagePatterns": ["@azure/cosmos"],
       "skillPath": "skills/azure-cosmos-ts",
-      "language": "npm"
+      "language": "javascript"
     },
     {
       "packagePatterns": ["SomePackage"],
@@ -263,7 +263,7 @@ A skill registry is a JSON file that maps packages to skill locations:
 | Field | Required | Description |
 |-------|----------|-------------|
 | `repoUrl` (top-level) | No | Default repository URL inherited by all skills in the file |
-| `language` (top-level) | No | Default ecosystem filter inherited by all skills (`"dotnet"`, `"npm"`, or omit for any) |
+| `language` (top-level) | No | Default ecosystem filter inherited by all skills (`"dotnet"`, `"javascript"`, or omit for any) |
 | `skills[].packagePatterns` | Yes | Array of package names or glob patterns to match |
 | `skills[].skillPath` | Yes | Path to the skill directory within the repository |
 | `skills[].repoUrl` | No | Per-skill repository URL override (takes precedence over the top-level value) |

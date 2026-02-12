@@ -12,7 +12,7 @@ public class LanguageAwareMatcherTests
     public void Match_NpmEntry_DoesNotMatchDotnetPackage()
     {
         var packages = new[] { new ResolvedPackage { Name = "express", Version = "4.18.0", IsTransitive = false, Ecosystem = Ecosystems.Dotnet } };
-        var entries = new[] { new RegistryEntry { PackagePatterns = ["express"], SkillPath = "skills/express", Language = "npm" } };
+        var entries = new[] { new RegistryEntry { PackagePatterns = ["express"], SkillPath = "skills/express", Language = "javascript" } };
 
         var result = _matcher.Match(packages, entries);
 
@@ -22,7 +22,7 @@ public class LanguageAwareMatcherTests
     [Fact]
     public void Match_DotnetEntry_DoesNotMatchNpmPackage()
     {
-        var packages = new[] { new ResolvedPackage { Name = "Azure.Identity", Version = "1.0.0", IsTransitive = false, Ecosystem = Ecosystems.Npm } };
+        var packages = new[] { new ResolvedPackage { Name = "Azure.Identity", Version = "1.0.0", IsTransitive = false, Ecosystem = Ecosystems.JavaScript } };
         var entries = new[] { new RegistryEntry { PackagePatterns = ["Azure.Identity"], SkillPath = "skills/azure-id", Language = "dotnet" } };
 
         var result = _matcher.Match(packages, entries);
@@ -33,8 +33,8 @@ public class LanguageAwareMatcherTests
     [Fact]
     public void Match_NpmEntry_MatchesNpmPackage()
     {
-        var packages = new[] { new ResolvedPackage { Name = "@azure/identity", Version = "3.4.0", IsTransitive = false, Ecosystem = Ecosystems.Npm } };
-        var entries = new[] { new RegistryEntry { PackagePatterns = ["@azure/identity"], SkillPath = "skills/azure-identity-ts", Language = "npm" } };
+        var packages = new[] { new ResolvedPackage { Name = "@azure/identity", Version = "3.4.0", IsTransitive = false, Ecosystem = Ecosystems.JavaScript } };
+        var entries = new[] { new RegistryEntry { PackagePatterns = ["@azure/identity"], SkillPath = "skills/azure-identity-ts", Language = "javascript" } };
 
         var result = _matcher.Match(packages, entries);
 
@@ -46,7 +46,7 @@ public class LanguageAwareMatcherTests
     {
         var packages = new[]
         {
-            new ResolvedPackage { Name = "redis", Version = "4.0.0", IsTransitive = false, Ecosystem = Ecosystems.Npm },
+            new ResolvedPackage { Name = "redis", Version = "4.0.0", IsTransitive = false, Ecosystem = Ecosystems.JavaScript },
             new ResolvedPackage { Name = "redis", Version = "2.0.0", IsTransitive = false, Ecosystem = Ecosystems.Dotnet }
         };
         var entries = new[] { new RegistryEntry { PackagePatterns = ["redis"], SkillPath = "skills/redis", Language = null } };
@@ -62,12 +62,12 @@ public class LanguageAwareMatcherTests
         var packages = new[]
         {
             new ResolvedPackage { Name = "Azure.Identity", Version = "1.0.0", IsTransitive = false, Ecosystem = Ecosystems.Dotnet },
-            new ResolvedPackage { Name = "@azure/identity", Version = "3.0.0", IsTransitive = false, Ecosystem = Ecosystems.Npm }
+            new ResolvedPackage { Name = "@azure/identity", Version = "3.0.0", IsTransitive = false, Ecosystem = Ecosystems.JavaScript }
         };
         var entries = new[]
         {
             new RegistryEntry { PackagePatterns = ["Azure.Identity"], SkillPath = "skills/azure-id-dotnet", Language = "dotnet" },
-            new RegistryEntry { PackagePatterns = ["@azure/identity"], SkillPath = "skills/azure-id-ts", Language = "npm" }
+            new RegistryEntry { PackagePatterns = ["@azure/identity"], SkillPath = "skills/azure-id-ts", Language = "javascript" }
         };
 
         var result = _matcher.Match(packages, entries);
@@ -80,8 +80,8 @@ public class LanguageAwareMatcherTests
     [Fact]
     public void Match_LanguageCaseInsensitive()
     {
-        var packages = new[] { new ResolvedPackage { Name = "express", Version = "4.0.0", IsTransitive = false, Ecosystem = "NPM" } };
-        var entries = new[] { new RegistryEntry { PackagePatterns = ["express"], SkillPath = "skills/express", Language = "npm" } };
+        var packages = new[] { new ResolvedPackage { Name = "express", Version = "4.0.0", IsTransitive = false, Ecosystem = "javascript" } };
+        var entries = new[] { new RegistryEntry { PackagePatterns = ["express"], SkillPath = "skills/express", Language = "javascript" } };
 
         var result = _matcher.Match(packages, entries);
 

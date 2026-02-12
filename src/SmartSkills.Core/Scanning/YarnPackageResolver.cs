@@ -40,7 +40,7 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
                 Name = kvp.Key,
                 Version = kvp.Value,
                 IsTransitive = false,
-                Ecosystem = Ecosystems.Npm
+                Ecosystem = Ecosystems.JavaScript
             }).ToList();
         }
 
@@ -100,7 +100,7 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
                         Name = currentName,
                         Version = version,
                         IsTransitive = !directDeps.ContainsKey(currentName),
-                        Ecosystem = Ecosystems.Npm
+                        Ecosystem = Ecosystems.JavaScript
                     });
                 }
                 currentName = null;
@@ -147,7 +147,7 @@ public sealed partial class YarnPackageResolver(ILogger<YarnPackageResolver> log
                         Name = currentName,
                         Version = version,
                         IsTransitive = !directDeps.ContainsKey(currentName),
-                        Ecosystem = Ecosystems.Npm
+                        Ecosystem = Ecosystems.JavaScript
                     });
                 }
                 currentName = null;

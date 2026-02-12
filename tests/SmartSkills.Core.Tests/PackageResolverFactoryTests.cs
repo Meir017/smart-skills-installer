@@ -15,6 +15,7 @@ public class PackageResolverFactoryTests
             new NpmPackageResolver(NullLogger<NpmPackageResolver>.Instance),
             new YarnPackageResolver(NullLogger<YarnPackageResolver>.Instance),
             new PnpmPackageResolver(NullLogger<PnpmPackageResolver>.Instance),
+            new BunPackageResolver(NullLogger<BunPackageResolver>.Instance),
             new UvLockPackageResolver(NullLogger<UvLockPackageResolver>.Instance),
             new PoetryLockPackageResolver(NullLogger<PoetryLockPackageResolver>.Instance),
             new PipfileLockPackageResolver(NullLogger<PipfileLockPackageResolver>.Instance),
@@ -37,7 +38,7 @@ public class PackageResolverFactoryTests
         try
         {
             File.WriteAllText(Path.Combine(dir, "package.json"), "{}");
-            var project = new DetectedProject(Ecosystems.Npm, Path.Combine(dir, "package.json"));
+            var project = new DetectedProject(Ecosystems.JavaScript, Path.Combine(dir, "package.json"));
             var resolver = _factory.GetResolver(project);
             Assert.IsType<NpmPackageResolver>(resolver);
         }
@@ -108,6 +109,36 @@ public class PackageResolverFactoryTests
     {
         var project = new DetectedProject("ruby", "Gemfile");
         Assert.Throws<NotSupportedException>(() => _factory.GetResolver(project));
+    }
+
+    [Fact]
+    public void GetResolver_BunLock_ReturnsBunResolver()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "package.json"), "{}");
+            File.WriteAllText(Path.Combine(dir, "bun.lock"), "{}");
+            var project = new DetectedProject(Ecosystems.JavaScript, Path.Combine(dir, "package.json"));
+            var resolver = _factory.GetResolver(project);
+            Assert.IsType<BunPackageResolver>(resolver);
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    [Fact]
+    public void GetResolver_BunLockb_ReturnsBunResolver()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "package.json"), "{}");
+            File.WriteAllText(Path.Combine(dir, "bun.lockb"), "binary");
+            var project = new DetectedProject(Ecosystems.JavaScript, Path.Combine(dir, "package.json"));
+            var resolver = _factory.GetResolver(project);
+            Assert.IsType<BunPackageResolver>(resolver);
+        }
+        finally { Directory.Delete(dir, true); }
     }
 
     private static string CreateTempDir()

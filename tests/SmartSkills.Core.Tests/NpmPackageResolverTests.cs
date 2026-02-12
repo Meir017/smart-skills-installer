@@ -29,7 +29,7 @@ public class NpmPackageResolverTests
         var packages = NpmPackageResolver.ParseLockFile(lockFile, directDeps);
 
         Assert.Equal(5, packages.Count);
-        Assert.All(packages, p => Assert.Equal(Ecosystems.Npm, p.Ecosystem));
+        Assert.All(packages, p => Assert.Equal(Ecosystems.JavaScript, p.Ecosystem));
     }
 
     [Fact]

@@ -46,7 +46,7 @@ public record RegistryEntry
     public ISkillSourceProvider? SourceProvider { get; init; }
 
     /// <summary>
-    /// Optional ecosystem filter (e.g. "dotnet", "npm"). When set, this entry only matches
+    /// Optional ecosystem filter (e.g. "dotnet", "javascript"). When set, this entry only matches
     /// packages from the specified ecosystem. When null, matches any ecosystem.
     /// </summary>
     public string? Language { get; init; }

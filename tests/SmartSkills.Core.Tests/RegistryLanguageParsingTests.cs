@@ -11,7 +11,7 @@ public class RegistryLanguageParsingTests
         var json = """
         {
           "skills": [
-            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "npm" }
+            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "javascript" }
           ]
         }
         """;
@@ -19,7 +19,7 @@ public class RegistryLanguageParsingTests
         var entries = RegistryIndexParser.Parse(json);
 
         Assert.Single(entries);
-        Assert.Equal("npm", entries[0].Language);
+        Assert.Equal("javascript", entries[0].Language);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class RegistryLanguageParsingTests
     {
         var json = """
         {
-          "language": "npm",
+          "language": "javascript",
           "skills": [
             { "packagePatterns": ["express"], "skillPath": "skills/express" },
             { "packagePatterns": ["react"], "skillPath": "skills/react" }
@@ -54,7 +54,7 @@ public class RegistryLanguageParsingTests
 
         var entries = RegistryIndexParser.Parse(json);
 
-        Assert.All(entries, e => Assert.Equal("npm", e.Language));
+        Assert.All(entries, e => Assert.Equal("javascript", e.Language));
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class RegistryLanguageParsingTests
           "language": "dotnet",
           "skills": [
             { "packagePatterns": ["SomePackage"], "skillPath": "skills/dotnet-skill" },
-            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "npm" }
+            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "javascript" }
           ]
         }
         """;
@@ -73,7 +73,7 @@ public class RegistryLanguageParsingTests
         var entries = RegistryIndexParser.Parse(json);
 
         Assert.Equal("dotnet", entries[0].Language);
-        Assert.Equal("npm", entries[1].Language);
+        Assert.Equal("javascript", entries[1].Language);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class RegistryLanguageParsingTests
     {
         var entries = RegistryIndexParser.LoadEmbedded();
 
-        Assert.Contains(entries, e => e.Language == "npm");
+        Assert.Contains(entries, e => e.Language == "javascript");
         Assert.Contains(entries, e => e.PackagePatterns.Contains("@azure/identity"));
     }
 

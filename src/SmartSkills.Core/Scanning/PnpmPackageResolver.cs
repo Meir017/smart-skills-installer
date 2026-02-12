@@ -40,7 +40,7 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
                 Name = kvp.Key,
                 Version = kvp.Value,
                 IsTransitive = false,
-                Ecosystem = Ecosystems.Npm
+                Ecosystem = Ecosystems.JavaScript
             }).ToList();
         }
 
@@ -95,7 +95,7 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
                     Name = name,
                     Version = version ?? "",
                     IsTransitive = !directDeps.ContainsKey(name),
-                    Ecosystem = Ecosystems.Npm
+                    Ecosystem = Ecosystems.JavaScript
                 });
             }
         }
@@ -120,7 +120,7 @@ public sealed class PnpmPackageResolver(ILogger<PnpmPackageResolver> logger) : I
                     Name = name,
                     Version = version ?? "",
                     IsTransitive = !directDeps.ContainsKey(name),
-                    Ecosystem = Ecosystems.Npm
+                    Ecosystem = Ecosystems.JavaScript
                 });
             }
         }

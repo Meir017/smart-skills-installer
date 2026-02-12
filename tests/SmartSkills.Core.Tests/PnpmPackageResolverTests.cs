@@ -17,7 +17,7 @@ public class PnpmPackageResolverTests
         var packages = PnpmPackageResolver.ParsePnpmLock(lockText, directDeps);
 
         Assert.NotEmpty(packages);
-        Assert.All(packages, p => Assert.Equal(Ecosystems.Npm, p.Ecosystem));
+        Assert.All(packages, p => Assert.Equal(Ecosystems.JavaScript, p.Ecosystem));
     }
 
     [Fact]

@@ -53,7 +53,7 @@ public class ProjectDetectorTests
             var result = _detector.Detect(dir);
 
             Assert.Single(result);
-            Assert.Equal(Ecosystems.Npm, result[0].Ecosystem);
+            Assert.Equal(Ecosystems.JavaScript, result[0].Ecosystem);
         }
         finally
         {
@@ -74,7 +74,7 @@ public class ProjectDetectorTests
 
             Assert.Equal(2, result.Count);
             Assert.Contains(result, r => r.Ecosystem == Ecosystems.Dotnet);
-            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Npm);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.JavaScript);
         }
         finally
         {
@@ -183,7 +183,7 @@ public class ProjectDetectorTests
 
             Assert.Equal(3, result.Count);
             Assert.Contains(result, r => r.Ecosystem == Ecosystems.Dotnet);
-            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Npm);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.JavaScript);
             Assert.Contains(result, r => r.Ecosystem == Ecosystems.Python);
         }
         finally

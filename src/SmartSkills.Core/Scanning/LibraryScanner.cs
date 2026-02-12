@@ -130,7 +130,7 @@ public sealed class LibraryScanner : ILibraryScanner
 
         if (filePath.EndsWith("package.json", StringComparison.OrdinalIgnoreCase))
         {
-            return new DetectedProject(Ecosystems.Npm, filePath);
+            return new DetectedProject(Ecosystems.JavaScript, filePath);
         }
 
         return null;
