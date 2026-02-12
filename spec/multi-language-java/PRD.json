@@ -19,21 +19,29 @@
         {
           "id": "S01-T01",
           "title": "Add Java Ecosystem Constant",
-          "completed": false,
+          "completed": true,
           "description": "Add 'public const string Java = \"java\";' to the Ecosystems class in Scanning/Models.cs.",
-          "apiReferences": ["Ecosystems"],
+          "apiReferences": [
+            "Ecosystems"
+          ],
           "requirements": [
             "Add Java = \"java\" constant to Ecosystems class"
           ],
           "dod": "Constant exists, dotnet build succeeds.",
-          "verifications": ["dotnet build passes"]
+          "verifications": [
+            "dotnet build passes"
+          ]
         },
         {
           "id": "S01-T02",
           "title": "Extend ProjectDetector for Java",
           "completed": false,
           "description": "Add Java project detection to the existing ProjectDetector.Detect method. Detect pom.xml for Maven projects and build.gradle or build.gradle.kts for Gradle projects.",
-          "apiReferences": ["IProjectDetector", "ProjectDetector", "Ecosystems"],
+          "apiReferences": [
+            "IProjectDetector",
+            "ProjectDetector",
+            "Ecosystems"
+          ],
           "requirements": [
             "Detect pom.xml as Maven project marker",
             "Detect build.gradle or build.gradle.kts as Gradle project marker",
@@ -61,7 +69,11 @@
           "title": "Implement MavenPomPackageResolver",
           "completed": false,
           "description": "Implement IPackageResolver that resolves Maven packages by parsing pom.xml. Extracts groupId:artifactId as the package name and version from <dependency> elements.",
-          "apiReferences": ["IPackageResolver", "MavenPomPackageResolver", "ResolvedPackage"],
+          "apiReferences": [
+            "IPackageResolver",
+            "MavenPomPackageResolver",
+            "ResolvedPackage"
+          ],
           "requirements": [
             "Parse pom.xml XML: extract <dependency> elements from <dependencies> section",
             "Package name format: groupId:artifactId (e.g. com.azure:azure-cosmos)",
@@ -85,7 +97,11 @@
           "title": "Implement GradlePackageResolver",
           "completed": false,
           "description": "Implement IPackageResolver that resolves Gradle packages by parsing build.gradle or build.gradle.kts files. Extracts dependency declarations from the dependencies block.",
-          "apiReferences": ["IPackageResolver", "GradlePackageResolver", "ResolvedPackage"],
+          "apiReferences": [
+            "IPackageResolver",
+            "GradlePackageResolver",
+            "ResolvedPackage"
+          ],
           "requirements": [
             "Parse Groovy DSL (build.gradle): match patterns like implementation 'group:artifact:version'",
             "Parse Kotlin DSL (build.gradle.kts): match patterns like implementation(\"group:artifact:version\")",
@@ -108,7 +124,10 @@
           "title": "Extend PackageResolverFactory for Java",
           "completed": false,
           "description": "Add Java ecosystem routing to the existing PackageResolverFactory.",
-          "apiReferences": ["IPackageResolverFactory", "PackageResolverFactory"],
+          "apiReferences": [
+            "IPackageResolverFactory",
+            "PackageResolverFactory"
+          ],
           "requirements": [
             "For Ecosystem == java: route by project file (pom.xml -> MavenPomPackageResolver, build.gradle/build.gradle.kts -> GradlePackageResolver)",
             "Register both Java resolvers as singletons in DI"
@@ -132,7 +151,10 @@
           "title": "Add Java Skill Entries to Embedded Registry",
           "completed": false,
           "description": "Add entries for the Java skills available in microsoft/skills. Map Maven coordinates (com.azure:artifactId) to skill paths.",
-          "apiReferences": ["RegistryIndexParser", "RegistryEntry"],
+          "apiReferences": [
+            "RegistryIndexParser",
+            "RegistryEntry"
+          ],
           "requirements": [
             "Map Maven package coordinates to skill paths for all Java skills in microsoft/skills",
             "Each entry must include language: java",
@@ -166,7 +188,9 @@
             "Place sample files in tests/SmartSkills.Core.Tests/TestData/Java/"
           ],
           "dod": "MavenPomPackageResolver has tests with real sample pom.xml files.",
-          "verifications": ["dotnet test --filter FullyQualifiedName~MavenPom passes"]
+          "verifications": [
+            "dotnet test --filter FullyQualifiedName~MavenPom passes"
+          ]
         },
         {
           "id": "S04-T02",
@@ -181,7 +205,9 @@
             "Place sample files in tests/SmartSkills.Core.Tests/TestData/Java/"
           ],
           "dod": "GradlePackageResolver has tests with real sample build files.",
-          "verifications": ["dotnet test --filter FullyQualifiedName~Gradle passes"]
+          "verifications": [
+            "dotnet test --filter FullyQualifiedName~Gradle passes"
+          ]
         },
         {
           "id": "S04-T03",
@@ -196,7 +222,9 @@
             "Test: polyglot dir returns four results"
           ],
           "dod": "Detection tests cover all Java project markers.",
-          "verifications": ["dotnet test --filter FullyQualifiedName~ProjectDetector passes"]
+          "verifications": [
+            "dotnet test --filter FullyQualifiedName~ProjectDetector passes"
+          ]
         },
         {
           "id": "S04-T04",
@@ -209,7 +237,9 @@
             "Test: java project with build.gradle.kts routes to GradlePackageResolver"
           ],
           "dod": "Factory tests cover Java routing.",
-          "verifications": ["dotnet test --filter FullyQualifiedName~ResolverFactory passes"]
+          "verifications": [
+            "dotnet test --filter FullyQualifiedName~ResolverFactory passes"
+          ]
         }
       ]
     }
