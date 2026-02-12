@@ -67,7 +67,7 @@ dotnet run --project src/SmartSkills.Cli  # run the CLI tool
 dotnet pack                            # create NuGet packages
 ```
 
-## .NET CLI Usage for LLM Agents
+## .NET CLI Usage
 
 Starting in .NET 9, the `dotnet` CLI uses **Terminal Logger** by default for interactive sessions. Terminal Logger uses ANSI/VT100 control codes to produce animated, live-updating console output with progress bars, duration timers, and color coding. This output is **not LLM-friendly** — it generates excessive noise, partial overwrites, and control characters that are difficult to parse.
 
