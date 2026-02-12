@@ -177,7 +177,7 @@
         {
           "id": "S04-T01",
           "title": "Unit Tests for MavenPomPackageResolver",
-          "completed": false,
+          "completed": true,
           "description": "Test MavenPomPackageResolver with sample pom.xml files in TestData/Java/.",
           "requirements": [
             "Test with sample pom.xml with standard dependencies",
