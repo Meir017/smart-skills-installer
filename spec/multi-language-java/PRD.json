@@ -122,7 +122,7 @@
         {
           "id": "S02-T03",
           "title": "Extend PackageResolverFactory for Java",
-          "completed": false,
+          "completed": true,
           "description": "Add Java ecosystem routing to the existing PackageResolverFactory.",
           "apiReferences": [
             "IPackageResolverFactory",
