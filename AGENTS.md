@@ -67,6 +67,34 @@ dotnet run --project src/SmartSkills.Cli  # run the CLI tool
 dotnet pack                            # create NuGet packages
 ```
 
+## .NET CLI Usage
+
+Starting in .NET 9, the `dotnet` CLI uses **Terminal Logger** by default for interactive sessions. Terminal Logger uses ANSI/VT100 control codes to produce animated, live-updating console output with progress bars, duration timers, and color coding. This output is **not LLM-friendly** — it generates excessive noise, partial overwrites, and control characters that are difficult to parse.
+
+**Always disable Terminal Logger** when running `dotnet` commands by appending `--tl:off`:
+
+```shell
+dotnet build --tl:off
+dotnet test --tl:off
+dotnet pack --tl:off
+dotnet restore --tl:off
+```
+
+Alternatively, set the environment variable once per session to disable it for all commands:
+
+```shell
+$env:MSBUILDTERMINALLOGGER = "off"
+```
+
+### Additional flags for cleaner output
+
+| Flag | Purpose |
+|------|---------|
+| `--nologo` | Suppress the MSBuild/SDK banner |
+| `-v q` / `-v quiet` | Minimal output — only errors and warnings |
+| `-v m` / `-v minimal` | Slightly more detail than quiet |
+| `--no-restore` | Skip restore when you've already restored — faster builds |
+
 ## Solution Structure Conventions
 
 ```
