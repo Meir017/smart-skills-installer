@@ -68,7 +68,9 @@ rootCommand.Subcommands.Add(scanCommand);
 // install command
 var installCommand = new Command("install", "Install skills based on detected packages")
 {
-    projectOption
+    projectOption,
+    recursiveOption,
+    depthOption
 };
 
 rootCommand.Subcommands.Add(installCommand);
@@ -79,6 +81,8 @@ installCommand.SetAction(async (parseResult, cancellationToken) =>
     string? projectPath = parseResult.GetValue(projectOption);
     bool dryRun = parseResult.GetValue(dryRunOption);
     string? baseDir = parseResult.GetValue(baseDirOption);
+    bool recursive = parseResult.GetValue(recursiveOption);
+    int depth = parseResult.GetValue(depthOption);
 
     using var host = CreateHost(verbose, baseDir);
     var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
@@ -88,7 +92,8 @@ installCommand.SetAction(async (parseResult, cancellationToken) =>
     var result = await installer.InstallAsync(new SmartSkills.Core.Installation.InstallOptions
     {
         ProjectPath = projectPath,
-        DryRun = dryRun
+        DryRun = dryRun,
+        DetectionOptions = new ProjectDetectionOptions { Recursive = recursive, MaxDepth = depth }
     }, cancellationToken);
     if (result.Installed.Count > 0)
     {

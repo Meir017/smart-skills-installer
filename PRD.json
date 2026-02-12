@@ -162,7 +162,7 @@
         {
           "id": "S03-T02",
           "title": "Add --recursive Option to install Command",
-          "completed": false,
+          "completed": true,
           "description": "Add the same --recursive and --depth flags to the install command. Aggregate packages from all discovered projects before matching against the registry.",
           "requirements": [
             "Add --recursive and --depth options (same as scan)",
