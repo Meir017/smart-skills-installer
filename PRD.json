@@ -143,7 +143,7 @@
         {
           "id": "S03-T01",
           "title": "Add --recursive Option to scan Command",
-          "completed": false,
+          "completed": true,
           "description": "Add --recursive (-r) boolean flag and --depth integer option to the scan CLI command. Pass as ProjectDetectionOptions to ScanDirectoryAsync.",
           "requirements": [
             "Add Option<bool>(\"--recursive\") with alias -r, default false",

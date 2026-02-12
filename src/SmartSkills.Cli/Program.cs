@@ -44,10 +44,23 @@ var jsonOption = new Option<bool>("--json")
     Description = "Output results in JSON format"
 };
 
+var recursiveOption = new Option<bool>("--recursive", "-r")
+{
+    Description = "Recursively scan subdirectories for projects"
+};
+
+var depthOption = new Option<int>("--depth")
+{
+    Description = "Maximum directory depth for recursive scanning (default: 5)",
+    DefaultValueFactory = _ => 5
+};
+
 var scanCommand = new Command("scan", "Scan a project or solution for installed packages")
 {
     projectOption,
-    jsonOption
+    jsonOption,
+    recursiveOption,
+    depthOption
 };
 
 rootCommand.Subcommands.Add(scanCommand);
@@ -182,6 +195,10 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
     string? projectPath = parseResult.GetValue(projectOption);
     bool jsonOutput = parseResult.GetValue(jsonOption);
     string? baseDir = parseResult.GetValue(baseDirOption);
+    bool recursive = parseResult.GetValue(recursiveOption);
+    int depth = parseResult.GetValue(depthOption);
+
+    var detectionOptions = new ProjectDetectionOptions { Recursive = recursive, MaxDepth = depth };
 
     using var host = CreateHost(verbose, baseDir);
     var scanner = host.Services.GetRequiredService<ILibraryScanner>();
@@ -196,7 +213,7 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
 
         if (Directory.Exists(projectPath))
         {
-            results = await scanner.ScanDirectoryAsync(projectPath, cancellationToken);
+            results = await scanner.ScanDirectoryAsync(projectPath, detectionOptions, cancellationToken);
         }
         else if (projectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) ||
                  projectPath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase))
@@ -213,7 +230,7 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
     {
         var dir = Directory.GetCurrentDirectory();
         logger.LogInformation("Scanning directory: {Path}", dir);
-        results = await scanner.ScanDirectoryAsync(dir, cancellationToken);
+        results = await scanner.ScanDirectoryAsync(dir, detectionOptions, cancellationToken);
     }
 
     if (jsonOutput)
