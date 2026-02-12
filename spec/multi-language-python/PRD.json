@@ -78,7 +78,7 @@
         {
           "id": "S02-T02",
           "title": "Implement Direct Dependency Extraction from pyproject.toml",
-          "completed": false,
+          "completed": true,
           "description": "Parse pyproject.toml to identify direct dependencies for transitive classification in lock file resolvers.",
           "apiReferences": ["PyprojectParser"],
           "requirements": [
