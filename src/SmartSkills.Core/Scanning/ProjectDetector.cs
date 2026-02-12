@@ -58,21 +58,19 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
         if (!File.Exists(packageJson))
             return;
 
-        // Ensure this is not a package.json inside node_modules
+        // Ensure this is not a package.json inside an excluded Node.js directory
         var dirName = Path.GetFileName(directoryPath);
-        if (string.Equals(dirName, "node_modules", StringComparison.OrdinalIgnoreCase))
+        if (ExcludedDirectories.NodeJs.Contains(dirName))
             return;
 
         results.Add(new DetectedProject(Ecosystems.Npm, packageJson));
         logger.LogDebug("Detected Node.js project: {Path}", packageJson);
     }
 
-    private static readonly string[] PythonExcludedDirs = ["venv", ".venv", "__pycache__", ".tox"];
-
     private void DetectPython(string directoryPath, List<DetectedProject> results)
     {
         var dirName = Path.GetFileName(directoryPath);
-        if (PythonExcludedDirs.Any(d => string.Equals(dirName, d, StringComparison.OrdinalIgnoreCase)))
+        if (ExcludedDirectories.Python.Contains(dirName))
             return;
 
         // Prefer pyproject.toml, then setup.py, then requirements.txt

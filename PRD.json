@@ -19,7 +19,7 @@
         {
           "id": "S01-T01",
           "title": "Define ProjectDetectionOptions Record",
-          "completed": false,
+          "completed": true,
           "description": "Create a configuration record that controls recursive scanning behavior with Recursive (bool, default false) and MaxDepth (int, default 5) properties.",
           "apiReferences": [
             "ProjectDetectionOptions"
@@ -84,7 +84,7 @@
         {
           "id": "S01-T04",
           "title": "Consolidate Exclusion List",
-          "completed": false,
+          "completed": true,
           "description": "Extract the exclusion list into a shared ExcludedDirectories static class with categorized sets (Universal, DotNet, NodeJs, Python, Java, BuildOutput) and a combined All set.",
           "apiReferences": [
             "ExcludedDirectories"
