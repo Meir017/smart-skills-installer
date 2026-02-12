@@ -201,7 +201,7 @@
         {
           "id": "S04-T02",
           "title": "Unit Tests for Recursive ProjectDetector",
-          "completed": false,
+          "completed": true,
           "description": "Test recursive traversal with various directory layouts using temp directories in test setup.",
           "requirements": [
             "Test: flat layout (single project at root) with Recursive = true",
