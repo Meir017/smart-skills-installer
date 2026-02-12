@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 using SmartSkills.Core;
 using SmartSkills.Core.Scanning;
 
+// Shared JSON serializer options for consistent formatting
+var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+
 var verboseOption = new Option<bool>("--verbose", "-v")
 {
     Description = "Enable detailed logging output",
@@ -180,7 +183,7 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
                 p.Ecosystem
             })
         });
-        Console.WriteLine(JsonSerializer.Serialize(output, new JsonSerializerOptions { WriteIndented = true }));
+        Console.WriteLine(JsonSerializer.Serialize(output, jsonOptions));
     }
     else
     {
@@ -222,7 +225,7 @@ listCommand.SetAction(async (parseResult, cancellationToken) =>
 
     if (jsonOutput)
     {
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(skills, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(skills, jsonOptions));
     }
     else if (skills.Count == 0)
     {

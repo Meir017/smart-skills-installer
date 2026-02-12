@@ -8,8 +8,10 @@ namespace SmartSkills.Core.Scanning;
 /// </summary>
 public sealed class NpmPackageResolver(ILogger<NpmPackageResolver> logger) : IPackageResolver
 {
-    public Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
+    public async Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(projectPath);
+
         var packageJsonPath = projectPath.EndsWith("package.json", StringComparison.OrdinalIgnoreCase)
             ? projectPath
             : Path.Combine(projectPath, "package.json");
@@ -18,7 +20,7 @@ public sealed class NpmPackageResolver(ILogger<NpmPackageResolver> logger) : IPa
             throw new FileNotFoundException($"package.json not found: {packageJsonPath}");
 
         var projectDir = Path.GetDirectoryName(packageJsonPath)!;
-        var packageJsonText = File.ReadAllText(packageJsonPath);
+        var packageJsonText = await File.ReadAllTextAsync(packageJsonPath, cancellationToken).ConfigureAwait(false);
         var directDeps = ParseDirectDependencies(packageJsonText);
 
         var lockFilePath = Path.Combine(projectDir, "package-lock.json");
@@ -27,7 +29,7 @@ public sealed class NpmPackageResolver(ILogger<NpmPackageResolver> logger) : IPa
         if (File.Exists(lockFilePath))
         {
             logger.LogDebug("Parsing package-lock.json at {Path}", lockFilePath);
-            var lockFileText = File.ReadAllText(lockFilePath);
+            var lockFileText = await File.ReadAllTextAsync(lockFilePath, cancellationToken).ConfigureAwait(false);
             packages = ParseLockFile(lockFileText, directDeps);
         }
         else
@@ -43,7 +45,7 @@ public sealed class NpmPackageResolver(ILogger<NpmPackageResolver> logger) : IPa
         }
 
         logger.LogInformation("Resolved {Count} npm packages from {Path}", packages.Count, packageJsonPath);
-        return Task.FromResult(new ProjectPackages(packageJsonPath, packages));
+        return new ProjectPackages(packageJsonPath, packages);
     }
 
     /// <summary>

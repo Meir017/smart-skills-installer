@@ -41,7 +41,9 @@ public sealed class AdoHttpClient : IDisposable
             new AuthenticationHeaderValue("Bearer", _cachedToken.Value.Token);
     }
 
+#pragma warning disable CA1054 // URI parameters should not be strings
     public async Task<JsonDocument> GetJsonAsync(string url, CancellationToken cancellationToken = default)
+#pragma warning restore CA1054 // URI parameters should not be strings
     {
         await EnsureAuthenticatedAsync(cancellationToken);
         _logger.LogDebug("GET {Url}", url);
@@ -54,7 +56,9 @@ public sealed class AdoHttpClient : IDisposable
         }, cancellationToken);
     }
 
+#pragma warning disable CA1054 // URI parameters should not be strings
     public async Task<Stream> GetStreamAsync(string url, CancellationToken cancellationToken = default)
+#pragma warning restore CA1054 // URI parameters should not be strings
     {
         await EnsureAuthenticatedAsync(cancellationToken);
         _logger.LogDebug("GET (stream) {Url}", url);
@@ -66,7 +70,9 @@ public sealed class AdoHttpClient : IDisposable
         }, cancellationToken);
     }
 
+#pragma warning disable CA1054 // URI parameters should not be strings
     public async Task<string> GetStringAsync(string url, CancellationToken cancellationToken = default)
+#pragma warning restore CA1054 // URI parameters should not be strings
     {
         await EnsureAuthenticatedAsync(cancellationToken);
         _logger.LogDebug("GET (string) {Url}", url);

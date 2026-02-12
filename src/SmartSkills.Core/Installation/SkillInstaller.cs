@@ -39,6 +39,8 @@ public sealed class SkillInstaller : ISkillInstaller
 
     public async Task<InstallResult> InstallAsync(InstallOptions options, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(options);
+
         var projectPath = options.ProjectPath ?? Directory.GetCurrentDirectory();
         _logger.LogInformation("Starting skill installation for {Path}", projectPath);
 
@@ -161,7 +163,9 @@ public sealed class SkillInstaller : ISkillInstaller
 
                 _logger.LogInformation("Installed skill: {Skill}", skill.Name);
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 _logger.LogError(ex, "Failed to install skill: {Skill}", match.RegistryEntry.SkillPath);
                 failed.Add(new SkillInstallFailure(match.RegistryEntry.SkillPath, ex.Message));

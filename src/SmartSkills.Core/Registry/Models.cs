@@ -38,7 +38,9 @@ public record RegistryEntry
     public required string SkillPath { get; init; }
 
     /// <summary>URL of the repository that hosts this skill.</summary>
+#pragma warning disable CA1056 // URI properties should not be strings
     public string? RepoUrl { get; init; }
+#pragma warning restore CA1056 // URI properties should not be strings
 
     /// <summary>The source provider that can fetch this skill. Null for entries that need a default provider.</summary>
     public ISkillSourceProvider? SourceProvider { get; init; }

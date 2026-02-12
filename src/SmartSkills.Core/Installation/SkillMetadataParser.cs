@@ -22,6 +22,8 @@ public sealed partial class SkillMetadataParser : ISkillMetadataParser
 
     public SkillMetadata? Parse(string skillMdContent, out IReadOnlyList<string> validationErrors)
     {
+        ArgumentNullException.ThrowIfNull(skillMdContent);
+
         var errors = new List<string>();
         validationErrors = errors;
 
@@ -37,7 +39,9 @@ public sealed partial class SkillMetadataParser : ISkillMetadataParser
         {
             dto = YamlDeserializer.Deserialize<FrontmatterDto>(frontmatter) ?? new();
         }
+#pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
         {
             errors.Add($"Failed to parse YAML: {ex.Message}");
             return null;
@@ -72,7 +76,7 @@ public sealed partial class SkillMetadataParser : ISkillMetadataParser
 
     private static string? ExtractFrontmatter(string content)
     {
-        if (!content.StartsWith("---"))
+        if (!content.StartsWith("---", StringComparison.Ordinal))
             return null;
 
         var end = content.IndexOf("---", 3, StringComparison.Ordinal);

@@ -14,6 +14,8 @@ public sealed class PackageResolverFactory(
 {
     public IPackageResolver GetResolver(DetectedProject project)
     {
+        ArgumentNullException.ThrowIfNull(project);
+
         if (string.Equals(project.Ecosystem, Ecosystems.Dotnet, StringComparison.OrdinalIgnoreCase))
         {
             logger.LogDebug("Using DotnetCliPackageResolver for {Path}", project.ProjectFilePath);
