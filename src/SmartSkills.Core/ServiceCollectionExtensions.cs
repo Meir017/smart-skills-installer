@@ -28,6 +28,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<PoetryLockPackageResolver>();
         services.AddSingleton<PipfileLockPackageResolver>();
         services.AddSingleton<RequirementsTxtPackageResolver>();
+        services.AddSingleton<MavenPomPackageResolver>();
+        services.AddSingleton<GradlePackageResolver>();
         services.AddSingleton<IPackageResolverFactory, PackageResolverFactory>();
         services.AddSingleton<ILibraryScanner, LibraryScanner>();
         services.AddSingleton<IProjectDetector, ProjectDetector>();

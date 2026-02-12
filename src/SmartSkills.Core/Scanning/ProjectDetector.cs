@@ -106,6 +106,7 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
         DetectDotnet(directoryPath, results);
         DetectNodeJs(directoryPath, results);
         DetectPython(directoryPath, results);
+        DetectJava(directoryPath, results);
 
         logger.LogDebug("Detected {Count} project(s) in {Directory}", results.Count, directoryPath);
     }
@@ -180,6 +181,34 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
         {
             results.Add(new DetectedProject(Ecosystems.Python, requirementsTxt));
             logger.LogDebug("Detected Python project: {Path}", requirementsTxt);
+            return;
+        }
+    }
+
+    private void DetectJava(string directoryPath, List<DetectedProject> results)
+    {
+        // Prefer pom.xml (Maven) over build.gradle/build.gradle.kts (Gradle)
+        var pomXml = Path.Combine(directoryPath, "pom.xml");
+        if (File.Exists(pomXml))
+        {
+            results.Add(new DetectedProject(Ecosystems.Java, pomXml));
+            logger.LogDebug("Detected Java Maven project: {Path}", pomXml);
+            return;
+        }
+
+        var buildGradleKts = Path.Combine(directoryPath, "build.gradle.kts");
+        if (File.Exists(buildGradleKts))
+        {
+            results.Add(new DetectedProject(Ecosystems.Java, buildGradleKts));
+            logger.LogDebug("Detected Java Gradle project: {Path}", buildGradleKts);
+            return;
+        }
+
+        var buildGradle = Path.Combine(directoryPath, "build.gradle");
+        if (File.Exists(buildGradle))
+        {
+            results.Add(new DetectedProject(Ecosystems.Java, buildGradle));
+            logger.LogDebug("Detected Java Gradle project: {Path}", buildGradle);
             return;
         }
     }
