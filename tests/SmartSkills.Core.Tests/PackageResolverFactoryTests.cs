@@ -106,6 +106,30 @@ public class PackageResolverFactoryTests
     }
 
     [Fact]
+    public void GetResolver_JavaPomXml_ReturnsMavenResolver()
+    {
+        var project = new DetectedProject(Ecosystems.Java, "pom.xml");
+        var resolver = _factory.GetResolver(project);
+        Assert.IsType<MavenPomPackageResolver>(resolver);
+    }
+
+    [Fact]
+    public void GetResolver_JavaBuildGradle_ReturnsGradleResolver()
+    {
+        var project = new DetectedProject(Ecosystems.Java, "build.gradle");
+        var resolver = _factory.GetResolver(project);
+        Assert.IsType<GradlePackageResolver>(resolver);
+    }
+
+    [Fact]
+    public void GetResolver_JavaBuildGradleKts_ReturnsGradleResolver()
+    {
+        var project = new DetectedProject(Ecosystems.Java, "build.gradle.kts");
+        var resolver = _factory.GetResolver(project);
+        Assert.IsType<GradlePackageResolver>(resolver);
+    }
+
+    [Fact]
     public void GetResolver_UnsupportedEcosystem_Throws()
     {
         var project = new DetectedProject("ruby", "Gemfile");
