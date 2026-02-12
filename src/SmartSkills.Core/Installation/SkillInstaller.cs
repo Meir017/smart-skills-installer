@@ -202,10 +202,21 @@ public sealed class SkillInstaller : ISkillInstaller
         };
     }
 
-    public async Task UninstallAsync(string skillName, CancellationToken cancellationToken = default)
+    public async Task UninstallAsync(string skillName, string projectPath, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Uninstalling skill: {SkillName}", skillName);
+
+        // Remove from legacy store
         await _store.RemoveAsync(skillName, cancellationToken);
+
+        // Remove from lock file
+        var baseDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
+        var lockFile = await _lockFileStore.LoadAsync(baseDir, cancellationToken);
+        if (lockFile.Skills.Remove(skillName))
+        {
+            await _lockFileStore.SaveAsync(baseDir, lockFile, cancellationToken);
+            _logger.LogInformation("Removed {SkillName} from lock file", skillName);
+        }
     }
 
     public async Task<RestoreResult> RestoreAsync(string projectPath, CancellationToken cancellationToken = default)

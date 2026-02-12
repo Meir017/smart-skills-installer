@@ -1143,7 +1143,7 @@
         {
           "id": "S14-T06",
           "title": "Integrate Lock File into Status Command",
-          "completed": false,
+          "completed": true,
           "description": "Update the 'status' CLI command to report lock file state: which skills are up-to-date, locally modified, or have remote updates available.",
           "requirements": [
             "Read lock file and check each skill entry",
@@ -1167,7 +1167,7 @@
         {
           "id": "S14-T07",
           "title": "Integrate Lock File into Uninstall Command",
-          "completed": false,
+          "completed": true,
           "description": "Update the 'uninstall' command to remove the skill entry from the lock file in addition to deleting the skill directory from disk.",
           "requirements": [
             "Remove skill directory from disk",
