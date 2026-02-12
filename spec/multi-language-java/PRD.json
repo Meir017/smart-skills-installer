@@ -67,7 +67,7 @@
         {
           "id": "S02-T01",
           "title": "Implement MavenPomPackageResolver",
-          "completed": false,
+          "completed": true,
           "description": "Implement IPackageResolver that resolves Maven packages by parsing pom.xml. Extracts groupId:artifactId as the package name and version from <dependency> elements.",
           "apiReferences": [
             "IPackageResolver",
