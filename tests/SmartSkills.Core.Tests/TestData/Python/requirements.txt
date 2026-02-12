@@ -1,0 +1,7 @@
+azure-identity==1.16.0
+fastapi>=0.100.0
+pydantic[email]>=2.0
+# This is a comment
+
+-r dev-requirements.txt
+--index-url https://pypi.org/simple

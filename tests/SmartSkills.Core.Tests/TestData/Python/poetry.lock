@@ -1,0 +1,22 @@
+[[package]]
+name = "azure-identity"
+version = "1.16.0"
+description = "Microsoft Azure Identity Library for Python"
+
+[[package]]
+name = "fastapi"
+version = "0.115.0"
+description = "FastAPI framework"
+
+[[package]]
+name = "starlette"
+version = "0.38.0"
+description = "ASGI framework"
+
+[[package]]
+name = "msal"
+version = "1.28.0"
+description = "Microsoft Authentication Library"
+
+[metadata]
+python-versions = ">=3.9"

@@ -1,0 +1,21 @@
+version = 1
+
+[[package]]
+name = "azure-identity"
+version = "1.16.0"
+
+[[package]]
+name = "fastapi"
+version = "0.115.0"
+
+[[package]]
+name = "pydantic"
+version = "2.9.0"
+
+[[package]]
+name = "starlette"
+version = "0.38.0"
+
+[[package]]
+name = "msal"
+version = "1.28.0"

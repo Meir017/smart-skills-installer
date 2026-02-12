@@ -1,0 +1,15 @@
+{
+  "_meta": {
+    "hash": { "sha256": "abc123" },
+    "pipfile-spec": 6,
+    "requires": { "python_version": "3.12" }
+  },
+  "default": {
+    "azure-identity": { "version": "==1.16.0" },
+    "fastapi": { "version": "==0.115.0" },
+    "msal": { "version": "==1.28.0" }
+  },
+  "develop": {
+    "pytest": { "version": "==8.0.0" }
+  }
+}
