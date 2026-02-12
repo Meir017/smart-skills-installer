@@ -1029,7 +1029,7 @@
         {
           "id": "S14-T02",
           "title": "Implement Cross-Platform Content Hashing",
-          "completed": false,
+          "completed": true,
           "description": "Implement the SkillContentHasher that computes a deterministic SHA256 content hash over a skill directory. The hash must be identical on Windows, macOS, and Linux. Algorithm: enumerate files recursively (excluding hidden), normalize paths to forward-slash NFC form, sort ordinally, hash each file's raw bytes, concatenate '<path>\\n<hash>\\n', then SHA256 the result.",
           "requirements": [
             "Enumerate all files recursively, excluding hidden files/directories (starting with '.')",
