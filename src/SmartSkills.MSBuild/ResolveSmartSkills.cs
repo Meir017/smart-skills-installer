@@ -31,11 +31,11 @@ public class ResolveSmartSkills : Microsoft.Build.Utilities.Task
             ResolvedSkills = [];
             return true;
         }
-#pragma warning disable CA1031 // Do not catch general exception types
+#pragma warning disable CA1031 // MSBuild tasks intentionally catch all exceptions to avoid breaking builds
         catch (Exception ex)
-#pragma warning restore CA1031 // Do not catch general exception types
+#pragma warning restore CA1031
         {
-            Log.LogWarning("SmartSkills: Skill resolution failed: {0}", ex.Message);
+            Log.LogWarningFromException(ex, showStackTrace: true);
             ResolvedSkills = [];
             return true; // Don't fail the build
         }
