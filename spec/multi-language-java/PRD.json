@@ -212,7 +212,7 @@
         {
           "id": "S04-T03",
           "title": "Unit Tests for Java Project Detection",
-          "completed": false,
+          "completed": true,
           "description": "Extend ProjectDetectorTests for Java scenarios.",
           "requirements": [
             "Test: pom.xml only -> Java detected",
