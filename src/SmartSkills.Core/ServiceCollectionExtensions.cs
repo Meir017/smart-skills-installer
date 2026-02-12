@@ -44,6 +44,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISkillSourceProviderFactory, SkillSourceProviderFactory>();
 
         // Installation
+        services.AddSingleton<ISkillLockFileStore, SkillLockFileStore>();
         services.AddSingleton<ISkillInstaller, SkillInstaller>();
         services.AddSingleton<ISkillStore>(sp =>
             new LocalSkillStore(

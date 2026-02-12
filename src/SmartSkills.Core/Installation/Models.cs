@@ -25,6 +25,9 @@ public record InstallOptions
 
     /// <summary>When true, report what would happen without making changes.</summary>
     public bool DryRun { get; init; }
+
+    /// <summary>When true, overwrite locally modified skills.</summary>
+    public bool Force { get; init; }
 }
 
 public record InstallResult

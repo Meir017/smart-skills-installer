@@ -1085,7 +1085,7 @@
         {
           "id": "S14-T04",
           "title": "Integrate Lock File into Install Workflow",
-          "completed": false,
+          "completed": true,
           "description": "Refactor SkillInstaller to use the lock file for change detection during install. For each matched skill: check lock file for existing entry, compare remote commit SHA, compute local content hash to detect edits, download only when needed, and update lock file entries.",
           "requirements": [
             "Read existing lock file before installing",
