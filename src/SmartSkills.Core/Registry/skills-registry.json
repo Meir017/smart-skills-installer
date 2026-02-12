@@ -424,6 +424,72 @@
       "skillPath": "skills/redis-development",
       "repoUrl": "https://github.com/redis/agent-skills",
       "language": "python"
+    },
+
+    {
+      "packagePatterns": ["com.azure:azure-ai-projects"],
+      "skillPath": ".github/skills/azure-ai-projects-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-ai-voicelive"],
+      "skillPath": ".github/skills/azure-ai-voicelive-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-communication-common"],
+      "skillPath": ".github/skills/azure-communication-common-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-cosmos"],
+      "skillPath": ".github/skills/azure-cosmos-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-data-tables"],
+      "skillPath": ".github/skills/azure-data-tables-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-messaging-eventgrid"],
+      "skillPath": ".github/skills/azure-eventgrid-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-messaging-eventhubs", "com.azure:azure-messaging-eventhubs-checkpointstore-blob"],
+      "skillPath": ".github/skills/azure-eventhub-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-identity"],
+      "skillPath": ".github/skills/azure-identity-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-messaging-webpubsub"],
+      "skillPath": ".github/skills/azure-messaging-webpubsub-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-monitor-ingestion"],
+      "skillPath": ".github/skills/azure-monitor-ingestion-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-monitor-query", "com.azure:azure-monitor-query-logs", "com.azure:azure-monitor-query-metrics"],
+      "skillPath": ".github/skills/azure-monitor-query-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-security-keyvault-keys"],
+      "skillPath": ".github/skills/azure-security-keyvault-keys-java",
+      "language": "java"
+    },
+    {
+      "packagePatterns": ["com.azure:azure-storage-blob"],
+      "skillPath": ".github/skills/azure-storage-blob-java",
+      "language": "java"
     }
   ]
 }
