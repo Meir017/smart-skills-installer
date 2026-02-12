@@ -20,18 +20,20 @@ public class RecursiveCliTests : IDisposable
     {
         if (Directory.Exists(_root))
             Directory.Delete(_root, true);
+        GC.SuppressFinalize(this);
     }
 
     [Fact]
     public async Task Scan_Recursive_ShowsNestedProjects()
     {
+        var ct = TestContext.Current.CancellationToken;
         // Root has a csproj
-        File.WriteAllText(Path.Combine(_root, "Root.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        await File.WriteAllTextAsync(Path.Combine(_root, "Root.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>", ct);
 
         // Sub has a package.json
         var sub = Path.Combine(_root, "web");
         Directory.CreateDirectory(sub);
-        File.WriteAllText(Path.Combine(sub, "package.json"), "{\"name\":\"web\",\"version\":\"1.0.0\"}");
+        await File.WriteAllTextAsync(Path.Combine(sub, "package.json"), "{\"name\":\"web\",\"version\":\"1.0.0\"}", ct);
 
         var (exitCode, output) = await RunCliAsync($"scan --recursive --project \"{_root}\"");
 
@@ -42,11 +44,12 @@ public class RecursiveCliTests : IDisposable
     [Fact]
     public async Task Scan_WithoutRecursive_BehavesAsDefault()
     {
-        File.WriteAllText(Path.Combine(_root, "Root.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        var ct = TestContext.Current.CancellationToken;
+        await File.WriteAllTextAsync(Path.Combine(_root, "Root.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>", ct);
 
         var sub = Path.Combine(_root, "child");
         Directory.CreateDirectory(sub);
-        File.WriteAllText(Path.Combine(sub, "package.json"), "{\"name\":\"child\",\"version\":\"1.0.0\"}");
+        await File.WriteAllTextAsync(Path.Combine(sub, "package.json"), "{\"name\":\"child\",\"version\":\"1.0.0\"}", ct);
 
         var (exitCode, output) = await RunCliAsync($"scan --project \"{_root}\"");
 
@@ -56,7 +59,7 @@ public class RecursiveCliTests : IDisposable
     [Fact]
     public async Task Scan_RecursiveDepth0_BehavesLikeNonRecursive()
     {
-        File.WriteAllText(Path.Combine(_root, "Root.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+        await File.WriteAllTextAsync(Path.Combine(_root, "Root.csproj"), "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>", TestContext.Current.CancellationToken);
 
         var (exitCode, output) = await RunCliAsync($"scan --recursive --depth 0 --project \"{_root}\"");
 
@@ -66,14 +69,14 @@ public class RecursiveCliTests : IDisposable
     [Fact]
     public async Task Scan_RecursiveJson_ReturnsValidJson()
     {
-        File.WriteAllText(Path.Combine(_root, "package.json"), "{\"name\":\"test\",\"version\":\"1.0.0\"}");
+        await File.WriteAllTextAsync(Path.Combine(_root, "package.json"), "{\"name\":\"test\",\"version\":\"1.0.0\"}", TestContext.Current.CancellationToken);
 
         var (exitCode, output) = await RunCliAsync($"scan --recursive --json --project \"{_root}\"");
 
         Assert.Equal(0, exitCode);
         // JSON output should start with [ and be parseable
         var trimmed = output.Trim();
-        Assert.StartsWith("[", trimmed);
+        Assert.StartsWith("[", trimmed, StringComparison.Ordinal);
     }
 
     [Fact]

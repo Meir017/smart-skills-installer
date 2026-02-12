@@ -18,6 +18,7 @@ public class RecursiveLibraryScannerTests : IDisposable
     {
         if (Directory.Exists(_root))
             Directory.Delete(_root, true);
+        GC.SuppressFinalize(this);
     }
 
     [Fact]
@@ -39,7 +40,7 @@ public class RecursiveLibraryScannerTests : IDisposable
 
         Directory.CreateDirectory(_root);
 
-        var result = await scanner.ScanDirectoryAsync(_root);
+        var result = await scanner.ScanDirectoryAsync(_root, TestContext.Current.CancellationToken);
 
         Assert.Single(result);
         Assert.Equal("express", result[0].Packages[0].Name);
@@ -59,7 +60,7 @@ public class RecursiveLibraryScannerTests : IDisposable
         var scanner = new LibraryScanner(resolverFactory, resolver, detector, NullLogger<LibraryScanner>.Instance);
 
         var options = new ProjectDetectionOptions { Recursive = true, MaxDepth = 3 };
-        var result = await scanner.ScanDirectoryAsync(_root, options);
+        var result = await scanner.ScanDirectoryAsync(_root, options, TestContext.Current.CancellationToken);
 
         Assert.Equal(2, result.Count);
         Assert.True(detector.LastOptionsUsed?.Recursive);
@@ -83,7 +84,7 @@ public class RecursiveLibraryScannerTests : IDisposable
         var resolverFactory = new FakePackageResolverFactory(resolver);
         var scanner = new LibraryScanner(resolverFactory, resolver, detector, NullLogger<LibraryScanner>.Instance);
 
-        var result = await scanner.ScanDirectoryAsync(_root, new ProjectDetectionOptions { Recursive = true });
+        var result = await scanner.ScanDirectoryAsync(_root, new ProjectDetectionOptions { Recursive = true }, TestContext.Current.CancellationToken);
 
         // Should only have one result despite two detections
         Assert.Single(result);
