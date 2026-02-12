@@ -74,6 +74,16 @@ smart-skills status
 smart-skills status --project ./src/MyProject
 ```
 
+### Restore Skills from Lock File
+
+```bash
+# Restore all skills to their exact locked versions
+smart-skills restore
+
+# Restore for a specific project
+smart-skills restore --project ./src/MyProject
+```
+
 ### Uninstall a Skill
 
 ```bash
@@ -86,6 +96,51 @@ smart-skills uninstall my-skill-name
 |--------|-------------|
 | `-v, --verbose` | Enable verbose logging |
 | `--dry-run` | Preview changes without executing |
+
+## Skills Lock File
+
+SmartSkills uses a **lock file** (`smart-skills.lock.json`) to track the exact state of installed skills. It serves as the single source of truth for reproducible installations — analogous to `packages.lock.json` (NuGet) or `yarn.lock` (npm).
+
+### How It Works
+
+When you run `smart-skills install`, the lock file records:
+- **Remote URL** and **skill path** — where the skill was fetched from
+- **Commit SHA** — the exact commit used for this version of the skill
+- **Content hash** — a SHA256 hash of all installed files for local edit detection
+
+On subsequent installs, SmartSkills compares the remote commit SHA and local content hash to determine whether a skill needs updating, is up-to-date, or has been locally modified.
+
+### Example Lock File
+
+```json
+{
+  "version": 1,
+  "skills": {
+    "azure-identity-dotnet": {
+      "remoteUrl": "https://github.com/microsoft/skills",
+      "skillPath": "skills/azure-identity-dotnet",
+      "language": "dotnet",
+      "commitSha": "abc123def456...",
+      "localContentHash": "sha256:e3b0c44298fc1c14..."
+    }
+  }
+}
+```
+
+### Workflows
+
+| Command | Behavior |
+|---------|----------|
+| `smart-skills install` | Fetches latest skills, updates lock file with new commit SHAs and content hashes |
+| `smart-skills install --force` | Overwrites locally modified skills |
+| `smart-skills restore` | Downloads skills at the exact commit SHAs recorded in the lock file |
+| `smart-skills status` | Shows which skills are up-to-date, modified, or missing |
+| `smart-skills status --check-remote` | Also checks if newer versions are available upstream |
+| `smart-skills uninstall <name>` | Removes the skill directory and its lock file entry |
+
+### Version Control
+
+The lock file should be **committed to your repository**. This ensures that all team members and CI pipelines restore the same skill versions. The file uses deterministic JSON formatting (sorted keys, consistent indentation) to produce clean diffs.
 
 ## MSBuild Integration
 
