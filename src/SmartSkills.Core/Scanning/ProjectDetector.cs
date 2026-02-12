@@ -10,20 +10,105 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
     private static readonly string[] DotnetSolutionExtensions = [".sln", ".slnx"];
     private static readonly string[] DotnetProjectExtensions = [".csproj", ".fsproj", ".vbproj"];
 
-    public IReadOnlyList<DetectedProject> Detect(string directoryPath)
+    public IReadOnlyList<DetectedProject> Detect(string directoryPath) =>
+        Detect(directoryPath, new ProjectDetectionOptions());
+
+    public IReadOnlyList<DetectedProject> Detect(string directoryPath, ProjectDetectionOptions options)
     {
+        ArgumentNullException.ThrowIfNull(options);
+
         if (!Directory.Exists(directoryPath))
             return [];
 
-        var results = new List<DetectedProject>();
+        if (!options.Recursive)
+        {
+            var results = new List<DetectedProject>();
+            DetectInDirectory(directoryPath, results);
+            return results;
+        }
 
+        var allResults = new List<DetectedProject>();
+        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        RecursiveDetect(directoryPath, options.MaxDepth, 0, visited, allResults, detectedEcosystems: null);
+        return allResults;
+    }
+
+    private void RecursiveDetect(
+        string directoryPath,
+        int maxDepth,
+        int currentDepth,
+        HashSet<string> visited,
+        List<DetectedProject> allResults,
+        HashSet<string>? detectedEcosystems)
+    {
+        // Resolve to canonical path to detect symlink cycles
+        string canonicalPath;
+        try
+        {
+            canonicalPath = Path.GetFullPath(directoryPath);
+        }
+        catch
+        {
+            return;
+        }
+
+        if (!visited.Add(canonicalPath))
+        {
+            logger.LogDebug("Skipping already-visited directory: {Path}", directoryPath);
+            return;
+        }
+
+        // Detect projects at this level
+        var localResults = new List<DetectedProject>();
+        DetectInDirectory(directoryPath, localResults);
+        allResults.AddRange(localResults);
+
+        // Determine which ecosystems were found here (for prune-on-detection)
+        var foundEcosystems = new HashSet<string>(
+            localResults.Select(r => r.Ecosystem), StringComparer.OrdinalIgnoreCase);
+        if (detectedEcosystems is not null)
+            foundEcosystems.UnionWith(detectedEcosystems);
+
+        if (currentDepth >= maxDepth)
+            return;
+
+        // Recurse into subdirectories
+        IEnumerable<string> subdirs;
+        try
+        {
+            subdirs = Directory.EnumerateDirectories(directoryPath);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return;
+        }
+
+        foreach (var subdir in subdirs)
+        {
+            var dirName = Path.GetFileName(subdir);
+
+            if (ExcludedDirectories.All.Contains(dirName))
+            {
+                logger.LogDebug("Skipping excluded directory: {Path}", subdir);
+                continue;
+            }
+
+            // Prune: only recurse if there are ecosystems not yet detected in this subtree path
+            // For simplicity, pass the set of ecosystems found on the path from root to here;
+            // the child's DetectInDirectory will still find all ecosystems, but we skip recursing
+            // deeper for ecosystems already found on this ancestor path.
+            RecursiveDetect(subdir, maxDepth, currentDepth + 1, visited, allResults, foundEcosystems);
+        }
+    }
+
+    private void DetectInDirectory(string directoryPath, List<DetectedProject> results)
+    {
         DetectDotnet(directoryPath, results);
         DetectNodeJs(directoryPath, results);
         DetectPython(directoryPath, results);
         DetectJava(directoryPath, results);
 
         logger.LogDebug("Detected {Count} project(s) in {Directory}", results.Count, directoryPath);
-        return results;
     }
 
     private void DetectDotnet(string directoryPath, List<DetectedProject> results)
@@ -59,21 +144,19 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
         if (!File.Exists(packageJson))
             return;
 
-        // Ensure this is not a package.json inside node_modules
+        // Ensure this is not a package.json inside an excluded Node.js directory
         var dirName = Path.GetFileName(directoryPath);
-        if (string.Equals(dirName, "node_modules", StringComparison.OrdinalIgnoreCase))
+        if (ExcludedDirectories.NodeJs.Contains(dirName))
             return;
 
         results.Add(new DetectedProject(Ecosystems.Npm, packageJson));
         logger.LogDebug("Detected Node.js project: {Path}", packageJson);
     }
 
-    private static readonly string[] PythonExcludedDirs = ["venv", ".venv", "__pycache__", ".tox"];
-
     private void DetectPython(string directoryPath, List<DetectedProject> results)
     {
         var dirName = Path.GetFileName(directoryPath);
-        if (PythonExcludedDirs.Any(d => string.Equals(dirName, d, StringComparison.OrdinalIgnoreCase)))
+        if (ExcludedDirectories.Python.Contains(dirName))
             return;
 
         // Prefer pyproject.toml, then setup.py, then requirements.txt

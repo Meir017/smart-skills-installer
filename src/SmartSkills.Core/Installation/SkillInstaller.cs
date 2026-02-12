@@ -52,7 +52,7 @@ public sealed class SkillInstaller : ISkillInstaller
         IReadOnlyList<ProjectPackages> projectPackages;
         if (Directory.Exists(projectPath))
         {
-            projectPackages = await _scanner.ScanDirectoryAsync(projectPath, cancellationToken);
+            projectPackages = await _scanner.ScanDirectoryAsync(projectPath, options.DetectionOptions, cancellationToken);
         }
         else if (projectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) ||
                  projectPath.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase))
