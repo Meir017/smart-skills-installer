@@ -157,7 +157,7 @@
         {
           "id": "S02-T06",
           "title": "Implement RequirementsTxtPackageResolver",
-          "completed": false,
+          "completed": true,
           "description": "Implement IPackageResolver for requirements.txt (plain text format).",
           "apiReferences": ["IPackageResolver", "RequirementsTxtPackageResolver", "ResolvedPackage"],
           "requirements": [
