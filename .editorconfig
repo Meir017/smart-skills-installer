@@ -334,5 +334,8 @@ dotnet_diagnostic.CA1848.severity = suggestion
 # CA1849: Synchronous file I/O - downgrade to warning
 dotnet_diagnostic.CA1849.severity = warning
 
+# CA1873: Logging argument evaluation - downgrade to suggestion (performance optimization)
+dotnet_diagnostic.CA1873.severity = suggestion
+
 # CA2007: Do not directly await a Task - downgrade to suggestion (ConfigureAwait not critical for apps)
 dotnet_diagnostic.CA2007.severity = suggestion
