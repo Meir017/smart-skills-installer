@@ -32,8 +32,8 @@ public class RequirementsTxtPackageResolverTests
         RequirementsTxtPackageResolver.ParseRequirementsFile(filePath, packages, seen);
 
         // Should not contain any comment or option entries
-        Assert.DoesNotContain(packages, p => p.Name.StartsWith("#"));
-        Assert.DoesNotContain(packages, p => p.Name.StartsWith("-"));
+        Assert.DoesNotContain(packages, p => p.Name.StartsWith('#'));
+        Assert.DoesNotContain(packages, p => p.Name.StartsWith('-'));
     }
 
     [Fact]

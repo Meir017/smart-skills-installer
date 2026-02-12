@@ -9,7 +9,7 @@ namespace SmartSkills.Core.Scanning;
 /// </summary>
 public sealed class PoetryLockPackageResolver(ILogger<PoetryLockPackageResolver> logger) : IPackageResolver
 {
-    public Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
+    public async Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
     {
         var projectDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
         var poetryLockPath = Path.Combine(projectDir, "poetry.lock");
@@ -17,15 +17,15 @@ public sealed class PoetryLockPackageResolver(ILogger<PoetryLockPackageResolver>
         if (!File.Exists(poetryLockPath))
         {
             logger.LogDebug("No poetry.lock found at {Path}, returning empty", poetryLockPath);
-            return Task.FromResult(new ProjectPackages(projectPath, []));
+            return new ProjectPackages(projectPath, []);
         }
 
         var directDeps = LoadDirectDependencies(projectDir);
-        var lockContent = File.ReadAllText(poetryLockPath);
+        var lockContent = await File.ReadAllTextAsync(poetryLockPath, cancellationToken);
         var packages = ParsePoetryLock(lockContent, directDeps);
 
         logger.LogInformation("Resolved {Count} Python packages from {Path}", packages.Count, poetryLockPath);
-        return Task.FromResult(new ProjectPackages(projectPath, packages));
+        return new ProjectPackages(projectPath, packages);
     }
 
     internal static List<ResolvedPackage> ParsePoetryLock(string tomlContent, HashSet<string> directDeps)

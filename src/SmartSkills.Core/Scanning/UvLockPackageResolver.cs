@@ -9,7 +9,7 @@ namespace SmartSkills.Core.Scanning;
 /// </summary>
 public sealed class UvLockPackageResolver(ILogger<UvLockPackageResolver> logger) : IPackageResolver
 {
-    public Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
+    public async Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
     {
         var projectDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
         var uvLockPath = Path.Combine(projectDir, "uv.lock");
@@ -17,15 +17,15 @@ public sealed class UvLockPackageResolver(ILogger<UvLockPackageResolver> logger)
         if (!File.Exists(uvLockPath))
         {
             logger.LogDebug("No uv.lock found at {Path}, returning empty", uvLockPath);
-            return Task.FromResult(new ProjectPackages(projectPath, []));
+            return new ProjectPackages(projectPath, []);
         }
 
         var directDeps = LoadDirectDependencies(projectDir);
-        var lockContent = File.ReadAllText(uvLockPath);
+        var lockContent = await File.ReadAllTextAsync(uvLockPath, cancellationToken);
         var packages = ParseUvLock(lockContent, directDeps);
 
         logger.LogInformation("Resolved {Count} Python packages from {Path}", packages.Count, uvLockPath);
-        return Task.FromResult(new ProjectPackages(projectPath, packages));
+        return new ProjectPackages(projectPath, packages);
     }
 
     internal static List<ResolvedPackage> ParseUvLock(string tomlContent, HashSet<string> directDeps)

@@ -121,7 +121,7 @@ public class ProjectDetectorTests
 
             Assert.Single(result);
             Assert.Equal(Ecosystems.Python, result[0].Ecosystem);
-            Assert.EndsWith("pyproject.toml", result[0].ProjectFilePath);
+            Assert.EndsWith("pyproject.toml", result[0].ProjectFilePath, StringComparison.Ordinal);
         }
         finally
         {
@@ -141,7 +141,7 @@ public class ProjectDetectorTests
 
             Assert.Single(result);
             Assert.Equal(Ecosystems.Python, result[0].Ecosystem);
-            Assert.EndsWith("requirements.txt", result[0].ProjectFilePath);
+            Assert.EndsWith("requirements.txt", result[0].ProjectFilePath, StringComparison.Ordinal);
         }
         finally
         {
@@ -161,7 +161,7 @@ public class ProjectDetectorTests
             var result = _detector.Detect(dir);
 
             var python = result.Single(r => r.Ecosystem == Ecosystems.Python);
-            Assert.EndsWith("pyproject.toml", python.ProjectFilePath);
+            Assert.EndsWith("pyproject.toml", python.ProjectFilePath, StringComparison.Ordinal);
         }
         finally
         {

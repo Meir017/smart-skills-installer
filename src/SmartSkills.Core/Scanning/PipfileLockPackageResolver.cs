@@ -8,7 +8,7 @@ namespace SmartSkills.Core.Scanning;
 /// </summary>
 public sealed class PipfileLockPackageResolver(ILogger<PipfileLockPackageResolver> logger) : IPackageResolver
 {
-    public Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
+    public async Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default)
     {
         var projectDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
         var pipfileLockPath = Path.Combine(projectDir, "Pipfile.lock");
@@ -16,14 +16,14 @@ public sealed class PipfileLockPackageResolver(ILogger<PipfileLockPackageResolve
         if (!File.Exists(pipfileLockPath))
         {
             logger.LogDebug("No Pipfile.lock found at {Path}, returning empty", pipfileLockPath);
-            return Task.FromResult(new ProjectPackages(projectPath, []));
+            return new ProjectPackages(projectPath, []);
         }
 
-        var lockContent = File.ReadAllText(pipfileLockPath);
+        var lockContent = await File.ReadAllTextAsync(pipfileLockPath, cancellationToken);
         var packages = ParsePipfileLock(lockContent);
 
         logger.LogInformation("Resolved {Count} Python packages from {Path}", packages.Count, pipfileLockPath);
-        return Task.FromResult(new ProjectPackages(projectPath, packages));
+        return new ProjectPackages(projectPath, packages);
     }
 
     internal static List<ResolvedPackage> ParsePipfileLock(string jsonContent)
@@ -52,7 +52,7 @@ public sealed class PipfileLockPackageResolver(ILogger<PipfileLockPackageResolve
             {
                 version = verProp.GetString() ?? "";
                 // Strip leading == prefix
-                if (version.StartsWith("=="))
+                if (version.StartsWith("==", StringComparison.Ordinal))
                     version = version[2..];
             }
 

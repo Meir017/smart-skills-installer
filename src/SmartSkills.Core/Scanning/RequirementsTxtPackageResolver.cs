@@ -53,14 +53,14 @@ public sealed partial class RequirementsTxtPackageResolver(ILogger<RequirementsT
                 continue;
 
             // Handle inline comments
-            var commentIdx = line.IndexOf('#');
+            var commentIdx = line.IndexOf('#', StringComparison.Ordinal);
             if (commentIdx > 0)
                 line = line[..commentIdx].Trim();
 
             // Handle -r / --requirement includes
-            if (line.StartsWith("-r ") || line.StartsWith("--requirement "))
+            if (line.StartsWith("-r ", StringComparison.Ordinal) || line.StartsWith("--requirement ", StringComparison.Ordinal))
             {
-                var includePath = line.StartsWith("-r ") ? line[3..].Trim() : line["--requirement ".Length..].Trim();
+                var includePath = line.StartsWith("-r ", StringComparison.Ordinal) ? line[3..].Trim() : line["--requirement ".Length..].Trim();
                 var resolvedPath = Path.IsPathRooted(includePath)
                     ? includePath
                     : Path.Combine(baseDir, includePath);
@@ -101,7 +101,7 @@ public sealed partial class RequirementsTxtPackageResolver(ILogger<RequirementsT
 
         // Extract version: "==1.2.3" → "1.2.3", ">=1.0,<2.0" → ">=1.0,<2.0"
         var version = "";
-        if (rest.StartsWith("=="))
+        if (rest.StartsWith("==", StringComparison.Ordinal))
             version = rest[2..].Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "";
         else if (rest.Length > 0 && (rest[0] == '>' || rest[0] == '<' || rest[0] == '~' || rest[0] == '!'))
             version = VersionSpecPattern().Match(rest).Value;
