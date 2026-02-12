@@ -13,4 +13,15 @@
     <!-- Code quality settings - use 'Recommended' to enable standard analyzers -->
     <AnalysisMode>Recommended</AnalysisMode>
   </PropertyGroup>
+
+  <!-- NuGet package metadata (shared across all packable projects) -->
+  <PropertyGroup>
+    <Authors>SmartSkills Contributors</Authors>
+    <Copyright>Copyright (c) SmartSkills Contributors</Copyright>
+    <PackageProjectUrl>https://github.com/meir017/smart-skills-installer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/meir017/smart-skills-installer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <VersionPrefix>1.0.0</VersionPrefix>
+  </PropertyGroup>
 </Project>

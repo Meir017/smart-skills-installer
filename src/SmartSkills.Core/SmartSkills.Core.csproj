@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <PackageId>SmartSkills.Core</PackageId>
+    <Description>Core library for SmartSkills - scanning, matching, fetching, and installation of agent skills</Description>
+    <PackageTags>dotnet;skills;agent;ai;core</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +23,10 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Registry\skills-registry.json" LogicalName="SmartSkills.Core.Registry.skills-registry.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
