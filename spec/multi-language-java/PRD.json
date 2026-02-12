@@ -149,7 +149,7 @@
         {
           "id": "S03-T01",
           "title": "Add Java Skill Entries to Embedded Registry",
-          "completed": false,
+          "completed": true,
           "description": "Add entries for the Java skills available in microsoft/skills. Map Maven coordinates (com.azure:artifactId) to skill paths.",
           "apiReferences": [
             "RegistryIndexParser",
