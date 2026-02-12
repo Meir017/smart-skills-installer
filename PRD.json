@@ -113,7 +113,7 @@
         {
           "id": "S02-T01",
           "title": "Add ScanDirectoryAsync Overload with Options",
-          "completed": false,
+          "completed": true,
           "description": "Add an overload of ScanDirectoryAsync that accepts ProjectDetectionOptions, passes it to the project detector, and deduplicates results.",
           "apiReferences": [
             "ILibraryScanner",
