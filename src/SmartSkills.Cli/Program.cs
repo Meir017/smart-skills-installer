@@ -404,18 +404,12 @@ return await rootCommand.Parse(args).InvokeAsync();
 
 static IHost CreateHost(bool verbose, string? baseDir = null)
 {
-    return Host.CreateDefaultBuilder()
-        .ConfigureLogging(logging =>
-        {
-            logging.ClearProviders();
-            logging.AddConsole();
-            logging.SetMinimumLevel(verbose ? LogLevel.Debug : LogLevel.Information);
-        })
-        .ConfigureServices(services =>
-        {
-            services.AddSmartSkills();
-        })
-        .Build();
+    var builder = Host.CreateApplicationBuilder();
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+    builder.Logging.SetMinimumLevel(verbose ? LogLevel.Debug : LogLevel.Information);
+    builder.Services.AddSmartSkills();
+    return builder.Build();
 }
 
 static string ResolveProjectPath(string? path)
