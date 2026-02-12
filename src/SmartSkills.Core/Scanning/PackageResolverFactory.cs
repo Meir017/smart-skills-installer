@@ -14,6 +14,8 @@ public sealed class PackageResolverFactory(
     PoetryLockPackageResolver poetryLockResolver,
     PipfileLockPackageResolver pipfileLockResolver,
     RequirementsTxtPackageResolver requirementsTxtResolver,
+    MavenPomPackageResolver mavenPomResolver,
+    GradlePackageResolver gradleResolver,
     ILogger<PackageResolverFactory> logger) : IPackageResolverFactory
 {
     public IPackageResolver GetResolver(DetectedProject project)
@@ -34,6 +36,11 @@ public sealed class PackageResolverFactory(
         if (string.Equals(project.Ecosystem, Ecosystems.Python, StringComparison.OrdinalIgnoreCase))
         {
             return SelectPythonResolver(project);
+        }
+
+        if (string.Equals(project.Ecosystem, Ecosystems.Java, StringComparison.OrdinalIgnoreCase))
+        {
+            return SelectJavaResolver(project);
         }
 
         throw new NotSupportedException($"Unsupported ecosystem: {project.Ecosystem}");
@@ -83,5 +90,19 @@ public sealed class PackageResolverFactory(
 
         logger.LogDebug("Using RequirementsTxtPackageResolver for {Path}", project.ProjectFilePath);
         return requirementsTxtResolver;
+    }
+
+    private IPackageResolver SelectJavaResolver(DetectedProject project)
+    {
+        var filePath = project.ProjectFilePath;
+
+        if (filePath.EndsWith("pom.xml", StringComparison.OrdinalIgnoreCase))
+        {
+            logger.LogDebug("Using MavenPomPackageResolver for {Path}", filePath);
+            return mavenPomResolver;
+        }
+
+        logger.LogDebug("Using GradlePackageResolver for {Path}", filePath);
+        return gradleResolver;
     }
 }

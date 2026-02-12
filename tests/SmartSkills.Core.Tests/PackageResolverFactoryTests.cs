@@ -19,6 +19,8 @@ public class PackageResolverFactoryTests
             new PoetryLockPackageResolver(NullLogger<PoetryLockPackageResolver>.Instance),
             new PipfileLockPackageResolver(NullLogger<PipfileLockPackageResolver>.Instance),
             new RequirementsTxtPackageResolver(NullLogger<RequirementsTxtPackageResolver>.Instance),
+            new MavenPomPackageResolver(NullLogger<MavenPomPackageResolver>.Instance),
+            new GradlePackageResolver(NullLogger<GradlePackageResolver>.Instance),
             NullLogger<PackageResolverFactory>.Instance);
     }
 
