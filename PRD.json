@@ -56,7 +56,7 @@
         {
           "id": "S01-T03",
           "title": "Implement Recursive Traversal in ProjectDetector",
-          "completed": false,
+          "completed": true,
           "description": "Implement recursive directory walking with exclusion and pruning. When Recursive is true, enumerate subdirectories (skipping excluded ones), detect projects at each level, and apply prune-on-detection strategy per ecosystem.",
           "apiReferences": [
             "ProjectDetector",
