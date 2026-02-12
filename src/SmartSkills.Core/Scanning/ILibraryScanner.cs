@@ -19,4 +19,9 @@ public interface ILibraryScanner
     /// Scan a directory for all supported project types and resolve packages from each.
     /// </summary>
     Task<IReadOnlyList<ProjectPackages>> ScanDirectoryAsync(string directoryPath, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Scan a directory with configurable detection options (supports recursive scanning).
+    /// </summary>
+    Task<IReadOnlyList<ProjectPackages>> ScanDirectoryAsync(string directoryPath, ProjectDetectionOptions options, CancellationToken cancellationToken = default);
 }

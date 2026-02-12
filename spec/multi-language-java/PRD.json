@@ -1,0 +1,247 @@
+{
+  "name": "Multi-Language Support: Java (Maven / Gradle)",
+  "version": "1.0.0",
+  "description": "Extend SmartSkills to detect and install agent skills for Java projects. Adds a java ecosystem constant, two package resolvers (Maven pom.xml, Gradle build files), project detection for Java markers, and embedded Java skill registry entries mapping Azure SDK Maven coordinates to skills.",
+  "apiSurface": "api.cs",
+  "goals": [
+    "Auto-detect Java projects by the presence of pom.xml, build.gradle, or build.gradle.kts",
+    "Resolve Java dependencies from Maven pom.xml and Gradle build files",
+    "Add the java ecosystem constant and register Java skill entries in the embedded registry",
+    "Maintain full backward compatibility with existing .NET, Node.js, and Python workflows",
+    "Support the same CLI commands (scan, install, list, status) for Java projects with no special flags"
+  ],
+  "stories": [
+    {
+      "id": "S01",
+      "title": "Java Ecosystem Constant & Detection",
+      "description": "Add the Java ecosystem to the existing multi-language infrastructure.",
+      "tasks": [
+        {
+          "id": "S01-T01",
+          "title": "Add Java Ecosystem Constant",
+          "completed": true,
+          "description": "Add 'public const string Java = \"java\";' to the Ecosystems class in Scanning/Models.cs.",
+          "apiReferences": [
+            "Ecosystems"
+          ],
+          "requirements": [
+            "Add Java = \"java\" constant to Ecosystems class"
+          ],
+          "dod": "Constant exists, dotnet build succeeds.",
+          "verifications": [
+            "dotnet build passes"
+          ]
+        },
+        {
+          "id": "S01-T02",
+          "title": "Extend ProjectDetector for Java",
+          "completed": true,
+          "description": "Add Java project detection to the existing ProjectDetector.Detect method. Detect pom.xml for Maven projects and build.gradle or build.gradle.kts for Gradle projects.",
+          "apiReferences": [
+            "IProjectDetector",
+            "ProjectDetector",
+            "Ecosystems"
+          ],
+          "requirements": [
+            "Detect pom.xml as Maven project marker",
+            "Detect build.gradle or build.gradle.kts as Gradle project marker",
+            "Prefer pom.xml when both Maven and Gradle files exist in the same directory",
+            "Return DetectedProject(Ecosystems.Java, filePath)"
+          ],
+          "dod": "ProjectDetector returns Java projects alongside .NET/Node.js/Python in polyglot directories.",
+          "verifications": [
+            "Unit test: directory with pom.xml returns DetectedProject(\"java\", ...)",
+            "Unit test: directory with build.gradle returns DetectedProject(\"java\", ...)",
+            "Unit test: pom.xml preferred over build.gradle when both present",
+            "Unit test: polyglot directory returns four results",
+            "Existing detection tests still pass"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Java Package Resolvers",
+      "description": "Implement IPackageResolver for Java build tool files.",
+      "tasks": [
+        {
+          "id": "S02-T01",
+          "title": "Implement MavenPomPackageResolver",
+          "completed": true,
+          "description": "Implement IPackageResolver that resolves Maven packages by parsing pom.xml. Extracts groupId:artifactId as the package name and version from <dependency> elements.",
+          "apiReferences": [
+            "IPackageResolver",
+            "MavenPomPackageResolver",
+            "ResolvedPackage"
+          ],
+          "requirements": [
+            "Parse pom.xml XML: extract <dependency> elements from <dependencies> section",
+            "Package name format: groupId:artifactId (e.g. com.azure:azure-cosmos)",
+            "Extract version from <version> element; use empty string if managed via BOM",
+            "Resolve property references like ${azure.sdk.version} from <properties> section",
+            "Classify scope=test as dev dependency (IsTransitive = false for all pom.xml entries since they are declared)",
+            "Handle <dependencyManagement> section for BOM imports (skip type=pom scope=import entries)",
+            "Set Ecosystem = Ecosystems.Java"
+          ],
+          "dod": "MavenPomPackageResolver returns resolved packages from pom.xml.",
+          "verifications": [
+            "Unit test with sample pom.xml: correct packages and versions",
+            "Unit test: groupId:artifactId format is used as package name",
+            "Unit test: property references resolved",
+            "Unit test: test-scoped dependencies included",
+            "Unit test: BOM imports skipped"
+          ]
+        },
+        {
+          "id": "S02-T02",
+          "title": "Implement GradlePackageResolver",
+          "completed": true,
+          "description": "Implement IPackageResolver that resolves Gradle packages by parsing build.gradle or build.gradle.kts files. Extracts dependency declarations from the dependencies block.",
+          "apiReferences": [
+            "IPackageResolver",
+            "GradlePackageResolver",
+            "ResolvedPackage"
+          ],
+          "requirements": [
+            "Parse Groovy DSL (build.gradle): match patterns like implementation 'group:artifact:version'",
+            "Parse Kotlin DSL (build.gradle.kts): match patterns like implementation(\"group:artifact:version\")",
+            "Handle various dependency configurations: implementation, api, compileOnly, runtimeOnly, testImplementation, testCompileOnly, testRuntimeOnly",
+            "Extract groupId:artifactId as package name, version as version",
+            "Handle dependencies without explicit version (platform/BOM managed)",
+            "Set Ecosystem = Ecosystems.Java",
+            "All parsed dependencies are IsTransitive = false (they are declared dependencies)"
+          ],
+          "dod": "GradlePackageResolver correctly parses Gradle build files.",
+          "verifications": [
+            "Unit test: Groovy DSL dependency declarations parsed correctly",
+            "Unit test: Kotlin DSL dependency declarations parsed correctly",
+            "Unit test: testImplementation classified correctly",
+            "Unit test: dependencies without version handled"
+          ]
+        },
+        {
+          "id": "S02-T03",
+          "title": "Extend PackageResolverFactory for Java",
+          "completed": true,
+          "description": "Add Java ecosystem routing to the existing PackageResolverFactory.",
+          "apiReferences": [
+            "IPackageResolverFactory",
+            "PackageResolverFactory"
+          ],
+          "requirements": [
+            "For Ecosystem == java: route by project file (pom.xml -> MavenPomPackageResolver, build.gradle/build.gradle.kts -> GradlePackageResolver)",
+            "Register both Java resolvers as singletons in DI"
+          ],
+          "dod": "Factory routes to the correct Java resolver.",
+          "verifications": [
+            "Unit test: java project with pom.xml -> MavenPomPackageResolver",
+            "Unit test: java project with build.gradle -> GradlePackageResolver",
+            "Unit test: java project with build.gradle.kts -> GradlePackageResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Java Skill Registry Entries",
+      "description": "Populate the embedded registry with Java/Maven skill entries.",
+      "tasks": [
+        {
+          "id": "S03-T01",
+          "title": "Add Java Skill Entries to Embedded Registry",
+          "completed": true,
+          "description": "Add entries for the Java skills available in microsoft/skills. Map Maven coordinates (com.azure:artifactId) to skill paths.",
+          "apiReferences": [
+            "RegistryIndexParser",
+            "RegistryEntry"
+          ],
+          "requirements": [
+            "Map Maven package coordinates to skill paths for all Java skills in microsoft/skills",
+            "Each entry must include language: java",
+            "Package patterns use groupId:artifactId format (e.g. com.azure:azure-cosmos)",
+            "Verify skill paths exist in the referenced repositories"
+          ],
+          "dod": "Embedded registry includes Java entries loaded at startup.",
+          "verifications": [
+            "RegistryIndexParser.LoadEmbedded() returns entries with Language == java",
+            "Java entries don't break existing .NET, npm, and python entry loading"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Testing",
+      "description": "Comprehensive tests for Java functionality.",
+      "tasks": [
+        {
+          "id": "S04-T01",
+          "title": "Unit Tests for MavenPomPackageResolver",
+          "completed": true,
+          "description": "Test MavenPomPackageResolver with sample pom.xml files in TestData/Java/.",
+          "requirements": [
+            "Test with sample pom.xml with standard dependencies",
+            "Test property reference resolution",
+            "Test BOM import handling",
+            "Test test-scoped dependencies",
+            "Test missing version (BOM-managed)",
+            "Place sample files in tests/SmartSkills.Core.Tests/TestData/Java/"
+          ],
+          "dod": "MavenPomPackageResolver has tests with real sample pom.xml files.",
+          "verifications": [
+            "dotnet test --filter FullyQualifiedName~MavenPom passes"
+          ]
+        },
+        {
+          "id": "S04-T02",
+          "title": "Unit Tests for GradlePackageResolver",
+          "completed": true,
+          "description": "Test GradlePackageResolver with sample Gradle build files.",
+          "requirements": [
+            "Test Groovy DSL (build.gradle) parsing",
+            "Test Kotlin DSL (build.gradle.kts) parsing",
+            "Test various configuration types (implementation, testImplementation, etc.)",
+            "Test dependencies without version",
+            "Place sample files in tests/SmartSkills.Core.Tests/TestData/Java/"
+          ],
+          "dod": "GradlePackageResolver has tests with real sample build files.",
+          "verifications": [
+            "dotnet test --filter FullyQualifiedName~Gradle passes"
+          ]
+        },
+        {
+          "id": "S04-T03",
+          "title": "Unit Tests for Java Project Detection",
+          "completed": true,
+          "description": "Extend ProjectDetectorTests for Java scenarios.",
+          "requirements": [
+            "Test: pom.xml only -> Java detected",
+            "Test: build.gradle only -> Java detected",
+            "Test: build.gradle.kts only -> Java detected",
+            "Test: pom.xml preferred over build.gradle",
+            "Test: polyglot dir returns four results"
+          ],
+          "dod": "Detection tests cover all Java project markers.",
+          "verifications": [
+            "dotnet test --filter FullyQualifiedName~ProjectDetector passes"
+          ]
+        },
+        {
+          "id": "S04-T04",
+          "title": "Unit Tests for Factory Routing",
+          "completed": true,
+          "description": "Extend PackageResolverFactory tests for Java routing.",
+          "requirements": [
+            "Test: java project with pom.xml routes to MavenPomPackageResolver",
+            "Test: java project with build.gradle routes to GradlePackageResolver",
+            "Test: java project with build.gradle.kts routes to GradlePackageResolver"
+          ],
+          "dod": "Factory tests cover Java routing.",
+          "verifications": [
+            "dotnet test --filter FullyQualifiedName~ResolverFactory passes"
+          ]
+        }
+      ]
+    }
+  ]
+}

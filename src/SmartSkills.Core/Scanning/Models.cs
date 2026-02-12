@@ -8,6 +8,7 @@ public static class Ecosystems
     public const string Dotnet = "dotnet";
     public const string JavaScript = "javascript";
     public const string Python = "python";
+    public const string Java = "java";
 }
 
 /// <summary>

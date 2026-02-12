@@ -192,6 +192,112 @@ public class ProjectDetectorTests
         }
     }
 
+    [Fact]
+    public void Detect_JavaPomXml_ReturnsJava()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "pom.xml"), "<project />");
+
+            var result = _detector.Detect(dir);
+
+            Assert.Single(result);
+            Assert.Equal(Ecosystems.Java, result[0].Ecosystem);
+            Assert.EndsWith("pom.xml", result[0].ProjectFilePath, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void Detect_JavaBuildGradle_ReturnsJava()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "build.gradle"), "plugins {}");
+
+            var result = _detector.Detect(dir);
+
+            Assert.Single(result);
+            Assert.Equal(Ecosystems.Java, result[0].Ecosystem);
+            Assert.EndsWith("build.gradle", result[0].ProjectFilePath, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void Detect_JavaBuildGradleKts_ReturnsJava()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "build.gradle.kts"), "plugins {}");
+
+            var result = _detector.Detect(dir);
+
+            Assert.Single(result);
+            Assert.Equal(Ecosystems.Java, result[0].Ecosystem);
+            Assert.EndsWith("build.gradle.kts", result[0].ProjectFilePath, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void Detect_JavaPrefersPomOverGradle()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "pom.xml"), "<project />");
+            File.WriteAllText(Path.Combine(dir, "build.gradle"), "plugins {}");
+            File.WriteAllText(Path.Combine(dir, "build.gradle.kts"), "plugins {}");
+
+            var result = _detector.Detect(dir);
+
+            var java = result.Single(r => r.Ecosystem == Ecosystems.Java);
+            Assert.EndsWith("pom.xml", java.ProjectFilePath, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void Detect_PolyglotFourWay_ReturnsFour()
+    {
+        var dir = CreateTempDir();
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "MyApp.sln"), "");
+            File.WriteAllText(Path.Combine(dir, "package.json"), "{}");
+            File.WriteAllText(Path.Combine(dir, "pyproject.toml"), "[project]\nname = \"test\"");
+            File.WriteAllText(Path.Combine(dir, "pom.xml"), "<project />");
+
+            var result = _detector.Detect(dir);
+
+            Assert.Equal(4, result.Count);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Dotnet);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Npm);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Python);
+            Assert.Contains(result, r => r.Ecosystem == Ecosystems.Java);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
     private static string CreateTempDir()
     {
         var dir = Path.Combine(Path.GetTempPath(), $"smartskills-test-{Guid.NewGuid():N}");

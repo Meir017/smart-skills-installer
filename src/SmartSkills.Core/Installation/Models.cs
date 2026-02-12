@@ -1,4 +1,5 @@
 using SmartSkills.Core.Registry;
+using SmartSkills.Core.Scanning;
 
 namespace SmartSkills.Core.Installation;
 
@@ -12,6 +13,9 @@ public record InstallOptions
 
     /// <summary>When true, overwrite locally modified skills.</summary>
     public bool Force { get; init; }
+
+    /// <summary>Options for project detection (recursive scanning, depth limit).</summary>
+    public ProjectDetectionOptions DetectionOptions { get; init; } = new();
 }
 
 public record InstallResult
