@@ -229,7 +229,7 @@
         {
           "id": "S04-T01",
           "title": "Unit Tests for Package Name Normalization",
-          "completed": false,
+          "completed": true,
           "description": "Test PypiNameNormalizer.Normalize with edge cases.",
           "requirements": [
             "Test underscore → hyphen conversion",
