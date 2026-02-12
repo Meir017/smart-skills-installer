@@ -260,7 +260,7 @@
         {
           "id": "S04-T03",
           "title": "Unit Tests for Python Project Detection",
-          "completed": false,
+          "completed": true,
           "description": "Extend ProjectDetectorTests for Python scenarios.",
           "requirements": [
             "Test: pyproject.toml only → Python detected",
