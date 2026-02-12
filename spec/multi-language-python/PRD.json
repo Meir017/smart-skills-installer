@@ -31,7 +31,7 @@
         {
           "id": "S01-T02",
           "title": "Extend ProjectDetector for Python",
-          "completed": false,
+          "completed": true,
           "description": "Add Python project detection to the existing ProjectDetector.Detect method. Detect pyproject.toml (preferred), setup.py, or requirements.txt.",
           "apiReferences": ["IProjectDetector", "ProjectDetector", "Ecosystems"],
           "requirements": [

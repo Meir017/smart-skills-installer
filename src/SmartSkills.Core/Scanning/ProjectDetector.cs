@@ -19,6 +19,7 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
 
         DetectDotnet(directoryPath, results);
         DetectNodeJs(directoryPath, results);
+        DetectPython(directoryPath, results);
 
         logger.LogDebug("Detected {Count} project(s) in {Directory}", results.Count, directoryPath);
         return results;
@@ -64,5 +65,39 @@ public sealed class ProjectDetector(ILogger<ProjectDetector> logger) : IProjectD
 
         results.Add(new DetectedProject(Ecosystems.Npm, packageJson));
         logger.LogDebug("Detected Node.js project: {Path}", packageJson);
+    }
+
+    private static readonly string[] PythonExcludedDirs = ["venv", ".venv", "__pycache__", ".tox"];
+
+    private void DetectPython(string directoryPath, List<DetectedProject> results)
+    {
+        var dirName = Path.GetFileName(directoryPath);
+        if (PythonExcludedDirs.Any(d => string.Equals(dirName, d, StringComparison.OrdinalIgnoreCase)))
+            return;
+
+        // Prefer pyproject.toml, then setup.py, then requirements.txt
+        var pyprojectToml = Path.Combine(directoryPath, "pyproject.toml");
+        if (File.Exists(pyprojectToml))
+        {
+            results.Add(new DetectedProject(Ecosystems.Python, pyprojectToml));
+            logger.LogDebug("Detected Python project: {Path}", pyprojectToml);
+            return;
+        }
+
+        var setupPy = Path.Combine(directoryPath, "setup.py");
+        if (File.Exists(setupPy))
+        {
+            results.Add(new DetectedProject(Ecosystems.Python, setupPy));
+            logger.LogDebug("Detected Python project: {Path}", setupPy);
+            return;
+        }
+
+        var requirementsTxt = Path.Combine(directoryPath, "requirements.txt");
+        if (File.Exists(requirementsTxt))
+        {
+            results.Add(new DetectedProject(Ecosystems.Python, requirementsTxt));
+            logger.LogDebug("Detected Python project: {Path}", requirementsTxt);
+            return;
+        }
     }
 }
