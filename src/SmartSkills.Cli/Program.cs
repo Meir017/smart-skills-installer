@@ -81,13 +81,13 @@ installCommand.SetAction(async (parseResult, cancellationToken) =>
     {
         Console.WriteLine($"Installed ({result.Installed.Count}):");
         foreach (var s in result.Installed)
-            Console.WriteLine($"  + {s.Name}");
+            Console.WriteLine($"  + {s}");
     }
     if (result.Updated.Count > 0)
     {
         Console.WriteLine($"Updated ({result.Updated.Count}):");
         foreach (var s in result.Updated)
-            Console.WriteLine($"  ~ {s.Name}");
+            Console.WriteLine($"  ~ {s}");
     }
     if (result.SkippedUpToDate.Count > 0)
     {
@@ -255,6 +255,7 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
 // list command
 var listCommand = new Command("list", "List installed skills")
 {
+    projectOption,
     jsonOption
 };
 
@@ -265,27 +266,31 @@ listCommand.SetAction(async (parseResult, cancellationToken) =>
     bool verbose = parseResult.GetValue(verboseOption);
     bool jsonOutput = parseResult.GetValue(jsonOption);
     string? baseDir = parseResult.GetValue(baseDirOption);
+    string? projectPath = parseResult.GetValue(projectOption);
 
     using var host = CreateHost(verbose, baseDir);
-    var store = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillStore>();
+    var lockFileStore = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillLockFileStore>();
 
-    var skills = await store.GetInstalledSkillsAsync(cancellationToken);
+    var resolvedPath = ResolveProjectPath(projectPath);
+    var lockFileDir = Directory.Exists(resolvedPath) ? resolvedPath : Path.GetDirectoryName(resolvedPath)!;
+    var lockFile = await lockFileStore.LoadAsync(lockFileDir, cancellationToken);
 
     if (jsonOutput)
     {
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(skills, jsonOptions));
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(lockFile.Skills, jsonOptions));
     }
-    else if (skills.Count == 0)
+    else if (lockFile.Skills.Count == 0)
     {
         Console.WriteLine("No skills installed.");
     }
     else
     {
-        Console.WriteLine($"{"Name",-30} {"Provider",-15} {"Installed",-25} {"SHA"}");
+        Console.WriteLine($"{"Name",-30} {"Path",-40} {"SHA"}");
         Console.WriteLine(new string('-', 90));
-        foreach (var s in skills)
+        foreach (var (name, entry) in lockFile.Skills)
         {
-            Console.WriteLine($"{s.Name,-30} {s.SourceProviderType,-15} {s.InstalledAt:yyyy-MM-dd HH:mm,-25} {s.CommitSha[..8]}");
+            var sha = entry.CommitSha.Length >= 8 ? entry.CommitSha[..8] : entry.CommitSha;
+            Console.WriteLine($"{name,-30} {entry.SkillPath,-40} {sha}");
         }
     }
 });
@@ -399,10 +404,6 @@ return await rootCommand.Parse(args).InvokeAsync();
 
 static IHost CreateHost(bool verbose, string? baseDir = null)
 {
-    var skillsDir = baseDir is not null
-        ? Path.Combine(Path.GetFullPath(baseDir), ".agents", "skills")
-        : null;
-
     return Host.CreateDefaultBuilder()
         .ConfigureLogging(logging =>
         {
@@ -412,7 +413,7 @@ static IHost CreateHost(bool verbose, string? baseDir = null)
         })
         .ConfigureServices(services =>
         {
-            services.AddSmartSkills(skillsDir);
+            services.AddSmartSkills();
         })
         .Build();
 }

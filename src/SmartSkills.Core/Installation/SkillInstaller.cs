@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using SmartSkills.Core.Providers;
-using SmartSkills.Core.Providers.GitHub;
 using SmartSkills.Core.Registry;
 using SmartSkills.Core.Scanning;
 
@@ -14,7 +13,6 @@ public sealed class SkillInstaller : ISkillInstaller
     private readonly ILibraryScanner _scanner;
     private readonly ISkillRegistry _registry;
     private readonly ISkillMatcher _matcher;
-    private readonly ISkillStore _store;
     private readonly ISkillLockFileStore _lockFileStore;
     private readonly ISkillMetadataParser _metadataParser;
     private readonly ISkillSourceProviderFactory _providerFactory;
@@ -24,7 +22,6 @@ public sealed class SkillInstaller : ISkillInstaller
         ILibraryScanner scanner,
         ISkillRegistry registry,
         ISkillMatcher matcher,
-        ISkillStore store,
         ISkillLockFileStore lockFileStore,
         ISkillMetadataParser metadataParser,
         ISkillSourceProviderFactory providerFactory,
@@ -33,7 +30,6 @@ public sealed class SkillInstaller : ISkillInstaller
         _scanner = scanner;
         _registry = registry;
         _matcher = matcher;
-        _store = store;
         _lockFileStore = lockFileStore;
         _metadataParser = metadataParser;
         _providerFactory = providerFactory;
@@ -77,8 +73,8 @@ public sealed class SkillInstaller : ISkillInstaller
 
         _logger.LogInformation("Found {Count} matching skills", matched.Count);
 
-        var installed = new List<InstalledSkill>();
-        var updated = new List<InstalledSkill>();
+        var installed = new List<string>();
+        var updated = new List<string>();
         var skipped = new List<string>();
         var failed = new List<SkillInstallFailure>();
         var lockFileChanged = false;
@@ -116,7 +112,7 @@ public sealed class SkillInstaller : ISkillInstaller
                         if (currentHash == lockEntry.LocalContentHash)
                         {
                             _logger.LogInformation("Skill {Skill} is up-to-date (SHA: {Sha})", skillName, latestSha);
-                            skipped.Add(match.RegistryEntry.SkillPath);
+                            skipped.Add(skillName);
                             continue;
                         }
 
@@ -124,7 +120,7 @@ public sealed class SkillInstaller : ISkillInstaller
                         if (!options.Force)
                         {
                             _logger.LogWarning("Skill {Skill} has been locally modified. Use --force to overwrite.", skillName);
-                            skipped.Add(match.RegistryEntry.SkillPath);
+                            skipped.Add(skillName);
                             continue;
                         }
 
@@ -156,27 +152,12 @@ public sealed class SkillInstaller : ISkillInstaller
                 };
                 lockFileChanged = true;
 
-                // Also update legacy store for backward compatibility
-                var metadata = await ParseSkillMetadataAsync(installDir, skillName, cancellationToken);
-                var skill = new InstalledSkill
-                {
-                    Name = metadata.Name,
-                    Metadata = metadata,
-                    InstallPath = installDir,
-                    InstalledAt = DateTimeOffset.UtcNow,
-                    SourceProviderType = provider.ProviderType,
-                    SourceUrl = match.RegistryEntry.SkillPath,
-                    CommitSha = latestSha
-                };
-
-                await _store.SaveAsync(skill, cancellationToken);
-
                 if (isUpdate)
-                    updated.Add(skill);
+                    updated.Add(skillName);
                 else
-                    installed.Add(skill);
+                    installed.Add(skillName);
 
-                _logger.LogInformation("Installed skill: {Skill}", skill.Name);
+                _logger.LogInformation("Installed skill: {Skill}", skillName);
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
@@ -206,11 +187,17 @@ public sealed class SkillInstaller : ISkillInstaller
     {
         _logger.LogInformation("Uninstalling skill: {SkillName}", skillName);
 
-        // Remove from legacy store
-        await _store.RemoveAsync(skillName, cancellationToken);
+        var baseDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
+
+        // Remove skill directory
+        var skillDir = Path.Combine(baseDir, ".agents", "skills", skillName);
+        if (Directory.Exists(skillDir))
+        {
+            Directory.Delete(skillDir, recursive: true);
+            _logger.LogInformation("Removed skill directory: {SkillDir}", skillDir);
+        }
 
         // Remove from lock file
-        var baseDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
         var lockFile = await _lockFileStore.LoadAsync(baseDir, cancellationToken);
         if (lockFile.Skills.Remove(skillName))
         {
@@ -295,21 +282,5 @@ public sealed class SkillInstaller : ISkillInstaller
             using var fs = File.Create(localPath);
             await stream.CopyToAsync(fs, cancellationToken);
         }
-    }
-
-    private async Task<SkillMetadata> ParseSkillMetadataAsync(string installDir, string skillName, CancellationToken cancellationToken)
-    {
-        var skillMdPath = Path.Combine(installDir, "SKILL.md");
-        if (File.Exists(skillMdPath))
-        {
-            var content = await File.ReadAllTextAsync(skillMdPath, cancellationToken);
-            var metadata = _metadataParser.Parse(content, out var errors);
-            if (metadata is not null)
-                return metadata;
-
-            _logger.LogWarning("SKILL.md validation failed: {Errors}", string.Join("; ", errors));
-        }
-
-        return new SkillMetadata { Name = skillName, Description = "Unknown" };
     }
 }
