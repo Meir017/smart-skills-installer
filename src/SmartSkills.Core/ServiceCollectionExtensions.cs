@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
     /// <summary>
     /// Register all SmartSkills.Core services into the DI container.
     /// </summary>
-    public static IServiceCollection AddSmartSkills(this IServiceCollection services, string? skillsOutputDirectory = null)
+    public static IServiceCollection AddSmartSkills(this IServiceCollection services)
     {
         // Resilience
         services.AddSingleton<RetryPolicy>();
@@ -44,11 +44,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISkillSourceProviderFactory, SkillSourceProviderFactory>();
 
         // Installation
+        services.AddSingleton<ISkillLockFileStore, SkillLockFileStore>();
         services.AddSingleton<ISkillInstaller, SkillInstaller>();
-        services.AddSingleton<ISkillStore>(sp =>
-            new LocalSkillStore(
-                skillsOutputDirectory ?? Path.Combine(Directory.GetCurrentDirectory(), ".agents", "skills"),
-                sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<LocalSkillStore>>()));
         return services;
     }
 }

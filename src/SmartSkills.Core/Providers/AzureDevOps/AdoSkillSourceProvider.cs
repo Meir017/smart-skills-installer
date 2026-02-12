@@ -47,11 +47,13 @@ public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
         return RegistryIndexParser.Parse(json);
     }
 
-    public async Task<IReadOnlyList<string>> ListSkillFilesAsync(string skillPath, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<string>> ListSkillFilesAsync(string skillPath, string? commitSha = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(skillPath);
 
-        var url = $"{BaseUrl}/items?scopePath={Uri.EscapeDataString(skillPath)}&recursionLevel=Full&versionDescriptor.version={_branch}&api-version=7.0";
+        var versionType = commitSha is not null ? "commit" : "branch";
+        var versionValue = commitSha ?? _branch;
+        var url = $"{BaseUrl}/items?scopePath={Uri.EscapeDataString(skillPath)}&recursionLevel=Full&versionDescriptor.versionType={versionType}&versionDescriptor.version={versionValue}&api-version=7.0";
         using var doc = await _client.GetJsonAsync(url, cancellationToken);
 
         var files = new List<string>();
@@ -76,9 +78,11 @@ public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
         return files;
     }
 
-    public async Task<Stream> DownloadFileAsync(string filePath, CancellationToken cancellationToken = default)
+    public async Task<Stream> DownloadFileAsync(string filePath, string? commitSha = null, CancellationToken cancellationToken = default)
     {
-        var url = $"{BaseUrl}/items?path={Uri.EscapeDataString(filePath)}&download=true&versionDescriptor.version={_branch}&api-version=7.0";
+        var versionType = commitSha is not null ? "commit" : "branch";
+        var versionValue = commitSha ?? _branch;
+        var url = $"{BaseUrl}/items?path={Uri.EscapeDataString(filePath)}&download=true&versionDescriptor.versionType={versionType}&versionDescriptor.version={versionValue}&api-version=7.0";
         return await _client.GetStreamAsync(url, cancellationToken);
     }
 

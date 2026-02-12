@@ -81,13 +81,13 @@ installCommand.SetAction(async (parseResult, cancellationToken) =>
     {
         Console.WriteLine($"Installed ({result.Installed.Count}):");
         foreach (var s in result.Installed)
-            Console.WriteLine($"  + {s.Name}");
+            Console.WriteLine($"  + {s}");
     }
     if (result.Updated.Count > 0)
     {
         Console.WriteLine($"Updated ({result.Updated.Count}):");
         foreach (var s in result.Updated)
-            Console.WriteLine($"  ~ {s.Name}");
+            Console.WriteLine($"  ~ {s}");
     }
     if (result.SkippedUpToDate.Count > 0)
     {
@@ -110,7 +110,8 @@ var skillNameArg = new Argument<string>("skill-name")
 };
 var uninstallCommand = new Command("uninstall", "Remove an installed skill")
 {
-    skillNameArg
+    skillNameArg,
+    projectOption
 };
 
 rootCommand.Subcommands.Add(uninstallCommand);
@@ -120,12 +121,59 @@ uninstallCommand.SetAction(async (parseResult, cancellationToken) =>
     bool verbose = parseResult.GetValue(verboseOption);
     string skillName = parseResult.GetValue(skillNameArg)!;
     string? baseDir = parseResult.GetValue(baseDirOption);
+    string? projectPath = parseResult.GetValue(projectOption);
 
     using var host = CreateHost(verbose, baseDir);
     var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
 
-    await installer.UninstallAsync(skillName, cancellationToken);
+    var resolvedPath = ResolveProjectPath(projectPath);
+    await installer.UninstallAsync(skillName, resolvedPath, cancellationToken);
     Console.WriteLine($"Uninstalled skill: {skillName}");
+});
+
+// restore command
+var restoreCommand = new Command("restore", "Restore skills from the lock file")
+{
+    projectOption
+};
+
+rootCommand.Subcommands.Add(restoreCommand);
+
+restoreCommand.SetAction(async (parseResult, cancellationToken) =>
+{
+    bool verbose = parseResult.GetValue(verboseOption);
+    string? projectPath = parseResult.GetValue(projectOption);
+    string? baseDir = parseResult.GetValue(baseDirOption);
+
+    using var host = CreateHost(verbose, baseDir);
+    var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
+
+    projectPath = ResolveProjectPath(projectPath);
+
+    var result = await installer.RestoreAsync(projectPath, cancellationToken);
+
+    if (result.Restored.Count > 0)
+    {
+        Console.WriteLine($"Restored ({result.Restored.Count}):");
+        foreach (var s in result.Restored)
+            Console.WriteLine($"  + {s}");
+    }
+    if (result.SkippedUpToDate.Count > 0)
+    {
+        Console.WriteLine($"Up-to-date ({result.SkippedUpToDate.Count}):");
+        foreach (var s in result.SkippedUpToDate)
+            Console.WriteLine($"  = {s}");
+    }
+    if (result.Failed.Count > 0)
+    {
+        Console.WriteLine($"Failed ({result.Failed.Count}):");
+        foreach (var f in result.Failed)
+            Console.WriteLine($"  x {f.SkillPath}: {f.Reason}");
+    }
+    if (result.Restored.Count == 0 && result.SkippedUpToDate.Count == 0 && result.Failed.Count == 0)
+    {
+        Console.WriteLine("No skills found in lock file.");
+    }
 });
 
 scanCommand.SetAction(async (parseResult, cancellationToken) =>
@@ -207,6 +255,7 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
 // list command
 var listCommand = new Command("list", "List installed skills")
 {
+    projectOption,
     jsonOption
 };
 
@@ -217,36 +266,46 @@ listCommand.SetAction(async (parseResult, cancellationToken) =>
     bool verbose = parseResult.GetValue(verboseOption);
     bool jsonOutput = parseResult.GetValue(jsonOption);
     string? baseDir = parseResult.GetValue(baseDirOption);
+    string? projectPath = parseResult.GetValue(projectOption);
 
     using var host = CreateHost(verbose, baseDir);
-    var store = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillStore>();
+    var lockFileStore = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillLockFileStore>();
 
-    var skills = await store.GetInstalledSkillsAsync(cancellationToken);
+    var resolvedPath = ResolveProjectPath(projectPath);
+    var lockFileDir = Directory.Exists(resolvedPath) ? resolvedPath : Path.GetDirectoryName(resolvedPath)!;
+    var lockFile = await lockFileStore.LoadAsync(lockFileDir, cancellationToken);
 
     if (jsonOutput)
     {
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(skills, jsonOptions));
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(lockFile.Skills, jsonOptions));
     }
-    else if (skills.Count == 0)
+    else if (lockFile.Skills.Count == 0)
     {
         Console.WriteLine("No skills installed.");
     }
     else
     {
-        Console.WriteLine($"{"Name",-30} {"Provider",-15} {"Installed",-25} {"SHA"}");
+        Console.WriteLine($"{"Name",-30} {"Path",-40} {"SHA"}");
         Console.WriteLine(new string('-', 90));
-        foreach (var s in skills)
+        foreach (var (name, entry) in lockFile.Skills)
         {
-            Console.WriteLine($"{s.Name,-30} {s.SourceProviderType,-15} {s.InstalledAt:yyyy-MM-dd HH:mm,-25} {s.CommitSha[..8]}");
+            var sha = entry.CommitSha.Length >= 8 ? entry.CommitSha[..8] : entry.CommitSha;
+            Console.WriteLine($"{name,-30} {entry.SkillPath,-40} {sha}");
         }
     }
 });
 
 // status command
+var checkRemoteOption = new Option<bool>("--check-remote")
+{
+    Description = "Check remote repositories for available updates"
+};
+
 var statusCommand = new Command("status", "Show status of installed skills and available updates")
 {
     projectOption,
-    jsonOption
+    jsonOption,
+    checkRemoteOption
 };
 
 rootCommand.Subcommands.Add(statusCommand);
@@ -255,27 +314,85 @@ statusCommand.SetAction(async (parseResult, cancellationToken) =>
 {
     bool verbose = parseResult.GetValue(verboseOption);
     bool jsonOutput = parseResult.GetValue(jsonOption);
+    bool checkRemote = parseResult.GetValue(checkRemoteOption);
+    string? projectPath = parseResult.GetValue(projectOption);
     string? baseDir = parseResult.GetValue(baseDirOption);
 
     using var host = CreateHost(verbose, baseDir);
-    var store = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillStore>();
-    var logger = host.Services.GetRequiredService<ILogger<Program>>();
+    var lockFileStore = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillLockFileStore>();
+    var providerFactory = host.Services.GetRequiredService<SmartSkills.Core.Providers.ISkillSourceProviderFactory>();
 
-    var skills = await store.GetInstalledSkillsAsync(cancellationToken);
+    var resolvedPath = ResolveProjectPath(projectPath);
+    var lockFileDir = Directory.Exists(resolvedPath) ? resolvedPath : Path.GetDirectoryName(resolvedPath)!;
+    var lockFile = await lockFileStore.LoadAsync(lockFileDir, cancellationToken);
 
-    if (skills.Count == 0)
+    if (lockFile.Skills.Count == 0)
     {
-        Console.WriteLine("No skills installed.");
+        Console.WriteLine("No skills in lock file.");
         return;
     }
 
-    Console.WriteLine($"{"Name",-30} {"Status",-15} {"SHA",-12} {"Installed"}");
-    Console.WriteLine(new string('-', 80));
+    var totalCount = lockFile.Skills.Count;
+    var upToDateCount = 0;
+    var modifiedCount = 0;
+    var missingCount = 0;
+    var updateAvailableCount = 0;
 
-    foreach (var s in skills)
+    Console.WriteLine($"{"Name",-30} {"Status",-20} {"SHA",-12}");
+    Console.WriteLine(new string('-', 65));
+
+    foreach (var (skillName, entry) in lockFile.Skills)
     {
-        Console.WriteLine($"{s.Name,-30} {"Installed",-15} {s.CommitSha[..8],-12} {s.InstalledAt:yyyy-MM-dd HH:mm}");
+        var installDir = Path.Combine(lockFileDir, ".agents", "skills", skillName);
+        var sha = entry.CommitSha.Length >= 8 ? entry.CommitSha[..8] : entry.CommitSha;
+        string status;
+
+        if (!Directory.Exists(installDir))
+        {
+            status = "Missing";
+            missingCount++;
+        }
+        else
+        {
+            var currentHash = SmartSkills.Core.Installation.SkillContentHasher.ComputeHash(installDir);
+            if (currentHash != entry.LocalContentHash)
+            {
+                status = "Modified";
+                modifiedCount++;
+            }
+            else
+            {
+                status = "Up-to-date";
+                upToDateCount++;
+            }
+        }
+
+        if (checkRemote && status != "Missing")
+        {
+            try
+            {
+                var provider = providerFactory.CreateFromRepoUrl(entry.RemoteUrl);
+                var remoteSha = await provider.GetLatestCommitShaAsync(entry.SkillPath, cancellationToken);
+                if (remoteSha != entry.CommitSha)
+                {
+                    status += " (update available)";
+                    updateAvailableCount++;
+                }
+            }
+#pragma warning disable CA1031
+            catch
+#pragma warning restore CA1031
+            {
+                status += " (remote check failed)";
+            }
+        }
+
+        Console.WriteLine($"{skillName,-30} {status,-20} {sha,-12}");
     }
+
+    Console.WriteLine();
+    Console.WriteLine($"Total: {totalCount} | Up-to-date: {upToDateCount} | Modified: {modifiedCount} | Missing: {missingCount}" +
+        (checkRemote ? $" | Updates: {updateAvailableCount}" : ""));
 });
 
 rootCommand.SetAction(parseResult =>
@@ -287,10 +404,6 @@ return await rootCommand.Parse(args).InvokeAsync();
 
 static IHost CreateHost(bool verbose, string? baseDir = null)
 {
-    var skillsDir = baseDir is not null
-        ? Path.Combine(Path.GetFullPath(baseDir), ".agents", "skills")
-        : null;
-
     return Host.CreateDefaultBuilder()
         .ConfigureLogging(logging =>
         {
@@ -300,7 +413,7 @@ static IHost CreateHost(bool verbose, string? baseDir = null)
         })
         .ConfigureServices(services =>
         {
-            services.AddSmartSkills(skillsDir);
+            services.AddSmartSkills();
         })
         .Build();
 }
