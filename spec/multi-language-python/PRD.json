@@ -180,7 +180,7 @@
         {
           "id": "S02-T07",
           "title": "Extend PackageResolverFactory for Python",
-          "completed": false,
+          "completed": true,
           "description": "Add Python ecosystem routing to the existing PackageResolverFactory.",
           "apiReferences": ["IPackageResolverFactory", "PackageResolverFactory"],
           "requirements": [
