@@ -137,7 +137,7 @@
         {
           "id": "S02-T05",
           "title": "Implement PipfileLockPackageResolver",
-          "completed": false,
+          "completed": true,
           "description": "Implement IPackageResolver for Pipfile.lock (JSON format).",
           "apiReferences": ["IPackageResolver", "PipfileLockPackageResolver", "ResolvedPackage"],
           "requirements": [
