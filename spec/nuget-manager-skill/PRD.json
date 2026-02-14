@@ -20,7 +20,7 @@
         {
           "id": "S01-T01",
           "title": "Define IMatchStrategy interface and MatchContext",
-          "completed": false,
+          "completed": true,
           "description": "Create the IMatchStrategy interface in Registry/Matching/. It takes a MatchContext (containing all available signals) and the strategy-specific criteria from the registry entry, and returns whether the entry matches plus which patterns triggered the match. MatchContext is designed to be extended with new signal types over time without breaking existing strategies.",
           "apiReferences": [
             "IMatchStrategy",
@@ -43,7 +43,7 @@
         {
           "id": "S01-T02",
           "title": "Implement PackageMatchStrategy",
-          "completed": false,
+          "completed": true,
           "description": "Extract the existing package-pattern matching logic from SkillMatcher.Match/IsMatch into a PackageMatchStrategy class that implements IMatchStrategy. This must produce identical results to the current code — it is a pure extraction refactor.",
           "apiReferences": [
             "IMatchStrategy",
@@ -65,7 +65,7 @@
         {
           "id": "S01-T03",
           "title": "Implement FileExistsMatchStrategy",
-          "completed": false,
+          "completed": true,
           "description": "Create a FileExistsMatchStrategy that implements IMatchStrategy. It checks whether any of the criteria patterns match file names in MatchContext.RootFileNames using glob matching.",
           "apiReferences": [
             "IMatchStrategy",
@@ -89,7 +89,7 @@
         {
           "id": "S01-T04",
           "title": "Create IMatchStrategyResolver for strategy lookup",
-          "completed": false,
+          "completed": true,
           "description": "Create an IMatchStrategyResolver (or use DI keyed services) that maps strategy names to IMatchStrategy instances. SkillMatcher will use this to resolve the correct strategy for each registry entry. New strategies are registered in DI with no changes to the resolver or matcher.",
           "apiReferences": [
             "IMatchStrategyResolver",
@@ -118,7 +118,7 @@
         {
           "id": "S02-T01",
           "title": "Refactor RegistryEntry to use MatchStrategy and Criteria",
-          "completed": false,
+          "completed": true,
           "description": "Replace the 'PackagePatterns' property on RegistryEntry with 'MatchStrategy' (string) and 'MatchCriteria' (IReadOnlyList<string>). The MatchStrategy names the strategy to use; MatchCriteria is the strategy-specific data (e.g. package patterns for 'package', file patterns for 'file-exists'). For backward compatibility, existing entries without an explicit matchStrategy default to 'package' with PackagePatterns becoming the criteria.",
           "apiReferences": [
             "RegistryEntry"
@@ -140,7 +140,7 @@
         {
           "id": "S02-T02",
           "title": "Update RegistryIndexParser for strategy-aware JSON",
-          "completed": false,
+          "completed": true,
           "description": "Update RegistryIndexParser.ParseDocument to support two JSON formats: (1) legacy format with 'packagePatterns' — automatically inferred as strategy='package', criteria=packagePatterns; (2) new format with 'matchStrategy' and 'matchCriteria' fields. Both formats coexist in the same JSON file.",
           "apiReferences": [
             "RegistryIndexParser",
@@ -171,7 +171,7 @@
         {
           "id": "S03-T01",
           "title": "Refactor SkillMatcher to delegate to IMatchStrategy",
-          "completed": false,
+          "completed": true,
           "description": "Rewrite SkillMatcher.Match to: (1) build a MatchContext from the available inputs, (2) for each RegistryEntry, resolve the IMatchStrategy by entry.MatchStrategy name, (3) call strategy.Match(context, entry.MatchCriteria), (4) collect results. The private IsMatch method is removed (moved into PackageMatchStrategy).",
           "apiReferences": [
             "SkillMatcher",
@@ -196,7 +196,7 @@
         {
           "id": "S03-T02",
           "title": "Update ISkillMatcher interface signature",
-          "completed": false,
+          "completed": true,
           "description": "Update the ISkillMatcher.Match signature to accept a MatchContext (or the signals needed to build one) so that root file names and future signals can be passed through. Maintain backward compatibility with a default parameter or overload.",
           "apiReferences": [
             "ISkillMatcher",
@@ -223,7 +223,7 @@
         {
           "id": "S04-T01",
           "title": "Add nuget-manager entry to skills-registry.json",
-          "completed": false,
+          "completed": true,
           "description": "Add a new entry to the embedded skills-registry.json for the nuget-manager skill using the 'file-exists' strategy. The entry should match .NET project root files and source from github/awesome-copilot.",
           "apiReferences": [
             "RegistryEntry"
@@ -244,7 +244,7 @@
         {
           "id": "S04-T02",
           "title": "Update skills-registry.md documentation",
-          "completed": false,
+          "completed": true,
           "description": "Update skills-registry.md to document the nuget-manager skill and the new match strategy concept. Add a section explaining file-exists triggered skills.",
           "requirements": [
             "Add a new section for file-exists skills (or 'Project-Level Skills')",
@@ -266,7 +266,7 @@
         {
           "id": "S05-T01",
           "title": "Collect root file names in scanning pipeline",
-          "completed": false,
+          "completed": true,
           "description": "Update the scanning pipeline to collect root-level file names from the target directory. These are passed into the MatchContext so file-exists (and future) strategies have access to this signal.",
           "apiReferences": [
             "SkillInstaller",
@@ -286,7 +286,7 @@
         {
           "id": "S05-T02",
           "title": "Update SkillInstaller.InstallAsync to build MatchContext",
-          "completed": false,
+          "completed": true,
           "description": "Update InstallAsync to build a MatchContext with both resolved packages and root file names, and pass it to the refactored SkillMatcher. The rest of the pipeline (fetch, install, lock file) is unchanged — it already works with MatchedSkill results.",
           "apiReferences": [
             "SkillInstaller",
@@ -317,7 +317,7 @@
         {
           "id": "S06-T01",
           "title": "CLI scan command shows strategy-matched skills",
-          "completed": false,
+          "completed": true,
           "description": "Update CLI scan output to display the match strategy for each matched skill (e.g. 'package: Azure.Identity' vs 'file-exists: *.sln').",
           "requirements": [
             "scan output includes the strategy name and matched criteria for each skill",
@@ -333,7 +333,7 @@
         {
           "id": "S06-T02",
           "title": "MSBuild task supports strategy-based matching",
-          "completed": false,
+          "completed": true,
           "description": "Update the MSBuild task to collect root file names and pass them through the MatchContext, enabling file-exists strategy matching during build.",
           "requirements": [
             "MSBuild install task builds MatchContext with root file names",
@@ -356,7 +356,7 @@
         {
           "id": "S07-T01",
           "title": "Register match strategies and resolver in DI",
-          "completed": false,
+          "completed": true,
           "description": "Update the AddSmartSkills DI extension to register PackageMatchStrategy, FileExistsMatchStrategy, IMatchStrategyResolver, and the refactored SkillMatcher.",
           "apiReferences": [
             "ServiceCollectionExtensions"
@@ -383,7 +383,7 @@
         {
           "id": "S08-T01",
           "title": "Unit tests for PackageMatchStrategy",
-          "completed": false,
+          "completed": true,
           "description": "Migrate existing SkillMatcher tests to test PackageMatchStrategy directly, plus add strategy-specific tests.",
           "requirements": [
             "All existing matcher test scenarios pass when routed through PackageMatchStrategy",
@@ -399,7 +399,7 @@
         {
           "id": "S08-T02",
           "title": "Unit tests for FileExistsMatchStrategy",
-          "completed": false,
+          "completed": true,
           "description": "Test the file-exists strategy with various file patterns and root file names.",
           "requirements": [
             "Test: '*.sln' matches 'MyApp.sln'",
@@ -416,7 +416,7 @@
         {
           "id": "S08-T03",
           "title": "Unit tests for RegistryIndexParser strategy support",
-          "completed": false,
+          "completed": true,
           "description": "Test parsing of both legacy (packagePatterns) and new (matchStrategy + matchCriteria) JSON formats.",
           "requirements": [
             "Test: legacy format produces strategy='package'",
@@ -432,7 +432,7 @@
         {
           "id": "S08-T04",
           "title": "Integration test for nuget-manager end-to-end",
-          "completed": false,
+          "completed": true,
           "description": "End-to-end test that scans a directory with .NET project files and verifies nuget-manager is installed via the file-exists strategy.",
           "requirements": [
             "Set up temp directory with a .sln file",
