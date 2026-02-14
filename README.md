@@ -204,38 +204,7 @@ Skills are automatically resolved and installed during build.
 
 SmartSkills ships with a **built-in registry** of curated skills that is embedded in the core library. When your project references a matching NuGet package, the corresponding skill is automatically discovered — no configuration needed.
 
-### Built-in Skills
-
-The embedded registry includes skills from [microsoft/skills](https://github.com/microsoft/skills) and [redis/agent-skills](https://github.com/redis/agent-skills):
-
-| NuGet Package(s) | Skill | Source |
-|---|---|---|
-| `Azure.Messaging.ServiceBus` | azure-servicebus-dotnet | microsoft/skills |
-| `Azure.AI.OpenAI` | azure-ai-openai-dotnet | microsoft/skills |
-| `Azure.Identity`, `Azure.Identity.*` | azure-identity-dotnet | microsoft/skills |
-| `Azure.Messaging.EventGrid`, `Azure.Messaging.EventGrid.*` | azure-eventgrid-dotnet | microsoft/skills |
-| `Azure.Messaging.EventHubs`, `Azure.Messaging.EventHubs.*` | azure-eventhub-dotnet | microsoft/skills |
-| `Azure.Search.Documents` | azure-search-documents-dotnet | microsoft/skills |
-| `Azure.Security.KeyVault.Keys` | azure-security-keyvault-keys-dotnet | microsoft/skills |
-| `Azure.AI.DocumentIntelligence` | azure-ai-document-intelligence-dotnet | microsoft/skills |
-| `Azure.AI.Projects`, `Azure.AI.Projects.*` | azure-ai-projects-dotnet | microsoft/skills |
-| `Azure.AI.VoiceLive` | azure-ai-voicelive-dotnet | microsoft/skills |
-| `Azure.Maps.Search`, `Azure.Maps.Routing`, `Azure.Maps.Rendering`, `Azure.Maps.Geolocation`, `Azure.Maps.TimeZones` | azure-maps-search-dotnet | microsoft/skills |
-| `Azure.AI.Agents.Persistent` | azure-ai-agents-persistent-dotnet | microsoft/skills |
-| `Microsoft.Agents.Builder`, `Microsoft.Agents.Hosting.AspNetCore`, `Microsoft.Agents.*` | m365-agents-dotnet | microsoft/skills |
-| `Microsoft.Azure.WebJobs.Extensions.AuthenticationEvents` | microsoft-azure-webjobs-extensions-authentication-events-dotnet | microsoft/skills |
-| `Azure.ResourceManager.AppContainers` | azure-mgmt-appcontainers-dotnet | microsoft/skills |
-| `Azure.ResourceManager.AppService` | azure-mgmt-appservice-dotnet | microsoft/skills |
-| `Azure.ResourceManager.Compute` | azure-mgmt-compute-dotnet | microsoft/skills |
-| `Azure.ResourceManager.ContainerRegistry` | azure-mgmt-containerregistry-dotnet | microsoft/skills |
-| `Azure.ResourceManager.ContainerService` | azure-mgmt-containerservice-dotnet | microsoft/skills |
-| `Azure.ResourceManager.CosmosDB` | azure-mgmt-cosmosdb-dotnet | microsoft/skills |
-| `Azure.ResourceManager.KeyVault` | azure-mgmt-keyvault-dotnet | microsoft/skills |
-| `Azure.ResourceManager.Network` | azure-mgmt-network-dotnet | microsoft/skills |
-| `Azure.ResourceManager.Playwright` | azure-mgmt-playwright-dotnet | microsoft/skills |
-| `Azure.ResourceManager.Sql` | azure-resource-manager-sql-dotnet | microsoft/skills |
-| `GitHub.Copilot.SDK` | copilot-sdk | microsoft/skills |
-| `StackExchange.Redis`, `StackExchange.Redis.*`, `NRedisStack`, `Microsoft.Extensions.Caching.StackExchangeRedis`, `Redis.OM` | redis-development | redis/agent-skills |
+See **[skills-registry.md](skills-registry.md)** for the full list of built-in skills across all ecosystems (.NET, JavaScript/TypeScript, Python, Java).
 
 ### Adding Custom Registries
 
