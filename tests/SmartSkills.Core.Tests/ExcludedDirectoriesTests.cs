@@ -108,11 +108,11 @@ public class ExcludedDirectoriesTests
     [Fact]
     public void All_IsSupersetOfAllCategories()
     {
-        Assert.Subset(ExcludedDirectories.Universal as ISet<string> ?? new HashSet<string>(ExcludedDirectories.Universal), (ISet<string>)ExcludedDirectories.All);
-        Assert.Subset(ExcludedDirectories.DotNet as ISet<string> ?? new HashSet<string>(ExcludedDirectories.DotNet), (ISet<string>)ExcludedDirectories.All);
-        Assert.Subset(ExcludedDirectories.NodeJs as ISet<string> ?? new HashSet<string>(ExcludedDirectories.NodeJs), (ISet<string>)ExcludedDirectories.All);
-        Assert.Subset(ExcludedDirectories.Python as ISet<string> ?? new HashSet<string>(ExcludedDirectories.Python), (ISet<string>)ExcludedDirectories.All);
-        Assert.Subset(ExcludedDirectories.Java as ISet<string> ?? new HashSet<string>(ExcludedDirectories.Java), (ISet<string>)ExcludedDirectories.All);
-        Assert.Subset(ExcludedDirectories.BuildOutput as ISet<string> ?? new HashSet<string>(ExcludedDirectories.BuildOutput), (ISet<string>)ExcludedDirectories.All);
+        Assert.Subset((ISet<string>)ExcludedDirectories.All, ExcludedDirectories.Universal as ISet<string> ?? new HashSet<string>(ExcludedDirectories.Universal));
+        Assert.Subset((ISet<string>)ExcludedDirectories.All, ExcludedDirectories.DotNet as ISet<string> ?? new HashSet<string>(ExcludedDirectories.DotNet));
+        Assert.Subset((ISet<string>)ExcludedDirectories.All, ExcludedDirectories.NodeJs as ISet<string> ?? new HashSet<string>(ExcludedDirectories.NodeJs));
+        Assert.Subset((ISet<string>)ExcludedDirectories.All, ExcludedDirectories.Python as ISet<string> ?? new HashSet<string>(ExcludedDirectories.Python));
+        Assert.Subset((ISet<string>)ExcludedDirectories.All, ExcludedDirectories.Java as ISet<string> ?? new HashSet<string>(ExcludedDirectories.Java));
+        Assert.Subset((ISet<string>)ExcludedDirectories.All, ExcludedDirectories.BuildOutput as ISet<string> ?? new HashSet<string>(ExcludedDirectories.BuildOutput));
     }
 }

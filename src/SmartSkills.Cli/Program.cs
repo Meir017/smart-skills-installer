@@ -205,7 +205,7 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
 
     var detectionOptions = new ProjectDetectionOptions { Recursive = recursive, MaxDepth = depth };
 
-    using var host = CreateHost(verbose, baseDir);
+    using var host = CreateHost(verbose, baseDir, suppressLogging: jsonOutput);
     var scanner = host.Services.GetRequiredService<ILibraryScanner>();
     var registry = host.Services.GetRequiredService<SmartSkills.Core.Registry.ISkillRegistry>();
     var matcher = host.Services.GetRequiredService<SmartSkills.Core.Registry.ISkillMatcher>();
@@ -334,7 +334,7 @@ listCommand.SetAction(async (parseResult, cancellationToken) =>
     string? baseDir = parseResult.GetValue(baseDirOption);
     string? projectPath = parseResult.GetValue(projectOption);
 
-    using var host = CreateHost(verbose, baseDir);
+    using var host = CreateHost(verbose, baseDir, suppressLogging: jsonOutput);
     var lockFileStore = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillLockFileStore>();
 
     var resolvedPath = ResolveProjectPath(projectPath);
@@ -384,7 +384,7 @@ statusCommand.SetAction(async (parseResult, cancellationToken) =>
     string? projectPath = parseResult.GetValue(projectOption);
     string? baseDir = parseResult.GetValue(baseDirOption);
 
-    using var host = CreateHost(verbose, baseDir);
+    using var host = CreateHost(verbose, baseDir, suppressLogging: jsonOutput);
     var lockFileStore = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillLockFileStore>();
     var providerFactory = host.Services.GetRequiredService<SmartSkills.Core.Providers.ISkillSourceProviderFactory>();
 
@@ -466,12 +466,19 @@ rootCommand.SetAction(parseResult =>
 
 return await rootCommand.Parse(args).InvokeAsync();
 
-static IHost CreateHost(bool verbose, string? baseDir = null)
+static IHost CreateHost(bool verbose, string? baseDir = null, bool suppressLogging = false)
 {
     var builder = Host.CreateApplicationBuilder();
     builder.Logging.ClearProviders();
-    builder.Logging.AddConsole();
-    builder.Logging.SetMinimumLevel(verbose ? LogLevel.Debug : LogLevel.Information);
+    if (!suppressLogging)
+    {
+        builder.Logging.AddConsole();
+        builder.Logging.SetMinimumLevel(verbose ? LogLevel.Debug : LogLevel.Information);
+    }
+    else
+    {
+        builder.Logging.SetMinimumLevel(LogLevel.None);
+    }
     builder.Services.AddSmartSkills();
     return builder.Build();
 }
