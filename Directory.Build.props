@@ -12,6 +12,9 @@
 
     <!-- Code quality settings - use 'Recommended' to enable standard analyzers -->
     <AnalysisMode>Recommended</AnalysisMode>
+
+    <!-- Enable Microsoft Testing Platform runner for xUnit v3 -->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
 
   <!-- NuGet package metadata (shared across all packable projects) -->
