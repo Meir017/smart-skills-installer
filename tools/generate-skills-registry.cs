@@ -41,12 +41,28 @@ var grouped = new Dictionary<string, List<SkillEntry>>
 };
 
 var totalParsed = 0;
+var fileExistsSkills = new List<FileExistsEntry>();
+
 foreach (var skill in skills.EnumerateArray())
 {
-    var patterns = skill.GetProperty("packagePatterns").EnumerateArray().Select(p => p.GetString()!).ToList();
     var skillPath = skill.GetProperty("skillPath").GetString()!;
     var repoUrl = skill.TryGetProperty("repoUrl", out var r) ? r.GetString()! : defaultRepoUrl;
     var language = skill.TryGetProperty("language", out var l) ? l.GetString()! : "dotnet";
+
+    // Determine strategy: new format (matchStrategy) or legacy (packagePatterns)
+    var matchStrategy = skill.TryGetProperty("matchStrategy", out var ms) ? ms.GetString()! : "package";
+
+    if (matchStrategy == "file-exists")
+    {
+        var criteria = skill.GetProperty("matchCriteria").EnumerateArray().Select(p => p.GetString()!).ToList();
+        fileExistsSkills.Add(new FileExistsEntry(criteria, skillPath, repoUrl, language));
+        totalParsed++;
+        continue;
+    }
+
+    var patterns = skill.TryGetProperty("matchCriteria", out var mc)
+        ? mc.EnumerateArray().Select(p => p.GetString()!).ToList()
+        : skill.GetProperty("packagePatterns").EnumerateArray().Select(p => p.GetString()!).ToList();
 
     var entry = new SkillEntry(patterns, skillPath, repoUrl, language);
     totalParsed++;
@@ -71,7 +87,7 @@ sb.AppendLine();
 sb.AppendLine("SmartSkills ships with a **built-in registry** of curated skills that is embedded in the core library.");
 sb.AppendLine("When your project references a matching package, the corresponding skill is automatically discovered — no configuration needed.");
 sb.AppendLine();
-sb.Append(CultureInfo.InvariantCulture, $"Total skills: **{grouped.Values.Sum(g => g.Count)}** across **{grouped.Count(g => g.Value.Count > 0)}** ecosystems.").AppendLine();
+sb.Append(CultureInfo.InvariantCulture, $"Total skills: **{grouped.Values.Sum(g => g.Count) + fileExistsSkills.Count}** across **{grouped.Count(g => g.Value.Count > 0)}** ecosystems.").AppendLine();
 sb.AppendLine();
 
 var languageLabels = new Dictionary<string, string>
@@ -104,7 +120,28 @@ foreach (var (language, entries) in grouped)
     sb.AppendLine();
 }
 
-var totalSkills = grouped.Values.Sum(g => g.Count);
+if (fileExistsSkills.Count > 0)
+{
+    sb.AppendLine("## Project-Level Skills (file-exists)");
+    sb.AppendLine();
+    sb.AppendLine("These skills are automatically installed when specific files are detected in the project root.");
+    sb.AppendLine();
+    sb.AppendLine("| File Pattern(s) | Skill | Ecosystem | Source |");
+    sb.AppendLine("|---|---|---|---|");
+
+    foreach (var entry in fileExistsSkills)
+    {
+        var patterns = string.Join(", ", entry.Patterns.Select(p => $"`{p}`"));
+        var skillName = entry.SkillPath.Split('/').Last();
+        var skillLink = $"[{skillName}]({entry.RepoUrl}/tree/main/{entry.SkillPath})";
+        var sourceLabel = ExtractSourceLabel(entry.RepoUrl);
+        sb.Append(CultureInfo.InvariantCulture, $"| {patterns} | {skillLink} | {entry.Language} | {sourceLabel} |").AppendLine();
+    }
+
+    sb.AppendLine();
+}
+
+var totalSkills = grouped.Values.Sum(g => g.Count) + fileExistsSkills.Count;
 var activeEcosystems = grouped.Count(g => g.Value.Count > 0);
 File.WriteAllText(outputPath, sb.ToString());
 
@@ -135,3 +172,4 @@ static string ExtractSourceLabel(string repoUrl)
 }
 
 internal sealed record SkillEntry(List<string> Patterns, string SkillPath, string RepoUrl, string Language);
+internal sealed record FileExistsEntry(List<string> Patterns, string SkillPath, string RepoUrl, string Language);
