@@ -28,9 +28,9 @@ public class RegistryIndexParserTests
         Assert.Equal(2, entries.Count);
         Assert.Equal("skills/json", entries[0].SkillPath);
         Assert.Null(entries[0].RepoUrl);
-        Assert.Single(entries[0].PackagePatterns);
+        Assert.Single(entries[0].MatchCriteria);
         Assert.Equal("skills/ef-core", entries[1].SkillPath);
-        Assert.Equal(2, entries[1].PackagePatterns.Count);
+        Assert.Equal(2, entries[1].MatchCriteria.Count);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class RegistryIndexParserTests
         Assert.NotNull(entries);
         Assert.NotEmpty(entries);
         Assert.Contains(entries, e => e.SkillPath == ".github/skills/azure-servicebus-dotnet");
-        Assert.Contains(entries, e => e.PackagePatterns.Contains("Azure.Messaging.ServiceBus"));
+        Assert.Contains(entries, e => e.MatchCriteria.Contains("Azure.Messaging.ServiceBus"));
         Assert.All(entries, e => Assert.NotNull(e.RepoUrl));
     }
 

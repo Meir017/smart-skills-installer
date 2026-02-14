@@ -65,32 +65,42 @@ public static class RegistryIndexParser
         // Top-level defaults apply to all skills unless overridden per-skill
         var defaultRepoUrl = root.TryGetProperty("repoUrl", out var repoUrlProp) ? repoUrlProp.GetString() : null;
         var defaultLanguage = root.TryGetProperty("language", out var langProp) ? langProp.GetString() : null;
+        var defaultMatchStrategy = root.TryGetProperty("matchStrategy", out var msProp) ? msProp.GetString() : null;
 
         if (!root.TryGetProperty("skills", out var skills))
             return entries;
 
         foreach (var skill in skills.EnumerateArray())
         {
-            var patterns = new List<string>();
-            if (skill.TryGetProperty("packagePatterns", out var patternsElement))
-            {
-                foreach (var pattern in patternsElement.EnumerateArray())
-                {
-                    var val = pattern.GetString();
-                    if (val is not null)
-                        patterns.Add(val);
-                }
-            }
-
             var skillPath = skill.TryGetProperty("skillPath", out var sp) ? sp.GetString() : null;
             var repoUrl = skill.TryGetProperty("repoUrl", out var ru) ? ru.GetString() : defaultRepoUrl;
             var language = skill.TryGetProperty("language", out var sl) ? sl.GetString() : defaultLanguage;
 
-            if (skillPath is not null && patterns.Count > 0)
+            // Determine match strategy and criteria:
+            // New format: "matchStrategy" + "matchCriteria"
+            // Legacy format: "packagePatterns" → strategy="package", criteria=packagePatterns
+            string? matchStrategy = null;
+            List<string>? criteria = null;
+
+            if (skill.TryGetProperty("matchCriteria", out var criteriaElement))
+            {
+                criteria = ParseStringArray(criteriaElement);
+                matchStrategy = skill.TryGetProperty("matchStrategy", out var ms)
+                    ? ms.GetString()
+                    : defaultMatchStrategy ?? "package";
+            }
+            else if (skill.TryGetProperty("packagePatterns", out var patternsElement))
+            {
+                criteria = ParseStringArray(patternsElement);
+                matchStrategy = "package";
+            }
+
+            if (skillPath is not null && criteria is { Count: > 0 } && matchStrategy is not null)
             {
                 entries.Add(new RegistryEntry
                 {
-                    PackagePatterns = patterns,
+                    MatchStrategy = matchStrategy,
+                    MatchCriteria = criteria,
                     SkillPath = skillPath,
                     RepoUrl = repoUrl,
                     Language = language
@@ -99,5 +109,17 @@ public static class RegistryIndexParser
         }
 
         return entries;
+    }
+
+    private static List<string> ParseStringArray(JsonElement element)
+    {
+        var list = new List<string>();
+        foreach (var item in element.EnumerateArray())
+        {
+            var val = item.GetString();
+            if (val is not null)
+                list.Add(val);
+        }
+        return list;
     }
 }

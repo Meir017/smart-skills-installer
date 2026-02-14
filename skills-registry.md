@@ -5,7 +5,7 @@
 SmartSkills ships with a **built-in registry** of curated skills that is embedded in the core library.
 When your project references a matching package, the corresponding skill is automatically discovered — no configuration needed.
 
-Total skills: **103** across **4** ecosystems.
+Total skills: **104** across **4** ecosystems.
 
 ## .NET (NuGet)
 
@@ -129,4 +129,12 @@ Total skills: **103** across **4** ecosystems.
 | `com.azure:azure-monitor-query`, `com.azure:azure-monitor-query-logs`, `com.azure:azure-monitor-query-metrics` | [azure-monitor-query-java](https://github.com/microsoft/skills/tree/main/.github/skills/azure-monitor-query-java) | microsoft/skills |
 | `com.azure:azure-security-keyvault-keys` | [azure-security-keyvault-keys-java](https://github.com/microsoft/skills/tree/main/.github/skills/azure-security-keyvault-keys-java) | microsoft/skills |
 | `com.azure:azure-storage-blob` | [azure-storage-blob-java](https://github.com/microsoft/skills/tree/main/.github/skills/azure-storage-blob-java) | microsoft/skills |
+
+## Project-Level Skills (file-exists)
+
+These skills are automatically installed when specific files are detected in the project root.
+
+| File Pattern(s) | Skill | Ecosystem | Source |
+|---|---|---|---|
+| `*.sln`, `*.slnx`, `global.json`, `Directory.Build.props`, `Directory.Packages.props` | [nuget-manager](https://github.com/github/awesome-copilot/tree/main/skills/nuget-manager) | dotnet | github/awesome-copilot |
 

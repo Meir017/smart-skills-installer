@@ -67,9 +67,14 @@ public sealed class SkillInstaller : ISkillInstaller
 
         var allPackages = projectPackages.SelectMany(p => p.Packages).ToList();
 
+        // Collect root file names for file-exists strategy matching
+        var rootFileNames = Directory.Exists(baseDir)
+            ? Directory.GetFiles(baseDir).Select(Path.GetFileName).Where(n => n is not null).Cast<string>().ToList()
+            : (IReadOnlyList<string>)[];
+
         // 2. Match skills
         var registryEntries = await _registry.GetRegistryEntriesAsync(cancellationToken);
-        var matched = _matcher.Match(allPackages, registryEntries);
+        var matched = _matcher.Match(allPackages, registryEntries, rootFileNames);
 
         _logger.LogInformation("Found {Count} matching skills", matched.Count);
 

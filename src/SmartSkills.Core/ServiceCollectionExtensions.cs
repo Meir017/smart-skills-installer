@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SmartSkills.Core.Installation;
 using SmartSkills.Core.Providers;
 using SmartSkills.Core.Registry;
+using SmartSkills.Core.Registry.Matching;
 using SmartSkills.Core.Resilience;
 using SmartSkills.Core.Scanning;
 
@@ -34,6 +35,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IPackageResolverFactory, PackageResolverFactory>();
         services.AddSingleton<ILibraryScanner, LibraryScanner>();
         services.AddSingleton<IProjectDetector, ProjectDetector>();
+
+        // Match strategies
+        services.AddSingleton<IMatchStrategy, PackageMatchStrategy>();
+        services.AddSingleton<IMatchStrategy, FileExistsMatchStrategy>();
+        services.AddSingleton<IMatchStrategyResolver, MatchStrategyResolver>();
 
         // Registry
         services.AddSingleton<ISkillMatcher, SkillMatcher>();

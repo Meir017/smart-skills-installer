@@ -490,6 +490,13 @@
       "packagePatterns": ["com.azure:azure-storage-blob"],
       "skillPath": ".github/skills/azure-storage-blob-java",
       "language": "java"
+    },
+    {
+      "repoUrl": "https://github.com/github/awesome-copilot",
+      "matchStrategy": "file-exists",
+      "matchCriteria": ["*.sln", "*.slnx", "global.json", "Directory.Build.props", "Directory.Packages.props"],
+      "skillPath": "skills/nuget-manager",
+      "language": "dotnet"
     }
   ]
 }

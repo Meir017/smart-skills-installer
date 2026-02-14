@@ -82,7 +82,7 @@ public class RegistryLanguageParsingTests
         var entries = RegistryIndexParser.LoadEmbedded();
 
         Assert.Contains(entries, e => e.Language == "javascript");
-        Assert.Contains(entries, e => e.PackagePatterns.Contains("@azure/identity"));
+        Assert.Contains(entries, e => e.MatchCriteria.Contains("@azure/identity"));
     }
 
     [Fact]

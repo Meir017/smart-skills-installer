@@ -23,8 +23,14 @@ public class ResolveSmartSkills : Microsoft.Build.Utilities.Task
 
         try
         {
-            // In a full implementation, this would use Core services to resolve skills.
-            // For now, log the intent and return empty list (skills require configured sources).
+            var projectDir = Directory.Exists(ProjectPath) ? ProjectPath : Path.GetDirectoryName(ProjectPath) ?? ".";
+
+            // Collect root file names for file-exists strategy matching
+            var rootFileNames = Directory.Exists(projectDir)
+                ? Directory.GetFiles(projectDir).Select(Path.GetFileName).Where(n => n is not null).ToArray()
+                : [];
+
+            Log.LogMessage(MessageImportance.Low, "SmartSkills: Found {0} root file(s) for file-exists matching", rootFileNames.Length);
             Log.LogMessage(MessageImportance.Normal, "SmartSkills: Output directory: {0}", OutputDirectory);
             Log.LogMessage(MessageImportance.Low, "SmartSkills: Resolution complete. No configured sources found.");
 
