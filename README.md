@@ -6,7 +6,7 @@ Automatically discover and install agent skills based on your project's dependen
 
 ## Overview
 
-SmartSkills scans your project for installed packages and matches them against a remote skill registry to find relevant agent skills. Skills follow the [Agent Skills specification](https://agentskills.io/specification.md) and are downloaded, validated, and installed locally.
+SmartSkills scans your project for installed packages and matches them against a remote skill registry to find relevant agent skills. Skills follow the [Agent Skills specification](https://agentskills.io/specification) and are downloaded, validated, and installed locally.
 
 **Key features:**
 - Scan projects and solutions for NuGet, npm, Python, and Java dependencies
