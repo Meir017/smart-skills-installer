@@ -1,65 +1,65 @@
-using System.Text.RegularExpressions;
+using SmartSkills.Core.Registry.Matching;
 using SmartSkills.Core.Scanning;
 
 namespace SmartSkills.Core.Registry;
 
 /// <summary>
-/// Matches packages to skills using exact and glob pattern matching.
+/// Matches registry entries to projects by delegating to <see cref="IMatchStrategy"/> implementations.
 /// </summary>
 public sealed class SkillMatcher : ISkillMatcher
 {
+    private readonly IMatchStrategyResolver _strategyResolver;
+
+    public SkillMatcher(IMatchStrategyResolver strategyResolver)
+    {
+        ArgumentNullException.ThrowIfNull(strategyResolver);
+        _strategyResolver = strategyResolver;
+    }
+
+    /// <summary>
+    /// Convenience constructor that registers the built-in strategies.
+    /// </summary>
+    public SkillMatcher()
+        : this(new MatchStrategyResolver([new PackageMatchStrategy(), new FileExistsMatchStrategy()]))
+    {
+    }
+
     public IReadOnlyList<MatchedSkill> Match(
         IEnumerable<ResolvedPackage> packages,
-        IEnumerable<RegistryEntry> registryEntries)
+        IEnumerable<RegistryEntry> registryEntries,
+        IReadOnlyList<string>? rootFileNames = null)
     {
-        var entries = registryEntries.ToList();
+        ArgumentNullException.ThrowIfNull(packages);
+        ArgumentNullException.ThrowIfNull(registryEntries);
+
         var packageList = packages.ToList();
         var results = new Dictionary<string, MatchedSkill>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var entry in entries)
+        foreach (var entry in registryEntries)
         {
-            // Determine which packages are eligible based on the entry's language filter
-            var eligiblePackages = entry.Language is null
-                ? packageList
-                : packageList.Where(p => string.Equals(p.Ecosystem, entry.Language, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (results.ContainsKey(entry.SkillPath))
+                continue;
 
-            var eligibleNames = eligiblePackages.Select(p => p.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-            var matchedPatterns = new List<string>();
-
-            foreach (var pattern in entry.MatchCriteria)
+            var context = new MatchContext
             {
-                foreach (var pkgName in eligibleNames)
-                {
-                    if (IsMatch(pkgName, pattern))
-                    {
-                        matchedPatterns.Add(pattern);
-                        break;
-                    }
-                }
-            }
+                ResolvedPackages = packageList,
+                RootFileNames = rootFileNames ?? [],
+                Language = entry.Language
+            };
 
-            if (matchedPatterns.Count > 0 && !results.ContainsKey(entry.SkillPath))
+            var strategy = _strategyResolver.Resolve(entry.MatchStrategy);
+            var result = strategy.Evaluate(context, entry.MatchCriteria);
+
+            if (result.IsMatch)
             {
                 results[entry.SkillPath] = new MatchedSkill
                 {
                     RegistryEntry = entry,
-                    MatchedPatterns = matchedPatterns
+                    MatchedPatterns = result.MatchedPatterns
                 };
             }
         }
 
         return results.Values.ToList();
-    }
-
-    private static bool IsMatch(string packageName, string pattern)
-    {
-        // Note: Contains with char doesn't have StringComparison overload in .NET, using culture-invariant comparison
-        if (pattern.Contains('*', StringComparison.Ordinal) || pattern.Contains('?', StringComparison.Ordinal))
-        {
-            var regex = "^" + Regex.Escape(pattern).Replace("\\*", ".*", StringComparison.Ordinal).Replace("\\?", ".", StringComparison.Ordinal) + "$";
-            return Regex.IsMatch(packageName, regex, RegexOptions.IgnoreCase);
-        }
-
-        return string.Equals(packageName, pattern, StringComparison.OrdinalIgnoreCase);
     }
 }
