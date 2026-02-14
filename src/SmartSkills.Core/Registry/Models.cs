@@ -27,12 +27,21 @@ public record SkillMetadata
 }
 
 /// <summary>
-/// An entry in the registry index mapping package patterns to a skill.
+/// An entry in the registry index mapping match criteria to a skill.
 /// </summary>
 public record RegistryEntry
 {
-    /// <summary>Package name patterns (exact or glob) that trigger this skill.</summary>
-    public required IReadOnlyList<string> PackagePatterns { get; init; }
+    /// <summary>
+    /// The match strategy to use (e.g. "package", "file-exists").
+    /// Defaults to "package" for backward compatibility.
+    /// </summary>
+    public string MatchStrategy { get; init; } = "package";
+
+    /// <summary>
+    /// Strategy-specific criteria. For "package", these are package name patterns.
+    /// For "file-exists", these are file name patterns.
+    /// </summary>
+    public required IReadOnlyList<string> MatchCriteria { get; init; }
 
     /// <summary>Relative path to the skill directory in the source repository.</summary>
     public required string SkillPath { get; init; }

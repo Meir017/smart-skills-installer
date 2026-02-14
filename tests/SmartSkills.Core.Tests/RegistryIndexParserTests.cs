@@ -12,11 +12,11 @@ public class RegistryIndexParserTests
         {
           "skills": [
             {
-              "packagePatterns": ["Newtonsoft.Json"],
+              "MatchCriteria": ["Newtonsoft.Json"],
               "skillPath": "skills/json"
             },
             {
-              "packagePatterns": ["Microsoft.EntityFrameworkCore*", "Npgsql.EntityFrameworkCore*"],
+              "MatchCriteria": ["Microsoft.EntityFrameworkCore*", "Npgsql.EntityFrameworkCore*"],
               "skillPath": "skills/ef-core"
             }
           ]
@@ -28,9 +28,9 @@ public class RegistryIndexParserTests
         Assert.Equal(2, entries.Count);
         Assert.Equal("skills/json", entries[0].SkillPath);
         Assert.Null(entries[0].RepoUrl);
-        Assert.Single(entries[0].PackagePatterns);
+        Assert.Single(entries[0].MatchCriteria);
         Assert.Equal("skills/ef-core", entries[1].SkillPath);
-        Assert.Equal(2, entries[1].PackagePatterns.Count);
+        Assert.Equal(2, entries[1].MatchCriteria.Count);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class RegistryIndexParserTests
         Assert.NotNull(entries);
         Assert.NotEmpty(entries);
         Assert.Contains(entries, e => e.SkillPath == ".github/skills/azure-servicebus-dotnet");
-        Assert.Contains(entries, e => e.PackagePatterns.Contains("Azure.Messaging.ServiceBus"));
+        Assert.Contains(entries, e => e.MatchCriteria.Contains("Azure.Messaging.ServiceBus"));
         Assert.All(entries, e => Assert.NotNull(e.RepoUrl));
     }
 
@@ -76,7 +76,7 @@ public class RegistryIndexParserTests
             File.WriteAllText(tempFile, """
             {
               "skills": [
-                { "packagePatterns": ["Extra.Package"], "skillPath": "skills/extra" }
+                { "MatchCriteria": ["Extra.Package"], "skillPath": "skills/extra" }
               ]
             }
             """);
@@ -98,8 +98,8 @@ public class RegistryIndexParserTests
         {
           "repoUrl": "https://github.com/org/repo",
           "skills": [
-            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
-            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b" }
+            { "MatchCriteria": ["Pkg.A"], "skillPath": "skills/a" },
+            { "MatchCriteria": ["Pkg.B"], "skillPath": "skills/b" }
           ]
         }
         """;
@@ -116,8 +116,8 @@ public class RegistryIndexParserTests
         {
           "repoUrl": "https://github.com/org/default",
           "skills": [
-            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
-            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b", "repoUrl": "https://github.com/org/custom" }
+            { "MatchCriteria": ["Pkg.A"], "skillPath": "skills/a" },
+            { "MatchCriteria": ["Pkg.B"], "skillPath": "skills/b", "repoUrl": "https://github.com/org/custom" }
           ]
         }
         """;

@@ -11,7 +11,7 @@ public class RegistryLanguageParsingTests
         var json = """
         {
           "skills": [
-            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "javascript" }
+            { "MatchCriteria": ["express"], "skillPath": "skills/express", "language": "javascript" }
           ]
         }
         """;
@@ -28,7 +28,7 @@ public class RegistryLanguageParsingTests
         var json = """
         {
           "skills": [
-            { "packagePatterns": ["SomePackage"], "skillPath": "skills/some" }
+            { "MatchCriteria": ["SomePackage"], "skillPath": "skills/some" }
           ]
         }
         """;
@@ -46,8 +46,8 @@ public class RegistryLanguageParsingTests
         {
           "language": "javascript",
           "skills": [
-            { "packagePatterns": ["express"], "skillPath": "skills/express" },
-            { "packagePatterns": ["react"], "skillPath": "skills/react" }
+            { "MatchCriteria": ["express"], "skillPath": "skills/express" },
+            { "MatchCriteria": ["react"], "skillPath": "skills/react" }
           ]
         }
         """;
@@ -64,8 +64,8 @@ public class RegistryLanguageParsingTests
         {
           "language": "dotnet",
           "skills": [
-            { "packagePatterns": ["SomePackage"], "skillPath": "skills/dotnet-skill" },
-            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "javascript" }
+            { "MatchCriteria": ["SomePackage"], "skillPath": "skills/dotnet-skill" },
+            { "MatchCriteria": ["express"], "skillPath": "skills/express", "language": "javascript" }
           ]
         }
         """;
@@ -82,7 +82,7 @@ public class RegistryLanguageParsingTests
         var entries = RegistryIndexParser.LoadEmbedded();
 
         Assert.Contains(entries, e => e.Language == "javascript");
-        Assert.Contains(entries, e => e.PackagePatterns.Contains("@azure/identity"));
+        Assert.Contains(entries, e => e.MatchCriteria.Contains("@azure/identity"));
     }
 
     [Fact]

@@ -90,7 +90,7 @@ public static class RegistryIndexParser
             {
                 entries.Add(new RegistryEntry
                 {
-                    PackagePatterns = patterns,
+                    MatchCriteria = patterns,
                     SkillPath = skillPath,
                     RepoUrl = repoUrl,
                     Language = language

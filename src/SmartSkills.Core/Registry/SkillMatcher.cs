@@ -26,7 +26,7 @@ public sealed class SkillMatcher : ISkillMatcher
             var eligibleNames = eligiblePackages.Select(p => p.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
             var matchedPatterns = new List<string>();
 
-            foreach (var pattern in entry.PackagePatterns)
+            foreach (var pattern in entry.MatchCriteria)
             {
                 foreach (var pkgName in eligibleNames)
                 {
