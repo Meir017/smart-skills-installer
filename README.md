@@ -2,34 +2,61 @@
 
 [![CI](https://github.com/Meir017/smart-skills-installer/actions/workflows/ci.yml/badge.svg)](https://github.com/Meir017/smart-skills-installer/actions/workflows/ci.yml)
 
-Automatically discover and install agent skills based on your project's dependencies. Supports .NET (NuGet) and Node.js (npm/yarn/pnpm) ecosystems. Available as both a CLI tool and MSBuild integration.
+Automatically discover and install agent skills based on your project's dependencies. Supports .NET (NuGet), Node.js (npm/yarn/pnpm/bun), Python, and Java ecosystems. Available as a CLI tool, MSBuild integration, and core SDK.
 
 ## Overview
 
 SmartSkills scans your project for installed packages and matches them against a remote skill registry to find relevant agent skills. Skills follow the [Agent Skills specification](https://agentskills.io/specification.md) and are downloaded, validated, and installed locally.
 
 **Key features:**
-- Scan projects and solutions for NuGet and npm dependencies
-- Auto-detect project type (.NET, Node.js) in a directory
+- Scan projects and solutions for NuGet, npm, Python, and Java dependencies
+- Auto-detect project type (.NET, Node.js, Python, Java) in a directory
 - Match packages against skill registries using exact and glob patterns
 - Fetch skills from GitHub and Azure DevOps repositories
 - Commit-SHA-based caching to skip unchanged skills
 - Configurable multi-source registries with priority ordering
 
+## Packages
+
+| Package | Description | Version |
+|---------|-------------|---------|
+| [SmartSkills.Core](https://www.nuget.org/packages/SmartSkills.Core) | Core SDK — scanning, matching, fetching, and installation | [![NuGet](https://img.shields.io/nuget/v/SmartSkills.Core.svg)](https://www.nuget.org/packages/SmartSkills.Core) |
+| [SmartSkills.Cli](https://www.nuget.org/packages/SmartSkills.Cli) | .NET global/local tool | [![NuGet](https://img.shields.io/nuget/v/SmartSkills.Cli.svg)](https://www.nuget.org/packages/SmartSkills.Cli) |
+| [SmartSkills.MSBuild](https://www.nuget.org/packages/SmartSkills.MSBuild) | Automatic skill acquisition during build | [![NuGet](https://img.shields.io/nuget/v/SmartSkills.MSBuild.svg)](https://www.nuget.org/packages/SmartSkills.MSBuild) |
+
 ## Installation
 
 ### CLI Tool
 
-```bash
+Install as a .NET global tool:
+
+```shell
 dotnet tool install -g SmartSkills.Cli
+```
+
+Or as a local tool in your repository:
+
+```shell
+dotnet new tool-manifest # if you don't have one yet
+dotnet tool install SmartSkills.Cli
 ```
 
 ### MSBuild Integration
 
-Add the NuGet package to your project:
+```shell
+dotnet add package SmartSkills.MSBuild
+```
+
+Since this is a build-only dependency, mark it with `PrivateAssets="all"`:
 
 ```xml
-<PackageReference Include="SmartSkills.MSBuild" Version="1.0.0" PrivateAssets="all" />
+<PackageReference Include="SmartSkills.MSBuild" PrivateAssets="all" />
+```
+
+### Core SDK
+
+```shell
+dotnet add package SmartSkills.Core
 ```
 
 ## CLI Usage
