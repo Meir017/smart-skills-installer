@@ -12,11 +12,11 @@ public class RegistryIndexParserTests
         {
           "skills": [
             {
-              "MatchCriteria": ["Newtonsoft.Json"],
+              "packagePatterns": ["Newtonsoft.Json"],
               "skillPath": "skills/json"
             },
             {
-              "MatchCriteria": ["Microsoft.EntityFrameworkCore*", "Npgsql.EntityFrameworkCore*"],
+              "packagePatterns": ["Microsoft.EntityFrameworkCore*", "Npgsql.EntityFrameworkCore*"],
               "skillPath": "skills/ef-core"
             }
           ]
@@ -76,7 +76,7 @@ public class RegistryIndexParserTests
             File.WriteAllText(tempFile, """
             {
               "skills": [
-                { "MatchCriteria": ["Extra.Package"], "skillPath": "skills/extra" }
+                { "packagePatterns": ["Extra.Package"], "skillPath": "skills/extra" }
               ]
             }
             """);
@@ -98,8 +98,8 @@ public class RegistryIndexParserTests
         {
           "repoUrl": "https://github.com/org/repo",
           "skills": [
-            { "MatchCriteria": ["Pkg.A"], "skillPath": "skills/a" },
-            { "MatchCriteria": ["Pkg.B"], "skillPath": "skills/b" }
+            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
+            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b" }
           ]
         }
         """;
@@ -116,8 +116,8 @@ public class RegistryIndexParserTests
         {
           "repoUrl": "https://github.com/org/default",
           "skills": [
-            { "MatchCriteria": ["Pkg.A"], "skillPath": "skills/a" },
-            { "MatchCriteria": ["Pkg.B"], "skillPath": "skills/b", "repoUrl": "https://github.com/org/custom" }
+            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
+            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b", "repoUrl": "https://github.com/org/custom" }
           ]
         }
         """;

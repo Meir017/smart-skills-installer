@@ -11,7 +11,7 @@ public class RegistryLanguageParsingTests
         var json = """
         {
           "skills": [
-            { "MatchCriteria": ["express"], "skillPath": "skills/express", "language": "javascript" }
+            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "javascript" }
           ]
         }
         """;
@@ -28,7 +28,7 @@ public class RegistryLanguageParsingTests
         var json = """
         {
           "skills": [
-            { "MatchCriteria": ["SomePackage"], "skillPath": "skills/some" }
+            { "packagePatterns": ["SomePackage"], "skillPath": "skills/some" }
           ]
         }
         """;
@@ -46,8 +46,8 @@ public class RegistryLanguageParsingTests
         {
           "language": "javascript",
           "skills": [
-            { "MatchCriteria": ["express"], "skillPath": "skills/express" },
-            { "MatchCriteria": ["react"], "skillPath": "skills/react" }
+            { "packagePatterns": ["express"], "skillPath": "skills/express" },
+            { "packagePatterns": ["react"], "skillPath": "skills/react" }
           ]
         }
         """;
@@ -64,8 +64,8 @@ public class RegistryLanguageParsingTests
         {
           "language": "dotnet",
           "skills": [
-            { "MatchCriteria": ["SomePackage"], "skillPath": "skills/dotnet-skill" },
-            { "MatchCriteria": ["express"], "skillPath": "skills/express", "language": "javascript" }
+            { "packagePatterns": ["SomePackage"], "skillPath": "skills/dotnet-skill" },
+            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "javascript" }
           ]
         }
         """;
