@@ -43,3 +43,6 @@ coverage/
 ## OS files
 .DS_Store
 Thumbs.db
+
+## File-based programs (generated .csproj files)
+tools/*.csproj
