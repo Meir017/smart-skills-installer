@@ -207,14 +207,18 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
 
     using var host = CreateHost(verbose, baseDir);
     var scanner = host.Services.GetRequiredService<ILibraryScanner>();
+    var registry = host.Services.GetRequiredService<SmartSkills.Core.Registry.ISkillRegistry>();
+    var matcher = host.Services.GetRequiredService<SmartSkills.Core.Registry.ISkillMatcher>();
     var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
+    string scanDir;
     IReadOnlyList<ProjectPackages> results;
 
     if (!string.IsNullOrEmpty(projectPath))
     {
         projectPath = Path.GetFullPath(projectPath);
         logger.LogInformation("Scanning: {Path}", projectPath);
+        scanDir = Directory.Exists(projectPath) ? projectPath : Path.GetDirectoryName(projectPath)!;
 
         if (Directory.Exists(projectPath))
         {
@@ -233,26 +237,45 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
     }
     else
     {
-        var dir = Directory.GetCurrentDirectory();
-        logger.LogInformation("Scanning directory: {Path}", dir);
-        results = await scanner.ScanDirectoryAsync(dir, detectionOptions, cancellationToken);
+        scanDir = Directory.GetCurrentDirectory();
+        logger.LogInformation("Scanning directory: {Path}", scanDir);
+        results = await scanner.ScanDirectoryAsync(scanDir, detectionOptions, cancellationToken);
     }
+
+    // Collect root file names for file-exists strategy matching
+    var rootFileNames = Directory.Exists(scanDir)
+        ? Directory.GetFiles(scanDir).Select(Path.GetFileName).Where(n => n is not null).Cast<string>().ToList()
+        : (IReadOnlyList<string>)[];
+
+    var allPackages = results.SelectMany(r => r.Packages).ToList();
+    var registryEntries = await registry.GetRegistryEntriesAsync(cancellationToken);
+    var matched = matcher.Match(allPackages, registryEntries, rootFileNames);
 
     if (jsonOutput)
     {
-        var output = results.Select(r => new
+        var output = new
         {
-            r.ProjectPath,
-            Packages = r.Packages.Select(p => new
+            Projects = results.Select(r => new
             {
-                p.Name,
-                p.Version,
-                p.IsTransitive,
-                p.TargetFramework,
-                p.RequestedVersion,
-                p.Ecosystem
+                r.ProjectPath,
+                Packages = r.Packages.Select(p => new
+                {
+                    p.Name,
+                    p.Version,
+                    p.IsTransitive,
+                    p.TargetFramework,
+                    p.RequestedVersion,
+                    p.Ecosystem
+                })
+            }),
+            MatchedSkills = matched.Select(m => new
+            {
+                m.RegistryEntry.SkillPath,
+                m.RegistryEntry.MatchStrategy,
+                m.MatchedPatterns,
+                m.RegistryEntry.Language
             })
-        });
+        };
         Console.WriteLine(JsonSerializer.Serialize(output, jsonOptions));
     }
     else
@@ -270,6 +293,27 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
                 var type = pkg.IsTransitive ? "Transitive" : "Direct";
                 Console.WriteLine($"{pkg.Name,-40} {pkg.Version,-15} {pkg.Ecosystem,-10} {type,-12} {pkg.TargetFramework}");
             }
+        }
+
+        if (matched.Count > 0)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Matched Skills:");
+            Console.WriteLine(new string('-', 90));
+            Console.WriteLine($"{"Skill",-40} {"Strategy",-15} {"Matched By"}");
+            Console.WriteLine(new string('-', 90));
+
+            foreach (var m in matched)
+            {
+                var skillName = m.RegistryEntry.SkillPath.Split('/').Last();
+                var matchedBy = string.Join(", ", m.MatchedPatterns);
+                Console.WriteLine($"{skillName,-40} {m.RegistryEntry.MatchStrategy,-15} {matchedBy}");
+            }
+        }
+        else
+        {
+            Console.WriteLine();
+            Console.WriteLine("No matching skills found.");
         }
     }
 });
