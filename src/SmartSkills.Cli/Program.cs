@@ -21,16 +21,10 @@ var dryRunOption = new Option<bool>("--dry-run")
     Recursive = true
 };
 
-var baseDirOption = new Option<string?>("--base-dir")
-{
-    Description = "Base directory where the .agents/skills directory will be created (defaults to current directory)"
-};
-
 var rootCommand = new RootCommand("SmartSkills - Intelligent skill installer for .NET and Node.js projects")
 {
     verboseOption,
-    dryRunOption,
-    baseDirOption
+    dryRunOption
 };
 
 // scan command
@@ -80,11 +74,10 @@ installCommand.SetAction(async (parseResult, cancellationToken) =>
     bool verbose = parseResult.GetValue(verboseOption);
     string? projectPath = parseResult.GetValue(projectOption);
     bool dryRun = parseResult.GetValue(dryRunOption);
-    string? baseDir = parseResult.GetValue(baseDirOption);
     bool recursive = parseResult.GetValue(recursiveOption);
     int depth = parseResult.GetValue(depthOption);
 
-    using var host = CreateHost(verbose, baseDir);
+    using var host = CreateHost(verbose);
     var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
 
     projectPath = ResolveProjectPath(projectPath);
@@ -138,10 +131,9 @@ uninstallCommand.SetAction(async (parseResult, cancellationToken) =>
 {
     bool verbose = parseResult.GetValue(verboseOption);
     string skillName = parseResult.GetValue(skillNameArg)!;
-    string? baseDir = parseResult.GetValue(baseDirOption);
     string? projectPath = parseResult.GetValue(projectOption);
 
-    using var host = CreateHost(verbose, baseDir);
+    using var host = CreateHost(verbose);
     var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
 
     var resolvedPath = ResolveProjectPath(projectPath);
@@ -161,9 +153,8 @@ restoreCommand.SetAction(async (parseResult, cancellationToken) =>
 {
     bool verbose = parseResult.GetValue(verboseOption);
     string? projectPath = parseResult.GetValue(projectOption);
-    string? baseDir = parseResult.GetValue(baseDirOption);
 
-    using var host = CreateHost(verbose, baseDir);
+    using var host = CreateHost(verbose);
     var installer = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillInstaller>();
 
     projectPath = ResolveProjectPath(projectPath);
@@ -199,13 +190,12 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
     bool verbose = parseResult.GetValue(verboseOption);
     string? projectPath = parseResult.GetValue(projectOption);
     bool jsonOutput = parseResult.GetValue(jsonOption);
-    string? baseDir = parseResult.GetValue(baseDirOption);
     bool recursive = parseResult.GetValue(recursiveOption);
     int depth = parseResult.GetValue(depthOption);
 
     var detectionOptions = new ProjectDetectionOptions { Recursive = recursive, MaxDepth = depth };
 
-    using var host = CreateHost(verbose, baseDir, suppressLogging: jsonOutput);
+    using var host = CreateHost(verbose, suppressLogging: jsonOutput);
     var scanner = host.Services.GetRequiredService<ILibraryScanner>();
     var registry = host.Services.GetRequiredService<SmartSkills.Core.Registry.ISkillRegistry>();
     var matcher = host.Services.GetRequiredService<SmartSkills.Core.Registry.ISkillMatcher>();
@@ -331,10 +321,9 @@ listCommand.SetAction(async (parseResult, cancellationToken) =>
 {
     bool verbose = parseResult.GetValue(verboseOption);
     bool jsonOutput = parseResult.GetValue(jsonOption);
-    string? baseDir = parseResult.GetValue(baseDirOption);
     string? projectPath = parseResult.GetValue(projectOption);
 
-    using var host = CreateHost(verbose, baseDir, suppressLogging: jsonOutput);
+    using var host = CreateHost(verbose, suppressLogging: jsonOutput);
     var lockFileStore = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillLockFileStore>();
 
     var resolvedPath = ResolveProjectPath(projectPath);
@@ -382,9 +371,8 @@ statusCommand.SetAction(async (parseResult, cancellationToken) =>
     bool jsonOutput = parseResult.GetValue(jsonOption);
     bool checkRemote = parseResult.GetValue(checkRemoteOption);
     string? projectPath = parseResult.GetValue(projectOption);
-    string? baseDir = parseResult.GetValue(baseDirOption);
 
-    using var host = CreateHost(verbose, baseDir, suppressLogging: jsonOutput);
+    using var host = CreateHost(verbose, suppressLogging: jsonOutput);
     var lockFileStore = host.Services.GetRequiredService<SmartSkills.Core.Installation.ISkillLockFileStore>();
     var providerFactory = host.Services.GetRequiredService<SmartSkills.Core.Providers.ISkillSourceProviderFactory>();
 
@@ -466,7 +454,7 @@ rootCommand.SetAction(parseResult =>
 
 return await rootCommand.Parse(args).InvokeAsync();
 
-static IHost CreateHost(bool verbose, string? baseDir = null, bool suppressLogging = false)
+static IHost CreateHost(bool verbose, bool suppressLogging = false)
 {
     var builder = Host.CreateApplicationBuilder();
     builder.Logging.ClearProviders();

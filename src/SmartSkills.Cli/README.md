@@ -105,7 +105,6 @@ smart-skills uninstall my-skill-name
 |--------|-------------|
 | `-v, --verbose` | Enable verbose logging |
 | `--dry-run` | Preview changes without executing |
-| `--base-dir <path>` | Base directory for `.agents/skills` (defaults to current directory) |
 
 ## Lock File
 
