@@ -15,6 +15,6 @@ public class MatchContext
     /// <summary>File names (not full paths) found in the project root directory.</summary>
     public IReadOnlyList<string> RootFileNames { get; init; } = [];
 
-    /// <summary>Optional ecosystem filter from the registry entry (e.g. "dotnet", "javascript").</summary>
-    public string? Language { get; init; }
+    /// <summary>Ecosystem filter from the registry entry (e.g. "dotnet", "javascript").</summary>
+    public required string Language { get; init; }
 }

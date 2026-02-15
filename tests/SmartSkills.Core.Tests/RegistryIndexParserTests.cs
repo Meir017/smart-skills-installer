@@ -12,12 +12,16 @@ public class RegistryIndexParserTests
         {
           "skills": [
             {
-              "packagePatterns": ["Newtonsoft.Json"],
-              "skillPath": "skills/json"
+              "type": "package",
+              "matchCriteria": ["Newtonsoft.Json"],
+              "skillPath": "skills/json",
+              "language": "dotnet"
             },
             {
-              "packagePatterns": ["Microsoft.EntityFrameworkCore*", "Npgsql.EntityFrameworkCore*"],
-              "skillPath": "skills/ef-core"
+              "type": "package",
+              "matchCriteria": ["Microsoft.EntityFrameworkCore*", "Npgsql.EntityFrameworkCore*"],
+              "skillPath": "skills/ef-core",
+              "language": "dotnet"
             }
           ]
         }
@@ -76,7 +80,7 @@ public class RegistryIndexParserTests
             File.WriteAllText(tempFile, """
             {
               "skills": [
-                { "packagePatterns": ["Extra.Package"], "skillPath": "skills/extra" }
+                { "type": "package", "matchCriteria": ["Extra.Package"], "skillPath": "skills/extra", "language": "dotnet" }
               ]
             }
             """);
@@ -98,8 +102,8 @@ public class RegistryIndexParserTests
         {
           "repoUrl": "https://github.com/org/repo",
           "skills": [
-            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
-            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b" }
+            { "type": "package", "matchCriteria": ["Pkg.A"], "skillPath": "skills/a", "language": "dotnet" },
+            { "type": "package", "matchCriteria": ["Pkg.B"], "skillPath": "skills/b", "language": "dotnet" }
           ]
         }
         """;
@@ -116,8 +120,8 @@ public class RegistryIndexParserTests
         {
           "repoUrl": "https://github.com/org/default",
           "skills": [
-            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
-            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b", "repoUrl": "https://github.com/org/custom" }
+            { "type": "package", "matchCriteria": ["Pkg.A"], "skillPath": "skills/a", "language": "dotnet" },
+            { "type": "package", "matchCriteria": ["Pkg.B"], "skillPath": "skills/b", "repoUrl": "https://github.com/org/custom", "language": "dotnet" }
           ]
         }
         """;

@@ -11,7 +11,7 @@ public class RegistryLanguageParsingTests
         var json = """
         {
           "skills": [
-            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "javascript" }
+            { "type": "package", "matchCriteria": ["express"], "skillPath": "skills/express", "language": "javascript" }
           ]
         }
         """;
@@ -23,20 +23,19 @@ public class RegistryLanguageParsingTests
     }
 
     [Fact]
-    public void Parse_WithoutLanguageField_LanguageIsNull()
+    public void Parse_WithoutLanguageField_EntryIsSkipped()
     {
         var json = """
         {
           "skills": [
-            { "packagePatterns": ["SomePackage"], "skillPath": "skills/some" }
+            { "type": "package", "matchCriteria": ["SomePackage"], "skillPath": "skills/some" }
           ]
         }
         """;
 
         var entries = RegistryIndexParser.Parse(json);
 
-        Assert.Single(entries);
-        Assert.Null(entries[0].Language);
+        Assert.Empty(entries);
     }
 
     [Fact]
@@ -46,8 +45,8 @@ public class RegistryLanguageParsingTests
         {
           "language": "javascript",
           "skills": [
-            { "packagePatterns": ["express"], "skillPath": "skills/express" },
-            { "packagePatterns": ["react"], "skillPath": "skills/react" }
+            { "type": "package", "matchCriteria": ["express"], "skillPath": "skills/express" },
+            { "type": "package", "matchCriteria": ["react"], "skillPath": "skills/react" }
           ]
         }
         """;
@@ -64,8 +63,8 @@ public class RegistryLanguageParsingTests
         {
           "language": "dotnet",
           "skills": [
-            { "packagePatterns": ["SomePackage"], "skillPath": "skills/dotnet-skill" },
-            { "packagePatterns": ["express"], "skillPath": "skills/express", "language": "javascript" }
+            { "type": "package", "matchCriteria": ["SomePackage"], "skillPath": "skills/dotnet-skill" },
+            { "type": "package", "matchCriteria": ["express"], "skillPath": "skills/express", "language": "javascript" }
           ]
         }
         """;
@@ -86,12 +85,11 @@ public class RegistryLanguageParsingTests
     }
 
     [Fact]
-    public void LoadEmbedded_DotnetEntries_HaveNullLanguage()
+    public void LoadEmbedded_DotnetEntries_HaveDotnetLanguage()
     {
         var entries = RegistryIndexParser.LoadEmbedded();
 
-        // Existing .NET entries should have null language (backward compat)
         var dotnetEntry = entries.First(e => e.SkillPath == ".github/skills/azure-servicebus-dotnet");
-        Assert.Null(dotnetEntry.Language);
+        Assert.Equal("dotnet", dotnetEntry.Language);
     }
 }

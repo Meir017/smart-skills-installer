@@ -291,7 +291,7 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
                 MatchedSkills = matched.Select(m => new
                 {
                     m.RegistryEntry.SkillPath,
-                    m.RegistryEntry.MatchStrategy,
+                    m.RegistryEntry.Type,
                     m.MatchedPatterns,
                     m.RegistryEntry.Language
                 })
@@ -327,7 +327,7 @@ scanCommand.SetAction(async (parseResult, cancellationToken) =>
                 {
                     var skillName = m.RegistryEntry.SkillPath.Split('/').Last();
                     var matchedBy = string.Join(", ", m.MatchedPatterns);
-                    Console.WriteLine($"{skillName,-40} {m.RegistryEntry.MatchStrategy,-15} {matchedBy}");
+                    Console.WriteLine($"{skillName,-40} {m.RegistryEntry.Type,-15} {matchedBy}");
                 }
             }
             else

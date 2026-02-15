@@ -47,7 +47,7 @@ public sealed class SkillMatcher : ISkillMatcher
                 Language = entry.Language
             };
 
-            var strategy = _strategyResolver.Resolve(entry.MatchStrategy);
+            var strategy = _strategyResolver.Resolve(entry.Type);
             var result = strategy.Evaluate(context, entry.MatchCriteria);
 
             if (result.IsMatch)

@@ -32,10 +32,9 @@ public record SkillMetadata
 public record RegistryEntry
 {
     /// <summary>
-    /// The match strategy to use (e.g. "package", "file-exists").
-    /// Defaults to "package" for backward compatibility.
+    /// The match type to use (e.g. "package", "file-exists").
     /// </summary>
-    public string MatchStrategy { get; init; } = "package";
+    public required string Type { get; init; }
 
     /// <summary>
     /// Strategy-specific criteria. For "package", these are package name patterns.
@@ -55,10 +54,10 @@ public record RegistryEntry
     public ISkillSourceProvider? SourceProvider { get; init; }
 
     /// <summary>
-    /// Optional ecosystem filter (e.g. "dotnet", "javascript"). When set, this entry only matches
-    /// packages from the specified ecosystem. When null, matches any ecosystem.
+    /// Ecosystem filter (e.g. "dotnet", "javascript"). This entry only matches
+    /// packages from the specified ecosystem.
     /// </summary>
-    public string? Language { get; init; }
+    public required string Language { get; init; }
 }
 
 /// <summary>

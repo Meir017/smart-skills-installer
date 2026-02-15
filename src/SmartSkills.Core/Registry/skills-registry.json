@@ -2,501 +2,869 @@
   "repoUrl": "https://github.com/microsoft/skills",
   "skills": [
     {
-      "packagePatterns": ["Azure.Messaging.ServiceBus"],
-      "skillPath": ".github/skills/azure-servicebus-dotnet"
+      "skillPath": ".github/skills/azure-servicebus-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.Messaging.ServiceBus"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.AI.OpenAI"],
-      "skillPath": ".github/skills/azure-ai-openai-dotnet"
+      "skillPath": ".github/skills/azure-ai-openai-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.AI.OpenAI"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.Identity", "Azure.Identity.Broker"],
-      "skillPath": ".github/skills/azure-identity-dotnet"
+      "skillPath": ".github/skills/azure-identity-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.Identity",
+        "Azure.Identity.Broker"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.Messaging.EventGrid", "Azure.Messaging.EventGrid.Namespaces"],
-      "skillPath": ".github/skills/azure-eventgrid-dotnet"
+      "skillPath": ".github/skills/azure-eventgrid-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.Messaging.EventGrid",
+        "Azure.Messaging.EventGrid.Namespaces"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.Messaging.EventHubs", "Azure.Messaging.EventHubs.Processor"],
-      "skillPath": ".github/skills/azure-eventhub-dotnet"
+      "skillPath": ".github/skills/azure-eventhub-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.Messaging.EventHubs",
+        "Azure.Messaging.EventHubs.Processor"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.Search.Documents"],
-      "skillPath": ".github/skills/azure-search-documents-dotnet"
+      "skillPath": ".github/skills/azure-search-documents-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.Search.Documents"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.Security.KeyVault.Keys"],
-      "skillPath": ".github/skills/azure-security-keyvault-keys-dotnet"
+      "skillPath": ".github/skills/azure-security-keyvault-keys-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.Security.KeyVault.Keys"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.AI.DocumentIntelligence"],
-      "skillPath": ".github/skills/azure-ai-document-intelligence-dotnet"
+      "skillPath": ".github/skills/azure-ai-document-intelligence-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.AI.DocumentIntelligence"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.AI.Projects", "Azure.AI.Projects.OpenAI"],
-      "skillPath": ".github/skills/azure-ai-projects-dotnet"
+      "skillPath": ".github/skills/azure-ai-projects-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.AI.Projects",
+        "Azure.AI.Projects.OpenAI"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.AI.VoiceLive"],
-      "skillPath": ".github/skills/azure-ai-voicelive-dotnet"
+      "skillPath": ".github/skills/azure-ai-voicelive-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.AI.VoiceLive"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.Maps.Search", "Azure.Maps.Routing", "Azure.Maps.Rendering", "Azure.Maps.Geolocation", "Azure.Maps.Weather"],
-      "skillPath": ".github/skills/azure-maps-search-dotnet"
+      "skillPath": ".github/skills/azure-maps-search-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.Maps.Search",
+        "Azure.Maps.Routing",
+        "Azure.Maps.Rendering",
+        "Azure.Maps.Geolocation",
+        "Azure.Maps.Weather"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.AI.Agents.Persistent"],
-      "skillPath": ".github/skills/azure-ai-agents-persistent-dotnet"
+      "skillPath": ".github/skills/azure-ai-agents-persistent-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.AI.Agents.Persistent"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Microsoft.Agents.Hosting.AspNetCore", "Microsoft.Agents.Authentication.Msal", "Microsoft.Agents.CopilotStudio.Client"],
-      "skillPath": ".github/skills/m365-agents-dotnet"
+      "skillPath": ".github/skills/m365-agents-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Microsoft.Agents.Hosting.AspNetCore",
+        "Microsoft.Agents.Authentication.Msal",
+        "Microsoft.Agents.CopilotStudio.Client"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Microsoft.Azure.WebJobs.Extensions.AuthenticationEvents"],
-      "skillPath": ".github/skills/microsoft-azure-webjobs-extensions-authentication-events-dotnet"
+      "skillPath": ".github/skills/microsoft-azure-webjobs-extensions-authentication-events-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Microsoft.Azure.WebJobs.Extensions.AuthenticationEvents"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.ApiCenter"],
-      "skillPath": ".github/skills/azure-mgmt-apicenter-dotnet"
+      "skillPath": ".github/skills/azure-mgmt-apicenter-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.ApiCenter"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.ApiManagement"],
-      "skillPath": ".github/skills/azure-mgmt-apimanagement-dotnet"
+      "skillPath": ".github/skills/azure-mgmt-apimanagement-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.ApiManagement"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.ApplicationInsights"],
-      "skillPath": ".github/skills/azure-mgmt-applicationinsights-dotnet"
+      "skillPath": ".github/skills/azure-mgmt-applicationinsights-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.ApplicationInsights"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.ArizeAIObservabilityEval"],
-      "skillPath": ".github/skills/azure-mgmt-arizeaiobservabilityeval-dotnet"
+      "skillPath": ".github/skills/azure-mgmt-arizeaiobservabilityeval-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.ArizeAIObservabilityEval"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.BotService"],
-      "skillPath": ".github/skills/azure-mgmt-botservice-dotnet"
+      "skillPath": ".github/skills/azure-mgmt-botservice-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.BotService"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.Fabric"],
-      "skillPath": ".github/skills/azure-mgmt-fabric-dotnet"
+      "skillPath": ".github/skills/azure-mgmt-fabric-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.Fabric"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.MongoDBAtlas"],
-      "skillPath": ".github/skills/azure-mgmt-mongodbatlas-dotnet"
+      "skillPath": ".github/skills/azure-mgmt-mongodbatlas-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.MongoDBAtlas"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.WeightsAndBiases"],
-      "skillPath": ".github/skills/azure-mgmt-weightsandbiases-dotnet"
+      "skillPath": ".github/skills/azure-mgmt-weightsandbiases-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.WeightsAndBiases"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.CosmosDB"],
-      "skillPath": ".github/skills/azure-resource-manager-cosmosdb-dotnet"
+      "skillPath": ".github/skills/azure-resource-manager-cosmosdb-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.CosmosDB"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.DurableTask"],
-      "skillPath": ".github/skills/azure-resource-manager-durabletask-dotnet"
+      "skillPath": ".github/skills/azure-resource-manager-durabletask-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.DurableTask"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.MySql"],
-      "skillPath": ".github/skills/azure-resource-manager-mysql-dotnet"
+      "skillPath": ".github/skills/azure-resource-manager-mysql-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.MySql"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.Playwright"],
-      "skillPath": ".github/skills/azure-resource-manager-playwright-dotnet"
+      "skillPath": ".github/skills/azure-resource-manager-playwright-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.Playwright"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.PostgreSql"],
-      "skillPath": ".github/skills/azure-resource-manager-postgresql-dotnet"
+      "skillPath": ".github/skills/azure-resource-manager-postgresql-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.PostgreSql"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.Redis"],
-      "skillPath": ".github/skills/azure-resource-manager-redis-dotnet"
+      "skillPath": ".github/skills/azure-resource-manager-redis-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.Redis"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["Azure.ResourceManager.Sql"],
-      "skillPath": ".github/skills/azure-resource-manager-sql-dotnet"
+      "skillPath": ".github/skills/azure-resource-manager-sql-dotnet",
+      "type": "package",
+      "matchCriteria": [
+        "Azure.ResourceManager.Sql"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["GitHub.Copilot.SDK"],
-      "skillPath": ".github/skills/copilot-sdk"
+      "skillPath": ".github/skills/copilot-sdk",
+      "type": "package",
+      "matchCriteria": [
+        "GitHub.Copilot.SDK"
+      ],
+      "language": "dotnet"
     },
     {
-      "packagePatterns": ["StackExchange.Redis", "StackExchange.Redis.*", "NRedisStack", "Microsoft.Extensions.Caching.StackExchangeRedis", "Redis.OM"],
       "skillPath": "skills/redis-development",
-      "repoUrl": "https://github.com/redis/agent-skills"
+      "repoUrl": "https://github.com/redis/agent-skills",
+      "type": "package",
+      "matchCriteria": [
+        "StackExchange.Redis",
+        "StackExchange.Redis.*",
+        "NRedisStack",
+        "Microsoft.Extensions.Caching.StackExchangeRedis",
+        "Redis.OM"
+      ],
+      "language": "dotnet"
     },
-
     {
-      "packagePatterns": ["@azure/service-bus"],
       "skillPath": ".github/skills/azure-servicebus-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/service-bus"
+      ]
     },
     {
-      "packagePatterns": ["@azure/openai"],
       "skillPath": ".github/skills/azure-ai-projects-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/openai"
+      ]
     },
     {
-      "packagePatterns": ["@azure/identity", "@azure/identity-*"],
       "skillPath": ".github/skills/azure-identity-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/identity",
+        "@azure/identity-*"
+      ]
     },
     {
-      "packagePatterns": ["@azure/event-hubs"],
       "skillPath": ".github/skills/azure-eventhub-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/event-hubs"
+      ]
     },
     {
-      "packagePatterns": ["@azure/search-documents"],
       "skillPath": ".github/skills/azure-search-documents-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/search-documents"
+      ]
     },
     {
-      "packagePatterns": ["@azure/keyvault-keys"],
       "skillPath": ".github/skills/azure-keyvault-keys-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/keyvault-keys"
+      ]
     },
     {
-      "packagePatterns": ["@azure/keyvault-secrets"],
       "skillPath": ".github/skills/azure-keyvault-secrets-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/keyvault-secrets"
+      ]
     },
     {
-      "packagePatterns": ["@azure/ai-document-intelligence"],
       "skillPath": ".github/skills/azure-ai-document-intelligence-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/ai-document-intelligence"
+      ]
     },
     {
-      "packagePatterns": ["@azure/cosmos"],
       "skillPath": ".github/skills/azure-cosmos-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/cosmos"
+      ]
     },
     {
-      "packagePatterns": ["@azure/storage-blob"],
       "skillPath": ".github/skills/azure-storage-blob-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/storage-blob"
+      ]
     },
     {
-      "packagePatterns": ["@azure/storage-queue"],
       "skillPath": ".github/skills/azure-storage-queue-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/storage-queue"
+      ]
     },
     {
-      "packagePatterns": ["@azure/storage-file-share"],
       "skillPath": ".github/skills/azure-storage-file-share-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/storage-file-share"
+      ]
     },
     {
-      "packagePatterns": ["@azure/app-configuration"],
       "skillPath": ".github/skills/azure-appconfiguration-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/app-configuration"
+      ]
     },
     {
-      "packagePatterns": ["@azure/web-pubsub"],
       "skillPath": ".github/skills/azure-web-pubsub-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/web-pubsub"
+      ]
     },
     {
-      "packagePatterns": ["@azure/monitor-opentelemetry"],
       "skillPath": ".github/skills/azure-monitor-opentelemetry-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/monitor-opentelemetry"
+      ]
     },
     {
-      "packagePatterns": ["@azure/ai-translation-text"],
       "skillPath": ".github/skills/azure-ai-translation-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/ai-translation-text"
+      ]
     },
     {
-      "packagePatterns": ["@azure/ai-content-safety"],
       "skillPath": ".github/skills/azure-ai-contentsafety-ts",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@azure/ai-content-safety"
+      ]
     },
     {
-      "packagePatterns": ["redis", "ioredis", "@redis/*"],
       "skillPath": "skills/redis-development",
       "repoUrl": "https://github.com/redis/agent-skills",
-      "language": "javascript"
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "redis",
+        "ioredis",
+        "@redis/*"
+      ]
     },
-
     {
-      "packagePatterns": ["azure-ai-projects"],
       "skillPath": ".github/skills/agent-framework-azure-ai-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-projects"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-contentsafety"],
       "skillPath": ".github/skills/azure-ai-contentsafety-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-contentsafety"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-contentunderstanding"],
       "skillPath": ".github/skills/azure-ai-contentunderstanding-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-contentunderstanding"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-ml", "azure-ai-ml-*"],
       "skillPath": ".github/skills/azure-ai-ml-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-ml",
+        "azure-ai-ml-*"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-projects", "azure-ai-inference"],
       "skillPath": ".github/skills/azure-ai-projects-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-projects",
+        "azure-ai-inference"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-textanalytics"],
       "skillPath": ".github/skills/azure-ai-textanalytics-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-textanalytics"
+      ]
     },
     {
-      "packagePatterns": ["azure-cognitiveservices-speech"],
       "skillPath": ".github/skills/azure-ai-transcription-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-cognitiveservices-speech"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-translation-document"],
       "skillPath": ".github/skills/azure-ai-translation-document-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-translation-document"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-translation-text"],
       "skillPath": ".github/skills/azure-ai-translation-text-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-translation-text"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-vision-imageanalysis"],
       "skillPath": ".github/skills/azure-ai-vision-imageanalysis-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-vision-imageanalysis"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-voicelive"],
       "skillPath": ".github/skills/azure-ai-voicelive-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-voicelive"
+      ]
     },
     {
-      "packagePatterns": ["azure-appconfiguration"],
       "skillPath": ".github/skills/azure-appconfiguration-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-appconfiguration"
+      ]
     },
     {
-      "packagePatterns": ["azure-containerregistry"],
       "skillPath": ".github/skills/azure-containerregistry-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-containerregistry"
+      ]
     },
     {
-      "packagePatterns": ["azure-cosmos"],
       "skillPath": ".github/skills/azure-cosmos-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-cosmos"
+      ]
     },
     {
-      "packagePatterns": ["azure-mgmt-cosmosdb"],
       "skillPath": ".github/skills/azure-cosmos-db-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-mgmt-cosmosdb"
+      ]
     },
     {
-      "packagePatterns": ["azure-data-tables"],
       "skillPath": ".github/skills/azure-data-tables-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-data-tables"
+      ]
     },
     {
-      "packagePatterns": ["azure-eventgrid"],
       "skillPath": ".github/skills/azure-eventgrid-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-eventgrid"
+      ]
     },
     {
-      "packagePatterns": ["azure-eventhub"],
       "skillPath": ".github/skills/azure-eventhub-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-eventhub"
+      ]
     },
     {
-      "packagePatterns": ["azure-identity"],
       "skillPath": ".github/skills/azure-identity-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-identity"
+      ]
     },
     {
-      "packagePatterns": ["azure-keyvault-secrets", "azure-keyvault-keys", "azure-keyvault-certificates"],
       "skillPath": ".github/skills/azure-keyvault-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-keyvault-secrets",
+        "azure-keyvault-keys",
+        "azure-keyvault-certificates"
+      ]
     },
     {
-      "packagePatterns": ["azure-messaging-webpubsubservice"],
       "skillPath": ".github/skills/azure-messaging-webpubsubservice-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-messaging-webpubsubservice"
+      ]
     },
     {
-      "packagePatterns": ["azure-mgmt-apicenter"],
       "skillPath": ".github/skills/azure-mgmt-apicenter-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-mgmt-apicenter"
+      ]
     },
     {
-      "packagePatterns": ["azure-mgmt-apimanagement"],
       "skillPath": ".github/skills/azure-mgmt-apimanagement-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-mgmt-apimanagement"
+      ]
     },
     {
-      "packagePatterns": ["azure-mgmt-botservice"],
       "skillPath": ".github/skills/azure-mgmt-botservice-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-mgmt-botservice"
+      ]
     },
     {
-      "packagePatterns": ["azure-mgmt-fabric"],
       "skillPath": ".github/skills/azure-mgmt-fabric-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-mgmt-fabric"
+      ]
     },
     {
-      "packagePatterns": ["azure-monitor-ingestion"],
       "skillPath": ".github/skills/azure-monitor-ingestion-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-monitor-ingestion"
+      ]
     },
     {
-      "packagePatterns": ["azure-monitor-opentelemetry-exporter"],
       "skillPath": ".github/skills/azure-monitor-opentelemetry-exporter-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-monitor-opentelemetry-exporter"
+      ]
     },
     {
-      "packagePatterns": ["azure-monitor-opentelemetry"],
       "skillPath": ".github/skills/azure-monitor-opentelemetry-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-monitor-opentelemetry"
+      ]
     },
     {
-      "packagePatterns": ["azure-monitor-query"],
       "skillPath": ".github/skills/azure-monitor-query-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-monitor-query"
+      ]
     },
     {
-      "packagePatterns": ["azure-search-documents"],
       "skillPath": ".github/skills/azure-search-documents-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-search-documents"
+      ]
     },
     {
-      "packagePatterns": ["azure-servicebus"],
       "skillPath": ".github/skills/azure-servicebus-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-servicebus"
+      ]
     },
     {
-      "packagePatterns": ["azure-cognitiveservices-speech"],
       "skillPath": ".github/skills/azure-speech-to-text-rest-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-cognitiveservices-speech"
+      ]
     },
     {
-      "packagePatterns": ["azure-storage-blob"],
       "skillPath": ".github/skills/azure-storage-blob-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-storage-blob"
+      ]
     },
     {
-      "packagePatterns": ["azure-storage-file-datalake"],
       "skillPath": ".github/skills/azure-storage-file-datalake-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-storage-file-datalake"
+      ]
     },
     {
-      "packagePatterns": ["azure-storage-file-share"],
       "skillPath": ".github/skills/azure-storage-file-share-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-storage-file-share"
+      ]
     },
     {
-      "packagePatterns": ["azure-storage-queue"],
       "skillPath": ".github/skills/azure-storage-queue-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-storage-queue"
+      ]
     },
     {
-      "packagePatterns": ["fastapi"],
       "skillPath": ".github/skills/fastapi-router-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "fastapi"
+      ]
     },
     {
-      "packagePatterns": ["azure-ai-agents"],
       "skillPath": ".github/skills/hosted-agents-v2-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "azure-ai-agents"
+      ]
     },
     {
-      "packagePatterns": ["microsoft-agents-*"],
       "skillPath": ".github/skills/m365-agents-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "microsoft-agents-*"
+      ]
     },
     {
-      "packagePatterns": ["pydantic"],
       "skillPath": ".github/skills/pydantic-models-py",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "pydantic"
+      ]
     },
     {
-      "packagePatterns": ["redis", "redis-py-cluster"],
       "skillPath": "skills/redis-development",
       "repoUrl": "https://github.com/redis/agent-skills",
-      "language": "python"
+      "language": "python",
+      "type": "package",
+      "matchCriteria": [
+        "redis",
+        "redis-py-cluster"
+      ]
     },
-
     {
-      "packagePatterns": ["com.azure:azure-ai-projects"],
       "skillPath": ".github/skills/azure-ai-projects-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-ai-projects"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-ai-voicelive"],
       "skillPath": ".github/skills/azure-ai-voicelive-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-ai-voicelive"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-communication-common"],
       "skillPath": ".github/skills/azure-communication-common-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-communication-common"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-cosmos"],
       "skillPath": ".github/skills/azure-cosmos-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-cosmos"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-data-tables"],
       "skillPath": ".github/skills/azure-data-tables-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-data-tables"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-messaging-eventgrid"],
       "skillPath": ".github/skills/azure-eventgrid-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-messaging-eventgrid"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-messaging-eventhubs", "com.azure:azure-messaging-eventhubs-checkpointstore-blob"],
       "skillPath": ".github/skills/azure-eventhub-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-messaging-eventhubs",
+        "com.azure:azure-messaging-eventhubs-checkpointstore-blob"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-identity"],
       "skillPath": ".github/skills/azure-identity-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-identity"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-messaging-webpubsub"],
       "skillPath": ".github/skills/azure-messaging-webpubsub-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-messaging-webpubsub"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-monitor-ingestion"],
       "skillPath": ".github/skills/azure-monitor-ingestion-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-monitor-ingestion"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-monitor-query", "com.azure:azure-monitor-query-logs", "com.azure:azure-monitor-query-metrics"],
       "skillPath": ".github/skills/azure-monitor-query-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-monitor-query",
+        "com.azure:azure-monitor-query-logs",
+        "com.azure:azure-monitor-query-metrics"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-security-keyvault-keys"],
       "skillPath": ".github/skills/azure-security-keyvault-keys-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-security-keyvault-keys"
+      ]
     },
     {
-      "packagePatterns": ["com.azure:azure-storage-blob"],
       "skillPath": ".github/skills/azure-storage-blob-java",
-      "language": "java"
+      "language": "java",
+      "type": "package",
+      "matchCriteria": [
+        "com.azure:azure-storage-blob"
+      ]
     },
     {
       "repoUrl": "https://github.com/github/awesome-copilot",
-      "matchStrategy": "file-exists",
-      "matchCriteria": ["*.sln", "*.slnx", "global.json", "Directory.Build.props", "Directory.Packages.props"],
+      "matchCriteria": [
+        "*.sln",
+        "*.slnx",
+        "global.json",
+        "Directory.Build.props",
+        "Directory.Packages.props"
+      ],
       "skillPath": "skills/nuget-manager",
-      "language": "dotnet"
+      "language": "dotnet",
+      "type": "file-exists"
     }
   ]
 }

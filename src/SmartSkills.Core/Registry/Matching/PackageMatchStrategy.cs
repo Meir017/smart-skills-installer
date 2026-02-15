@@ -15,11 +15,9 @@ public sealed class PackageMatchStrategy : IMatchStrategy
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(criteria);
 
-        var eligibleNames = context.Language is null
-            ? context.ResolvedPackages.Select(p => p.Name)
-            : context.ResolvedPackages
-                .Where(p => string.Equals(p.Ecosystem, context.Language, StringComparison.OrdinalIgnoreCase))
-                .Select(p => p.Name);
+        var eligibleNames = context.ResolvedPackages
+            .Where(p => string.Equals(p.Ecosystem, context.Language, StringComparison.OrdinalIgnoreCase))
+            .Select(p => p.Name);
 
         var distinctNames = eligibleNames.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         var matchedPatterns = new List<string>();

@@ -19,7 +19,8 @@ public class PackageMatchStrategyTests
     {
         var context = new MatchContext
         {
-            ResolvedPackages = [new ResolvedPackage { Name = "Newtonsoft.Json", Version = "13.0.3", IsTransitive = false }]
+            ResolvedPackages = [new ResolvedPackage { Name = "Newtonsoft.Json", Version = "13.0.3", IsTransitive = false }],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["Newtonsoft.Json"]);
@@ -37,7 +38,8 @@ public class PackageMatchStrategyTests
             [
                 new ResolvedPackage { Name = "Microsoft.EntityFrameworkCore", Version = "8.0.0", IsTransitive = false },
                 new ResolvedPackage { Name = "Microsoft.EntityFrameworkCore.SqlServer", Version = "8.0.0", IsTransitive = false }
-            ]
+            ],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["Microsoft.EntityFrameworkCore*"]);
@@ -50,7 +52,8 @@ public class PackageMatchStrategyTests
     {
         var context = new MatchContext
         {
-            ResolvedPackages = [new ResolvedPackage { Name = "NEWTONSOFT.JSON", Version = "13.0.3", IsTransitive = false }]
+            ResolvedPackages = [new ResolvedPackage { Name = "NEWTONSOFT.JSON", Version = "13.0.3", IsTransitive = false }],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["newtonsoft.json"]);
@@ -63,7 +66,8 @@ public class PackageMatchStrategyTests
     {
         var context = new MatchContext
         {
-            ResolvedPackages = [new ResolvedPackage { Name = "SomePackage", Version = "1.0.0", IsTransitive = false }]
+            ResolvedPackages = [new ResolvedPackage { Name = "SomePackage", Version = "1.0.0", IsTransitive = false }],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["OtherPackage"]);
@@ -102,19 +106,5 @@ public class PackageMatchStrategyTests
         var result = _strategy.Evaluate(context, ["express"]);
 
         Assert.False(result.IsMatch);
-    }
-
-    [Fact]
-    public void Evaluate_NullLanguage_MatchesAllEcosystems()
-    {
-        var context = new MatchContext
-        {
-            ResolvedPackages = [new ResolvedPackage { Name = "redis", Version = "4.0.0", IsTransitive = false, Ecosystem = "javascript" }],
-            Language = null
-        };
-
-        var result = _strategy.Evaluate(context, ["redis"]);
-
-        Assert.True(result.IsMatch);
     }
 }
