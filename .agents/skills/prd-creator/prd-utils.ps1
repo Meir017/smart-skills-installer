@@ -1,19 +1,65 @@
 # PRD.json Management Utilities
-# Provides functions for adding, modifying, and removing stories and tasks in a PRD.json file.
+# Provides functions for creating, reading, writing, and modifying PRD.json files.
 #
-# Usage:
-#   . .\prd-utils.ps1
-#   $prd = Read-Prd "spec\PRD.json"
-#   Add-PrdStory $prd -Id "S14" -Title "New Feature" -Description "Description of the feature"
-#   Add-PrdTask $prd -StoryId "S14" -Id "S14-T01" -Title "First task" -Description "Do the thing" -Requirements @("Req 1") -Dod "It works" -Verifications @("Test it")
-#   Write-Prd $prd "spec\PRD.json"
+# Quick start — create a new PRD:
+#   . .agents\skills\prd-creator\prd-utils.ps1
+#   $prd = New-Prd -Name "My Feature" -Description "What it does" -Goals @("Goal 1","Goal 2")
+#   Add-PrdStory $prd -Id "S01" -Title "First Story" -Description "Story description"
+#   Add-PrdTask $prd -StoryId "S01" -Id "S01-T01" -Title "First task" `
+#       -Description "Do the thing" -Requirements @("Req 1") -Dod "It works" -Verifications @("Test it")
+#   Initialize-PrdDirectory $prd -Slug "my-feature"
+#
+# Work with an existing PRD:
+#   $prd = Read-Prd "spec\my-feature\PRD.json"
+#   Get-PrdSummary $prd
+#   Set-PrdTaskCompleted $prd -TaskId "S01-T01"
+#   Write-Prd $prd "spec\my-feature\PRD.json"
+
+# --- Creation & I/O ---
+
+function New-Prd {
+    param(
+        [Parameter(Mandatory)][string]$Name,
+        [Parameter(Mandatory)][string]$Description,
+        [string[]]$Goals = @(),
+        [string]$Version = "1.0.0",
+        [string]$ApiSurface
+    )
+    $prd = [ordered]@{
+        name        = $Name
+        version     = $Version
+        description = $Description
+        goals       = @($Goals)
+        stories     = @()
+    }
+    if ($ApiSurface) { $prd.apiSurface = $ApiSurface }
+    Write-Host "Created PRD '$Name' v$Version"
+    return [PSCustomObject]$prd
+}
+
+function Initialize-PrdDirectory {
+    param(
+        [Parameter(Mandatory)][object]$Prd,
+        [Parameter(Mandatory)][string]$Slug,
+        [string]$BaseDir = "spec"
+    )
+    $dir = Join-Path $BaseDir $Slug
+    if (-not (Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+    $path = Join-Path $dir "PRD.json"
+    Write-Prd $Prd $path
+    Write-Host "Initialized PRD directory at '$dir' with PRD.json"
+    return $path
+}
 
 function Read-Prd {
     param(
         [Parameter(Mandatory)][string]$Path
     )
     $content = Get-Content -Path $Path -Raw -Encoding utf8
-    return $content | ConvertFrom-Json -Depth 20
+    # -Depth is only available in PowerShell 7+; omit for compatibility
+    return $content | ConvertFrom-Json
 }
 
 function Write-Prd {
