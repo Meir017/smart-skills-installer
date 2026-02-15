@@ -1,0 +1,162 @@
+{
+  "name": "CLI Design Gap Fixes",
+  "version": "1.0.0",
+  "description": "Fix CLI design gaps identified in the cli.md review: documentation mismatches, ghost options, error handling, exit codes, stderr separation, and UX improvements.",
+  "goals": [
+    "Fix documentation/code mismatches (--force, --base-dir)",
+    "Add structured error handling and meaningful exit codes",
+    "Separate error output to stderr",
+    "Move --dry-run from global to per-command scope",
+    "Improve root command help UX"
+  ],
+  "stories": [
+    {
+      "id": "S01",
+      "title": "Fix Documentation & Ghost Options",
+      "description": "Resolve mismatches between documented CLI features and actual implementation.",
+      "tasks": [
+        {
+          "id": "S01-T01",
+          "title": "Remove --force from README examples",
+          "completed": true,
+          "description": "The CLI README documents 'smart-skills install --force' but no --force option exists in Program.cs. Remove the --force example from the README since InstallOptions.Force exists in Core but is not wired up in the CLI. Note: wiring --force into the CLI is out of scope for this task.",
+          "requirements": [
+            "Remove the --force example line from src/SmartSkills.Cli/README.md",
+            "Keep the rest of the install section intact"
+          ],
+          "dod": "README no longer references --force",
+          "verifications": [
+            "Grep for '--force' in README.md returns no results"
+          ]
+        },
+        {
+          "id": "S01-T02",
+          "title": "Remove --base-dir ghost option",
+          "completed": true,
+          "description": "The --base-dir option is declared and parsed but never used by CreateHost() or any command. Remove it from the CLI surface to avoid confusing users with a silent no-op option. Also remove from README Global Options table.",
+          "requirements": [
+            "Remove baseDirOption declaration from Program.cs",
+            "Remove --base-dir from rootCommand options",
+            "Remove all parseResult.GetValue(baseDirOption) calls",
+            "Remove baseDir parameter from CreateHost()",
+            "Remove --base-dir from README.md Global Options table"
+          ],
+          "dod": "No references to --base-dir remain in CLI code or README",
+          "verifications": [
+            "dotnet build succeeds",
+            "Grep for 'base-dir' or 'baseDir' in Program.cs returns no results",
+            "Grep for 'base-dir' in README.md returns no results"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Structured Error Handling & Exit Codes",
+      "description": "Add try-catch wrappers to all command actions and return meaningful exit codes on failure.",
+      "tasks": [
+        {
+          "id": "S02-T01",
+          "title": "Add error handling wrapper to all commands",
+          "completed": true,
+          "description": "Wrap each command's SetAction handler body in a try-catch that catches exceptions, writes a user-friendly message to Console.Error, shows stack trace only when --verbose is enabled, and sets a non-zero exit code.",
+          "requirements": [
+            "All 6 command handlers (scan, install, uninstall, restore, list, status) must have try-catch",
+            "Caught exceptions write to Console.Error.WriteLine",
+            "Stack traces shown only when verbose=true",
+            "Return exit code 1 on unhandled exception via parseResult.Configuration.Error or Environment.ExitCode"
+          ],
+          "dod": "No command produces a raw stack trace on failure when --verbose is not set",
+          "verifications": [
+            "dotnet build succeeds",
+            "Code review confirms all commands wrapped"
+          ]
+        },
+        {
+          "id": "S02-T02",
+          "title": "Return non-zero exit code on partial failures",
+          "completed": true,
+          "description": "When install or restore completes but result.Failed.Count > 0, set Environment.ExitCode = 1 to signal partial failure to CI/CD.",
+          "requirements": [
+            "install command sets ExitCode=1 when result.Failed.Count > 0",
+            "restore command sets ExitCode=1 when result.Failed.Count > 0"
+          ],
+          "dod": "Partial failures produce non-zero exit code",
+          "verifications": [
+            "dotnet build succeeds",
+            "Code review confirms exit code logic"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Separate Error Output to stderr",
+      "description": "Write error and failure messages to stderr instead of stdout, so JSON output and piped output remain clean.",
+      "tasks": [
+        {
+          "id": "S03-T01",
+          "title": "Write failure output to stderr",
+          "completed": true,
+          "description": "In install and restore commands, write Failed entries to Console.Error instead of Console.WriteLine. In the error handling wrapper, errors already go to Console.Error.",
+          "requirements": [
+            "install: 'Failed (N):' section writes to Console.Error.WriteLine",
+            "restore: 'Failed (N):' section writes to Console.Error.WriteLine",
+            "uninstall: any error messages go to Console.Error.WriteLine"
+          ],
+          "dod": "Failure messages go to stderr; success messages go to stdout",
+          "verifications": [
+            "dotnet build succeeds",
+            "Code review confirms Console.Error usage for failures"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Move --dry-run to Per-Command Scope",
+      "description": "Move --dry-run from a global recursive option to only the commands that support it (install), preventing user confusion.",
+      "tasks": [
+        {
+          "id": "S04-T01",
+          "title": "Move --dry-run from global to install command only",
+          "completed": true,
+          "description": "Remove --dry-run from rootCommand global options. Add it as a local option on the install command only (the only command that reads it). Update README to document --dry-run under install options rather than global options.",
+          "requirements": [
+            "Remove dryRunOption from rootCommand",
+            "Remove Recursive=true from dryRunOption",
+            "Add dryRunOption to installCommand options",
+            "Update README: move --dry-run from Global Options to install options table"
+          ],
+          "dod": "--dry-run only appears in install command help, not global help",
+          "verifications": [
+            "dotnet build succeeds",
+            "Grep for 'Recursive' in dryRunOption returns no results"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "Improve Root Command Help",
+      "description": "Show full help output when the CLI is invoked without arguments, instead of a stub message.",
+      "tasks": [
+        {
+          "id": "S05-T01",
+          "title": "Remove custom root action to show default help",
+          "completed": true,
+          "description": "Remove the rootCommand.SetAction that prints 'SmartSkills CLI - Use --help for usage information.' System.CommandLine will automatically show the help output when no subcommand is provided.",
+          "requirements": [
+            "Remove the rootCommand.SetAction block",
+            "System.CommandLine's default help behavior takes over"
+          ],
+          "dod": "Running 'smart-skills' with no args shows the full help with subcommand list",
+          "verifications": [
+            "dotnet build succeeds",
+            "Code review confirms SetAction removed from rootCommand"
+          ]
+        }
+      ]
+    }
+  ]
+}

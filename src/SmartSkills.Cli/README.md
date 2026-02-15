@@ -60,9 +60,6 @@ smart-skills install
 
 # Install for a specific project
 smart-skills install --project ./src/MyProject
-
-# Force reinstall (overwrite locally modified skills)
-smart-skills install --project ./src/MyProject --force
 ```
 
 | Option | Description |
@@ -70,6 +67,7 @@ smart-skills install --project ./src/MyProject --force
 | `-p, --project <path>` | Path to a project, solution, or directory |
 | `-r, --recursive` | Recursively detect projects |
 | `--depth <n>` | Maximum recursion depth (default: 5) |
+| `--dry-run` | Preview changes without executing |
 
 ### `restore` — Restore from Lock File
 
@@ -107,8 +105,6 @@ smart-skills uninstall my-skill-name
 | Option | Description |
 |--------|-------------|
 | `-v, --verbose` | Enable verbose logging |
-| `--dry-run` | Preview changes without executing |
-| `--base-dir <path>` | Base directory for `.agents/skills` (defaults to current directory) |
 
 ## Lock File
 
