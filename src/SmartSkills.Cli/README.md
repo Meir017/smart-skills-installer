@@ -60,9 +60,6 @@ smart-skills install
 
 # Install for a specific project
 smart-skills install --project ./src/MyProject
-
-# Force reinstall (overwrite locally modified skills)
-smart-skills install --project ./src/MyProject --force
 ```
 
 | Option | Description |
