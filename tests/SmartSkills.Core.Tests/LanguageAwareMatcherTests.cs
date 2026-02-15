@@ -1,4 +1,5 @@
 using SmartSkills.Core.Registry;
+using SmartSkills.Core.Registry.Matching;
 using SmartSkills.Core.Scanning;
 using Xunit;
 
@@ -6,7 +7,7 @@ namespace SmartSkills.Core.Tests;
 
 public class LanguageAwareMatcherTests
 {
-    private readonly SkillMatcher _matcher = new();
+    private readonly SkillMatcher _matcher = new(new MatchStrategyResolver([new PackageMatchStrategy(), new FileExistsMatchStrategy()]));
 
     [Fact]
     public void Match_NpmEntry_DoesNotMatchDotnetPackage()

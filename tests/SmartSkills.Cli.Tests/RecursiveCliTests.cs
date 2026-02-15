@@ -36,6 +36,9 @@ public class RecursiveCliTests : IDisposable
 
         // Should find at least one project without error
         Assert.Equal(0, exitCode);
+        Assert.Contains("Project:", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Root.csproj", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("package.json", output, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -51,6 +54,8 @@ public class RecursiveCliTests : IDisposable
         var (exitCode, output) = await CliFixture.RunCliAsync($"scan --project \"{_root}\"");
 
         Assert.Equal(0, exitCode);
+        Assert.Contains("Project:", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Root.csproj", output, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -61,6 +66,8 @@ public class RecursiveCliTests : IDisposable
         var (exitCode, output) = await CliFixture.RunCliAsync($"scan --recursive --depth 0 --project \"{_root}\"");
 
         Assert.Equal(0, exitCode);
+        Assert.Contains("Project:", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Root.csproj", output, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
