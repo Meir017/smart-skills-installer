@@ -8,7 +8,14 @@ namespace SmartSkills.Core.Tests;
 
 public class SkillSourceProviderFactoryTests
 {
-    private readonly SkillSourceProviderFactory _factory = new(NullLoggerFactory.Instance);
+    private static readonly IHttpClientFactory HttpClientFactory = new SimpleHttpClientFactory();
+
+    private readonly SkillSourceProviderFactory _factory = new(NullLoggerFactory.Instance, HttpClientFactory);
+
+    private sealed class SimpleHttpClientFactory : IHttpClientFactory
+    {
+        public HttpClient CreateClient(string name) => new();
+    }
 
     [Fact]
     public void CreateFromRepoUrl_GitHubUrl_ReturnsGitHubProvider()

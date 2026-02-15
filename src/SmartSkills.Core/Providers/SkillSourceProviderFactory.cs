@@ -12,11 +12,13 @@ namespace SmartSkills.Core.Providers;
 public sealed class SkillSourceProviderFactory : ISkillSourceProviderFactory
 {
     private readonly ILoggerFactory _loggerFactory;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ConcurrentDictionary<string, ISkillSourceProvider> _cache = new(StringComparer.OrdinalIgnoreCase);
 
-    public SkillSourceProviderFactory(ILoggerFactory loggerFactory)
+    public SkillSourceProviderFactory(ILoggerFactory loggerFactory, IHttpClientFactory httpClientFactory)
     {
         _loggerFactory = loggerFactory;
+        _httpClientFactory = httpClientFactory;
     }
 
     public ISkillSourceProvider CreateFromRepoUrl(string repoUrl)
@@ -35,13 +37,16 @@ public sealed class SkillSourceProviderFactory : ISkillSourceProviderFactory
             if (segments.Length < 2)
                 throw new ArgumentException($"Invalid GitHub URL: {repoUrl}. Expected format: https://github.com/owner/repo");
 
+            var httpClient = _httpClientFactory.CreateClient("github");
+            var ghClient = new GitHubHttpClient(httpClient, _loggerFactory.CreateLogger<GitHubHttpClient>());
+
             return new GitHubSkillSourceProvider(
                 segments[0],
                 segments[1],
                 branch: "main",
                 registryIndexPath: null,
                 _loggerFactory.CreateLogger<GitHubSkillSourceProvider>(),
-                _loggerFactory.CreateLogger<GitHubHttpClient>());
+                ghClient);
         }
         else if (uri.Host.EndsWith("dev.azure.com", StringComparison.OrdinalIgnoreCase) ||
                  uri.Host.EndsWith("visualstudio.com", StringComparison.OrdinalIgnoreCase))
@@ -60,12 +65,15 @@ public sealed class SkillSourceProviderFactory : ISkillSourceProviderFactory
                 throw new ArgumentException($"Invalid Azure DevOps URL: {repoUrl}. Expected format: https://dev.azure.com/org/project/_git/repo");
             }
 
+            var httpClient = _httpClientFactory.CreateClient("ado");
+            var adoClient = new AdoHttpClient(httpClient, _loggerFactory.CreateLogger<AdoHttpClient>());
+
             return new AdoSkillSourceProvider(
                 org, project, repo,
                 branch: "main",
                 registryIndexPath: null,
                 _loggerFactory.CreateLogger<AdoSkillSourceProvider>(),
-                _loggerFactory.CreateLogger<AdoHttpClient>());
+                adoClient);
         }
         else
         {

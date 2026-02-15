@@ -1,4 +1,6 @@
+using System.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http.Resilience;
 using SmartSkills.Core.Installation;
 using SmartSkills.Core.Providers;
 using SmartSkills.Core.Registry;
@@ -15,8 +17,20 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddSmartSkills(this IServiceCollection services)
     {
-        // Resilience
-        services.AddSingleton<RetryPolicy>();
+        // Resilience — HTTP clients with standard resilience handler
+        services.AddHttpClient("github", client =>
+        {
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("SmartSkills", "1.0"));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+        })
+        .AddStandardResilienceHandler();
+
+        services.AddHttpClient("ado", client =>
+        {
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        })
+        .AddStandardResilienceHandler();
+
         services.AddSingleton<LocalCache>();
 
         // Scanning
