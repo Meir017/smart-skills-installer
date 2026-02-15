@@ -500,11 +500,6 @@ statusCommand.SetAction(async (parseResult, cancellationToken) =>
     }
 });
 
-rootCommand.SetAction(parseResult =>
-{
-    Console.WriteLine("SmartSkills CLI - Use --help for usage information.");
-});
-
 return await rootCommand.Parse(args).InvokeAsync();
 
 static IHost CreateHost(bool verbose, bool suppressLogging = false)
