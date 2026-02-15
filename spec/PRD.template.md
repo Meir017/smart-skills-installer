@@ -6,9 +6,12 @@ Use this template when creating a new Product Requirements Document. It mirrors 
 
 ## How to Use
 
-1. Copy this template to a new file (e.g. `MyFeature-PRD.md`)
-2. Fill in each section below
-3. Optionally create a companion `PRD.json` for machine-readable tracking and an `api.cs` for the public API surface
+**Preferred approach — use the `prd-creator` skill** to scaffold PRDs via script functions. See `.agents/skills/prd-creator/SKILL.md` for details.
+
+Manual approach:
+1. Create a subdirectory under `spec/` with a kebab-case slug (e.g. `spec/my-feature/`)
+2. Create `PRD.json` in that directory (required — machine-readable source of truth)
+3. Optionally create `PRD.md` for a human-readable narrative and `api.cs` for the public API surface
 
 ---
 
@@ -95,9 +98,9 @@ public record MyRecord
 #endregion
 ```
 
-## 5. Machine-Readable PRD (optional)
+## 5. Machine-Readable PRD (required)
 
-Create a companion `PRD.json` for tooling and tracking. The schema follows this structure:
+The `PRD.json` file is the machine-readable source of truth. Use the `prd-creator` skill to generate it, or follow this schema:
 
 ```json
 {
@@ -136,6 +139,10 @@ Create a companion `PRD.json` for tooling and tracking. The schema follows this 
 
 ## 6. Conventions
 
+- All PRDs live in a **dedicated subdirectory** under `spec/` with a kebab-case slug (e.g. `spec/my-feature/`)
+- **PRD.json is required** in each spec subdirectory — it is the machine-readable source of truth
+- **PRD.md is optional** — a longer narrative form for complex specs
+- **api.cs is optional** — a design-review-only API sketch for .NET features
 - **Story IDs** use the format `S01`, `S02`, etc.
 - **Task IDs** use the format `S01-T01`, `S01-T02`, etc.
 - Each task should have **requirements**, a **definition of done**, and **verifications** so progress can be tracked objectively.

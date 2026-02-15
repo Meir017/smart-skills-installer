@@ -998,7 +998,7 @@
     {
       "id": "S14",
       "title": "Skills Lock File",
-      "description": "Introduce a version-controlled lock file (smart-skills.lock.json) that records the exact fetch coordinates and integrity hashes of all tracked skills. Replaces the internal .agents-skills-state.json with a committable, deterministic, cross-platform file that enables reproducible skill installations and local edit detection. See spec/lock-file.md for full specification.",
+      "description": "Introduce a version-controlled lock file (smart-skills.lock.json) that records the exact fetch coordinates and integrity hashes of all tracked skills. Replaces the internal .agents-skills-state.json with a committable, deterministic, cross-platform file that enables reproducible skill installations and local edit detection. See spec/lock-file/PRD.md for full specification.",
       "tasks": [
         {
           "id": "S14-T01",
