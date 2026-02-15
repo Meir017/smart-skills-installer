@@ -17,14 +17,12 @@ var verboseOption = new Option<bool>("--verbose", "-v")
 
 var dryRunOption = new Option<bool>("--dry-run")
 {
-    Description = "Preview actions without executing them",
-    Recursive = true
+    Description = "Preview actions without executing them"
 };
 
 var rootCommand = new RootCommand("SmartSkills - Intelligent skill installer for .NET and Node.js projects")
 {
-    verboseOption,
-    dryRunOption
+    verboseOption
 };
 
 // scan command
@@ -64,7 +62,8 @@ var installCommand = new Command("install", "Install skills based on detected pa
 {
     projectOption,
     recursiveOption,
-    depthOption
+    depthOption,
+    dryRunOption
 };
 
 rootCommand.Subcommands.Add(installCommand);
