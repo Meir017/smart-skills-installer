@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using SmartSkills.Core.Scanning;
+using SmartSkills.Core.Tests.Fakes;
 using Xunit;
 
 namespace SmartSkills.Core.Tests;
@@ -37,8 +38,6 @@ public class RecursiveLibraryScannerTests : IDisposable
         var resolver = new FakePackageResolver(packages);
         var resolverFactory = new FakePackageResolverFactory(resolver);
         var scanner = new LibraryScanner(resolverFactory, resolver, detector, NullLogger<LibraryScanner>.Instance);
-
-        Directory.CreateDirectory(_root);
 
         var result = await scanner.ScanDirectoryAsync(_root, TestContext.Current.CancellationToken);
 
@@ -88,38 +87,5 @@ public class RecursiveLibraryScannerTests : IDisposable
 
         // Should only have one result despite two detections
         Assert.Single(result);
-    }
-
-    private sealed class FakeProjectDetector(IReadOnlyList<DetectedProject> results) : IProjectDetector
-    {
-        public ProjectDetectionOptions? LastOptionsUsed { get; private set; }
-
-        public IReadOnlyList<DetectedProject> Detect(string directoryPath) =>
-            Detect(directoryPath, new ProjectDetectionOptions());
-
-        public IReadOnlyList<DetectedProject> Detect(string directoryPath, ProjectDetectionOptions options)
-        {
-            LastOptionsUsed = options;
-            return results;
-        }
-    }
-
-    private sealed class FakePackageResolver : IPackageResolver
-    {
-        private readonly Func<string, ProjectPackages> _resolve;
-
-        public FakePackageResolver(ProjectPackages fixedResult)
-            : this(_ => fixedResult) { }
-
-        public FakePackageResolver(Func<string, ProjectPackages> resolve) =>
-            _resolve = resolve;
-
-        public Task<ProjectPackages> ResolvePackagesAsync(string projectPath, CancellationToken cancellationToken = default) =>
-            Task.FromResult(_resolve(projectPath));
-    }
-
-    private sealed class FakePackageResolverFactory(IPackageResolver resolver) : IPackageResolverFactory
-    {
-        public IPackageResolver GetResolver(DetectedProject project) => resolver;
     }
 }
