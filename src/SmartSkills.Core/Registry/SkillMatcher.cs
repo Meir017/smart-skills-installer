@@ -16,14 +16,6 @@ public sealed class SkillMatcher : ISkillMatcher
         _strategyResolver = strategyResolver;
     }
 
-    /// <summary>
-    /// Convenience constructor that registers the built-in strategies.
-    /// </summary>
-    public SkillMatcher()
-        : this(new MatchStrategyResolver([new PackageMatchStrategy(), new FileExistsMatchStrategy()]))
-    {
-    }
-
     public IReadOnlyList<MatchedSkill> Match(
         IEnumerable<ResolvedPackage> packages,
         IEnumerable<RegistryEntry> registryEntries,

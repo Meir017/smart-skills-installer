@@ -7,7 +7,7 @@ namespace SmartSkills.Core.Providers.GitHub;
 /// <summary>
 /// ISkillSourceProvider implementation using GitHub REST API.
 /// </summary>
-public sealed class GitHubSkillSourceProvider : ISkillSourceProvider, IDisposable
+public sealed class GitHubSkillSourceProvider : ISkillSourceProvider
 {
     private readonly string _owner;
     private readonly string _repo;
@@ -24,14 +24,14 @@ public sealed class GitHubSkillSourceProvider : ISkillSourceProvider, IDisposabl
         string? branch,
         string? registryIndexPath,
         ILogger<GitHubSkillSourceProvider> logger,
-        ILogger<GitHubHttpClient> httpClientLogger)
+        GitHubHttpClient httpClient)
     {
         _owner = owner;
         _repo = repo;
         _branch = branch ?? "main";
         _registryIndexPath = registryIndexPath ?? "skills-registry.json";
         _logger = logger;
-        _client = new GitHubHttpClient(httpClientLogger);
+        _client = httpClient;
     }
 
     public async Task<IReadOnlyList<RegistryEntry>> GetRegistryIndexAsync(CancellationToken cancellationToken = default)
@@ -89,6 +89,4 @@ public sealed class GitHubSkillSourceProvider : ISkillSourceProvider, IDisposabl
 
         return commits[0].GetProperty("sha").GetString()!;
     }
-
-    public void Dispose() => _client.Dispose();
 }

@@ -7,7 +7,7 @@ namespace SmartSkills.Core.Providers.AzureDevOps;
 /// <summary>
 /// ISkillSourceProvider implementation using Azure DevOps Git REST API.
 /// </summary>
-public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
+public sealed class AdoSkillSourceProvider : ISkillSourceProvider
 {
     private readonly string _organization;
     private readonly string _project;
@@ -26,7 +26,7 @@ public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
         string? branch,
         string? registryIndexPath,
         ILogger<AdoSkillSourceProvider> logger,
-        ILogger<AdoHttpClient> httpClientLogger)
+        AdoHttpClient httpClient)
     {
         _organization = organization;
         _project = project;
@@ -34,7 +34,7 @@ public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
         _branch = branch ?? "main";
         _registryIndexPath = registryIndexPath ?? "skills-registry.json";
         _logger = logger;
-        _client = new AdoHttpClient(httpClientLogger);
+        _client = httpClient;
     }
 
     private string BaseUrl => $"https://dev.azure.com/{_organization}/{_project}/_apis/git/repositories/{_repository}";
@@ -98,6 +98,4 @@ public sealed class AdoSkillSourceProvider : ISkillSourceProvider, IDisposable
 
         throw new InvalidOperationException($"No commits found for path: {skillPath}");
     }
-
-    public void Dispose() => _client.Dispose();
 }

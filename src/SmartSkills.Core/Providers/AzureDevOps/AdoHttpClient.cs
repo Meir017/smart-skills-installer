@@ -3,30 +3,27 @@ using System.Text.Json;
 using Azure.Core;
 using Azure.Identity;
 using Microsoft.Extensions.Logging;
-using SmartSkills.Core.Resilience;
 
 namespace SmartSkills.Core.Providers.AzureDevOps;
 
 /// <summary>
 /// HTTP client wrapper for Azure DevOps REST API using DefaultAzureCredential.
+/// The underlying <see cref="HttpClient"/> is configured and managed by <c>IHttpClientFactory</c>.
 /// </summary>
-public sealed class AdoHttpClient : IDisposable
+public sealed class AdoHttpClient
 {
     private readonly HttpClient _httpClient;
-    private readonly RetryPolicy _retryPolicy;
     private readonly ILogger<AdoHttpClient> _logger;
     private readonly TokenCredential _credential;
     private AccessToken? _cachedToken;
 
     private static readonly string[] AdoScopes = ["499b84ac-1321-427f-aa17-267ca6975798/.default"];
 
-    public AdoHttpClient(ILogger<AdoHttpClient> logger, RetryPolicy? retryPolicy = null)
+    public AdoHttpClient(HttpClient httpClient, ILogger<AdoHttpClient> logger)
     {
+        _httpClient = httpClient;
         _logger = logger;
-        _retryPolicy = retryPolicy ?? new RetryPolicy(logger: logger);
         _credential = new DefaultAzureCredential();
-        _httpClient = new HttpClient();
-        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
     private async Task EnsureAuthenticatedAsync(CancellationToken cancellationToken)
@@ -35,7 +32,7 @@ public sealed class AdoHttpClient : IDisposable
         {
             _logger.LogDebug("Acquiring ADO token via DefaultAzureCredential");
             _cachedToken = await _credential.GetTokenAsync(
-                new TokenRequestContext(AdoScopes), cancellationToken);
+                new TokenRequestContext(AdoScopes), cancellationToken).ConfigureAwait(false);
         }
         _httpClient.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", _cachedToken.Value.Token);
@@ -45,44 +42,33 @@ public sealed class AdoHttpClient : IDisposable
     public async Task<JsonDocument> GetJsonAsync(string url, CancellationToken cancellationToken = default)
 #pragma warning restore CA1054 // URI parameters should not be strings
     {
-        await EnsureAuthenticatedAsync(cancellationToken);
+        await EnsureAuthenticatedAsync(cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("GET {Url}", url);
-        return await _retryPolicy.ExecuteAsync(async ct =>
-        {
-            var response = await _httpClient.GetAsync(url, ct);
-            response.EnsureSuccessStatusCode();
-            var stream = await response.Content.ReadAsStreamAsync(ct);
-            return await JsonDocument.ParseAsync(stream, cancellationToken: ct);
-        }, cancellationToken);
+        var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        return await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
 #pragma warning disable CA1054 // URI parameters should not be strings
     public async Task<Stream> GetStreamAsync(string url, CancellationToken cancellationToken = default)
 #pragma warning restore CA1054 // URI parameters should not be strings
     {
-        await EnsureAuthenticatedAsync(cancellationToken);
+        await EnsureAuthenticatedAsync(cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("GET (stream) {Url}", url);
-        return await _retryPolicy.ExecuteAsync(async ct =>
-        {
-            var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStreamAsync(ct);
-        }, cancellationToken);
+        var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
     }
 
 #pragma warning disable CA1054 // URI parameters should not be strings
     public async Task<string> GetStringAsync(string url, CancellationToken cancellationToken = default)
 #pragma warning restore CA1054 // URI parameters should not be strings
     {
-        await EnsureAuthenticatedAsync(cancellationToken);
+        await EnsureAuthenticatedAsync(cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("GET (string) {Url}", url);
-        return await _retryPolicy.ExecuteAsync(async ct =>
-        {
-            var response = await _httpClient.GetAsync(url, ct);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync(ct);
-        }, cancellationToken);
+        var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
     }
-
-    public void Dispose() => _httpClient.Dispose();
 }
