@@ -134,7 +134,8 @@ public class FileExistsMatchIntegrationTests
             {
                 Type = "package",
                 MatchCriteria = ["SomePackage"],
-                SkillPath = "skills/some-skill"
+                SkillPath = "skills/some-skill",
+                Language = "dotnet"
             }
         };
         var rootFiles = new[] { "SomePackage" };

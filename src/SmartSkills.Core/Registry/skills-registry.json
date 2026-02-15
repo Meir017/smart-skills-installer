@@ -6,14 +6,16 @@
       "type": "package",
       "matchCriteria": [
         "Azure.Messaging.ServiceBus"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-ai-openai-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.AI.OpenAI"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-identity-dotnet",
@@ -21,7 +23,8 @@
       "matchCriteria": [
         "Azure.Identity",
         "Azure.Identity.Broker"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-eventgrid-dotnet",
@@ -29,7 +32,8 @@
       "matchCriteria": [
         "Azure.Messaging.EventGrid",
         "Azure.Messaging.EventGrid.Namespaces"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-eventhub-dotnet",
@@ -37,28 +41,32 @@
       "matchCriteria": [
         "Azure.Messaging.EventHubs",
         "Azure.Messaging.EventHubs.Processor"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-search-documents-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.Search.Documents"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-security-keyvault-keys-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.Security.KeyVault.Keys"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-ai-document-intelligence-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.AI.DocumentIntelligence"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-ai-projects-dotnet",
@@ -66,14 +74,16 @@
       "matchCriteria": [
         "Azure.AI.Projects",
         "Azure.AI.Projects.OpenAI"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-ai-voicelive-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.AI.VoiceLive"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-maps-search-dotnet",
@@ -84,14 +94,16 @@
         "Azure.Maps.Rendering",
         "Azure.Maps.Geolocation",
         "Azure.Maps.Weather"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-ai-agents-persistent-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.AI.Agents.Persistent"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/m365-agents-dotnet",
@@ -100,126 +112,144 @@
         "Microsoft.Agents.Hosting.AspNetCore",
         "Microsoft.Agents.Authentication.Msal",
         "Microsoft.Agents.CopilotStudio.Client"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/microsoft-azure-webjobs-extensions-authentication-events-dotnet",
       "type": "package",
       "matchCriteria": [
         "Microsoft.Azure.WebJobs.Extensions.AuthenticationEvents"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-mgmt-apicenter-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.ApiCenter"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-mgmt-apimanagement-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.ApiManagement"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-mgmt-applicationinsights-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.ApplicationInsights"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-mgmt-arizeaiobservabilityeval-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.ArizeAIObservabilityEval"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-mgmt-botservice-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.BotService"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-mgmt-fabric-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.Fabric"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-mgmt-mongodbatlas-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.MongoDBAtlas"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-mgmt-weightsandbiases-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.WeightsAndBiases"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-resource-manager-cosmosdb-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.CosmosDB"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-resource-manager-durabletask-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.DurableTask"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-resource-manager-mysql-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.MySql"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-resource-manager-playwright-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.Playwright"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-resource-manager-postgresql-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.PostgreSql"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-resource-manager-redis-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.Redis"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-resource-manager-sql-dotnet",
       "type": "package",
       "matchCriteria": [
         "Azure.ResourceManager.Sql"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/copilot-sdk",
       "type": "package",
       "matchCriteria": [
         "GitHub.Copilot.SDK"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": "skills/redis-development",
@@ -231,7 +261,8 @@
         "NRedisStack",
         "Microsoft.Extensions.Caching.StackExchangeRedis",
         "Redis.OM"
-      ]
+      ],
+      "language": "dotnet"
     },
     {
       "skillPath": ".github/skills/azure-servicebus-ts",

@@ -80,7 +80,7 @@ public static class RegistryIndexParser
                 ? ParseStringArray(criteriaElement)
                 : null;
 
-            if (skillPath is not null && criteria is { Count: > 0 } && type is not null)
+            if (skillPath is not null && criteria is { Count: > 0 } && type is not null && language is not null)
             {
                 entries.Add(new RegistryEntry
                 {

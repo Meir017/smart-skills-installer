@@ -18,7 +18,8 @@ public class FileExistsMatchStrategyTests
     {
         var context = new MatchContext
         {
-            RootFileNames = ["MyApp.sln", "README.md", "global.json"]
+            RootFileNames = ["MyApp.sln", "README.md", "global.json"],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["*.sln"]);
@@ -32,7 +33,8 @@ public class FileExistsMatchStrategyTests
     {
         var context = new MatchContext
         {
-            RootFileNames = ["global.json", "README.md"]
+            RootFileNames = ["global.json", "README.md"],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["global.json"]);
@@ -46,7 +48,8 @@ public class FileExistsMatchStrategyTests
     {
         var context = new MatchContext
         {
-            RootFileNames = ["package.json", "README.md"]
+            RootFileNames = ["package.json", "README.md"],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["*.sln"]);
@@ -60,7 +63,8 @@ public class FileExistsMatchStrategyTests
     {
         var context = new MatchContext
         {
-            RootFileNames = []
+            RootFileNames = [],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["*.sln", "global.json"]);
@@ -73,7 +77,8 @@ public class FileExistsMatchStrategyTests
     {
         var context = new MatchContext
         {
-            RootFileNames = ["directory.build.props"]
+            RootFileNames = ["directory.build.props"],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["Directory.Build.props"]);
@@ -86,7 +91,8 @@ public class FileExistsMatchStrategyTests
     {
         var context = new MatchContext
         {
-            RootFileNames = ["Directory.Packages.props"]
+            RootFileNames = ["Directory.Packages.props"],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["*.sln", "*.slnx", "global.json", "Directory.Build.props", "Directory.Packages.props"]);
@@ -100,7 +106,8 @@ public class FileExistsMatchStrategyTests
     {
         var context = new MatchContext
         {
-            RootFileNames = ["SmartSkills.slnx"]
+            RootFileNames = ["SmartSkills.slnx"],
+            Language = "dotnet"
         };
 
         var result = _strategy.Evaluate(context, ["*.slnx"]);

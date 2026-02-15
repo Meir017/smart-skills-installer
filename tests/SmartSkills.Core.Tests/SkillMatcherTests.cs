@@ -12,7 +12,7 @@ public class SkillMatcherTests
     public void Match_ExactName_ReturnsMatch()
     {
         var packages = new[] { new ResolvedPackage { Name = "Newtonsoft.Json", Version = "13.0.3", IsTransitive = false } };
-        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["Newtonsoft.Json"], SkillPath = "skills/json" } };
+        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["Newtonsoft.Json"], SkillPath = "skills/json", Language = "dotnet" } };
 
         var result = _matcher.Match(packages, entries);
 
@@ -28,7 +28,7 @@ public class SkillMatcherTests
             new ResolvedPackage { Name = "Microsoft.EntityFrameworkCore", Version = "8.0.0", IsTransitive = false },
             new ResolvedPackage { Name = "Microsoft.EntityFrameworkCore.SqlServer", Version = "8.0.0", IsTransitive = false }
         };
-        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["Microsoft.EntityFrameworkCore*"], SkillPath = "skills/ef" } };
+        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["Microsoft.EntityFrameworkCore*"], SkillPath = "skills/ef", Language = "dotnet" } };
 
         var result = _matcher.Match(packages, entries);
 
@@ -39,7 +39,7 @@ public class SkillMatcherTests
     public void Match_CaseInsensitive_ReturnsMatch()
     {
         var packages = new[] { new ResolvedPackage { Name = "NEWTONSOFT.JSON", Version = "13.0.3", IsTransitive = false } };
-        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["newtonsoft.json"], SkillPath = "skills/json" } };
+        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["newtonsoft.json"], SkillPath = "skills/json", Language = "dotnet" } };
 
         var result = _matcher.Match(packages, entries);
 
@@ -50,7 +50,7 @@ public class SkillMatcherTests
     public void Match_NoMatch_ReturnsEmpty()
     {
         var packages = new[] { new ResolvedPackage { Name = "SomePackage", Version = "1.0.0", IsTransitive = false } };
-        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["OtherPackage"], SkillPath = "skills/other" } };
+        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["OtherPackage"], SkillPath = "skills/other", Language = "dotnet" } };
 
         var result = _matcher.Match(packages, entries);
 
@@ -61,7 +61,7 @@ public class SkillMatcherTests
     public void Match_MultiplePatterns_MatchesAny()
     {
         var packages = new[] { new ResolvedPackage { Name = "PackageB", Version = "1.0.0", IsTransitive = false } };
-        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["PackageA", "PackageB"], SkillPath = "skills/multi" } };
+        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["PackageA", "PackageB"], SkillPath = "skills/multi", Language = "dotnet" } };
 
         var result = _matcher.Match(packages, entries);
 

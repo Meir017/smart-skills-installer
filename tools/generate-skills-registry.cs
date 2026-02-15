@@ -47,7 +47,7 @@ foreach (var skill in skills.EnumerateArray())
 {
     var skillPath = skill.GetProperty("skillPath").GetString()!;
     var repoUrl = skill.TryGetProperty("repoUrl", out var r) ? r.GetString()! : defaultRepoUrl;
-    var language = skill.TryGetProperty("language", out var l) ? l.GetString()! : "dotnet";
+    var language = skill.GetProperty("language").GetString()!;
 
     // Determine strategy: "type" field
     var matchType = skill.TryGetProperty("type", out var ms) ? ms.GetString()! : "package";

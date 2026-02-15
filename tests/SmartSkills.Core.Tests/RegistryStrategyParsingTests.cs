@@ -15,7 +15,8 @@ public class RegistryStrategyParsingTests
                 {
                     "type": "package",
                     "matchCriteria": ["Azure.Identity"],
-                    "skillPath": ".github/skills/azure-identity-dotnet"
+                    "skillPath": ".github/skills/azure-identity-dotnet",
+                    "language": "dotnet"
                 }
             ]
         }
@@ -113,7 +114,8 @@ public class RegistryStrategyParsingTests
                 {
                     "type": "file-exists",
                     "matchCriteria": ["*.sln"],
-                    "skillPath": "skills/nuget-manager"
+                    "skillPath": "skills/nuget-manager",
+                    "language": "dotnet"
                 }
             ]
         }

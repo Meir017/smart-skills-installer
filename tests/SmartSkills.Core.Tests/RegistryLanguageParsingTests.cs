@@ -23,7 +23,7 @@ public class RegistryLanguageParsingTests
     }
 
     [Fact]
-    public void Parse_WithoutLanguageField_LanguageIsNull()
+    public void Parse_WithoutLanguageField_EntryIsSkipped()
     {
         var json = """
         {
@@ -35,8 +35,7 @@ public class RegistryLanguageParsingTests
 
         var entries = RegistryIndexParser.Parse(json);
 
-        Assert.Single(entries);
-        Assert.Null(entries[0].Language);
+        Assert.Empty(entries);
     }
 
     [Fact]
@@ -86,12 +85,11 @@ public class RegistryLanguageParsingTests
     }
 
     [Fact]
-    public void LoadEmbedded_DotnetEntries_HaveNullLanguage()
+    public void LoadEmbedded_DotnetEntries_HaveDotnetLanguage()
     {
         var entries = RegistryIndexParser.LoadEmbedded();
 
-        // Existing .NET entries should have null language (backward compat)
         var dotnetEntry = entries.First(e => e.SkillPath == ".github/skills/azure-servicebus-dotnet");
-        Assert.Null(dotnetEntry.Language);
+        Assert.Equal("dotnet", dotnetEntry.Language);
     }
 }

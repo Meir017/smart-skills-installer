@@ -54,10 +54,10 @@ public record RegistryEntry
     public ISkillSourceProvider? SourceProvider { get; init; }
 
     /// <summary>
-    /// Optional ecosystem filter (e.g. "dotnet", "javascript"). When set, this entry only matches
-    /// packages from the specified ecosystem. When null, matches any ecosystem.
+    /// Ecosystem filter (e.g. "dotnet", "javascript"). This entry only matches
+    /// packages from the specified ecosystem.
     /// </summary>
-    public string? Language { get; init; }
+    public required string Language { get; init; }
 }
 
 /// <summary>

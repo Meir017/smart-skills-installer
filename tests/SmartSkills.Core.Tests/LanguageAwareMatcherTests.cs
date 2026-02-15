@@ -42,21 +42,6 @@ public class LanguageAwareMatcherTests
     }
 
     [Fact]
-    public void Match_NullLanguage_MatchesBothEcosystems()
-    {
-        var packages = new[]
-        {
-            new ResolvedPackage { Name = "redis", Version = "4.0.0", IsTransitive = false, Ecosystem = Ecosystems.JavaScript },
-            new ResolvedPackage { Name = "redis", Version = "2.0.0", IsTransitive = false, Ecosystem = Ecosystems.Dotnet }
-        };
-        var entries = new[] { new RegistryEntry { Type = "package", MatchCriteria = ["redis"], SkillPath = "skills/redis", Language = null } };
-
-        var result = _matcher.Match(packages, entries);
-
-        Assert.Single(result);
-    }
-
-    [Fact]
     public void Match_MixedPackagesAndEntries_CorrectCrossProduct()
     {
         var packages = new[]
