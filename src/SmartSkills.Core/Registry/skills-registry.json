@@ -111,7 +111,8 @@
       "matchCriteria": [
         "Microsoft.Agents.Hosting.AspNetCore",
         "Microsoft.Agents.Authentication.Msal",
-        "Microsoft.Agents.CopilotStudio.Client"
+        "Microsoft.Agents.CopilotStudio.Client",
+        "Microsoft.Agents.A365.*"
       ],
       "language": "dotnet"
     },
@@ -410,6 +411,15 @@
         "redis",
         "ioredis",
         "@redis/*"
+      ]
+    },
+    {
+      "skillPath": ".github/skills/m365-agents-ts",
+      "language": "javascript",
+      "type": "package",
+      "matchCriteria": [
+        "@microsoft/agents-*",
+        "@microsoft/agents-a365-*"
       ]
     },
     {
