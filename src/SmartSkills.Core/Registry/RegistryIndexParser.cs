@@ -9,7 +9,7 @@ namespace SmartSkills.Core.Registry;
 /// {
 ///   "repoUrl": "https://github.com/org/repo",
 ///   "skills": [
-///     { "packagePatterns": ["Pkg.Name", "Pkg.Prefix*"], "skillPath": "skills/my-skill" }
+///     { "type": "package", "matchCriteria": ["Pkg.Name", "Pkg.Prefix*"], "skillPath": "skills/my-skill" }
 ///   ]
 /// }
 /// </summary>
@@ -65,7 +65,6 @@ public static class RegistryIndexParser
         // Top-level defaults apply to all skills unless overridden per-skill
         var defaultRepoUrl = root.TryGetProperty("repoUrl", out var repoUrlProp) ? repoUrlProp.GetString() : null;
         var defaultLanguage = root.TryGetProperty("language", out var langProp) ? langProp.GetString() : null;
-        var defaultMatchStrategy = root.TryGetProperty("matchStrategy", out var msProp) ? msProp.GetString() : null;
 
         if (!root.TryGetProperty("skills", out var skills))
             return entries;
@@ -76,30 +75,16 @@ public static class RegistryIndexParser
             var repoUrl = skill.TryGetProperty("repoUrl", out var ru) ? ru.GetString() : defaultRepoUrl;
             var language = skill.TryGetProperty("language", out var sl) ? sl.GetString() : defaultLanguage;
 
-            // Determine match strategy and criteria:
-            // New format: "matchStrategy" + "matchCriteria"
-            // Legacy format: "packagePatterns" → strategy="package", criteria=packagePatterns
-            string? matchStrategy = null;
-            List<string>? criteria = null;
+            var type = skill.TryGetProperty("type", out var typeProp) ? typeProp.GetString() : null;
+            var criteria = skill.TryGetProperty("matchCriteria", out var criteriaElement)
+                ? ParseStringArray(criteriaElement)
+                : null;
 
-            if (skill.TryGetProperty("matchCriteria", out var criteriaElement))
-            {
-                criteria = ParseStringArray(criteriaElement);
-                matchStrategy = skill.TryGetProperty("matchStrategy", out var ms)
-                    ? ms.GetString()
-                    : defaultMatchStrategy ?? "package";
-            }
-            else if (skill.TryGetProperty("packagePatterns", out var patternsElement))
-            {
-                criteria = ParseStringArray(patternsElement);
-                matchStrategy = "package";
-            }
-
-            if (skillPath is not null && criteria is { Count: > 0 } && matchStrategy is not null)
+            if (skillPath is not null && criteria is { Count: > 0 } && type is not null)
             {
                 entries.Add(new RegistryEntry
                 {
-                    MatchStrategy = matchStrategy,
+                    Type = type,
                     MatchCriteria = criteria,
                     SkillPath = skillPath,
                     RepoUrl = repoUrl,

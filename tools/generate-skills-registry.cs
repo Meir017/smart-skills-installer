@@ -49,10 +49,10 @@ foreach (var skill in skills.EnumerateArray())
     var repoUrl = skill.TryGetProperty("repoUrl", out var r) ? r.GetString()! : defaultRepoUrl;
     var language = skill.TryGetProperty("language", out var l) ? l.GetString()! : "dotnet";
 
-    // Determine strategy: new format (matchStrategy) or legacy (packagePatterns)
-    var matchStrategy = skill.TryGetProperty("matchStrategy", out var ms) ? ms.GetString()! : "package";
+    // Determine strategy: "type" field
+    var matchType = skill.TryGetProperty("type", out var ms) ? ms.GetString()! : "package";
 
-    if (matchStrategy == "file-exists")
+    if (matchType == "file-exists")
     {
         var criteria = skill.GetProperty("matchCriteria").EnumerateArray().Select(p => p.GetString()!).ToList();
         fileExistsSkills.Add(new FileExistsEntry(criteria, skillPath, repoUrl, language));
@@ -62,7 +62,7 @@ foreach (var skill in skills.EnumerateArray())
 
     var patterns = skill.TryGetProperty("matchCriteria", out var mc)
         ? mc.EnumerateArray().Select(p => p.GetString()!).ToList()
-        : skill.GetProperty("packagePatterns").EnumerateArray().Select(p => p.GetString()!).ToList();
+        : [];
 
     var entry = new SkillEntry(patterns, skillPath, repoUrl, language);
     totalParsed++;

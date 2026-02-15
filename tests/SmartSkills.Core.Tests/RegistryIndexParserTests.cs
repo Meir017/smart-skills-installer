@@ -12,11 +12,13 @@ public class RegistryIndexParserTests
         {
           "skills": [
             {
-              "packagePatterns": ["Newtonsoft.Json"],
+              "type": "package",
+              "matchCriteria": ["Newtonsoft.Json"],
               "skillPath": "skills/json"
             },
             {
-              "packagePatterns": ["Microsoft.EntityFrameworkCore*", "Npgsql.EntityFrameworkCore*"],
+              "type": "package",
+              "matchCriteria": ["Microsoft.EntityFrameworkCore*", "Npgsql.EntityFrameworkCore*"],
               "skillPath": "skills/ef-core"
             }
           ]
@@ -76,7 +78,7 @@ public class RegistryIndexParserTests
             File.WriteAllText(tempFile, """
             {
               "skills": [
-                { "packagePatterns": ["Extra.Package"], "skillPath": "skills/extra" }
+                { "type": "package", "matchCriteria": ["Extra.Package"], "skillPath": "skills/extra" }
               ]
             }
             """);
@@ -98,8 +100,8 @@ public class RegistryIndexParserTests
         {
           "repoUrl": "https://github.com/org/repo",
           "skills": [
-            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
-            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b" }
+            { "type": "package", "matchCriteria": ["Pkg.A"], "skillPath": "skills/a" },
+            { "type": "package", "matchCriteria": ["Pkg.B"], "skillPath": "skills/b" }
           ]
         }
         """;
@@ -116,8 +118,8 @@ public class RegistryIndexParserTests
         {
           "repoUrl": "https://github.com/org/default",
           "skills": [
-            { "packagePatterns": ["Pkg.A"], "skillPath": "skills/a" },
-            { "packagePatterns": ["Pkg.B"], "skillPath": "skills/b", "repoUrl": "https://github.com/org/custom" }
+            { "type": "package", "matchCriteria": ["Pkg.A"], "skillPath": "skills/a" },
+            { "type": "package", "matchCriteria": ["Pkg.B"], "skillPath": "skills/b", "repoUrl": "https://github.com/org/custom" }
           ]
         }
         """;

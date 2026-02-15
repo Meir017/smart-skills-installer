@@ -17,7 +17,7 @@ public class FileExistsMatchIntegrationTests
         {
             new RegistryEntry
             {
-                MatchStrategy = "file-exists",
+                Type = "file-exists",
                 MatchCriteria = ["*.sln", "*.slnx", "global.json", "Directory.Build.props", "Directory.Packages.props"],
                 SkillPath = "skills/nuget-manager",
                 Language = "dotnet"
@@ -39,7 +39,7 @@ public class FileExistsMatchIntegrationTests
         {
             new RegistryEntry
             {
-                MatchStrategy = "file-exists",
+                Type = "file-exists",
                 MatchCriteria = ["*.sln", "*.slnx", "global.json"],
                 SkillPath = "skills/nuget-manager",
                 Language = "dotnet"
@@ -60,7 +60,7 @@ public class FileExistsMatchIntegrationTests
         {
             new RegistryEntry
             {
-                MatchStrategy = "file-exists",
+                Type = "file-exists",
                 MatchCriteria = ["*.sln", "global.json"],
                 SkillPath = "skills/nuget-manager",
                 Language = "dotnet"
@@ -81,7 +81,7 @@ public class FileExistsMatchIntegrationTests
         {
             new RegistryEntry
             {
-                MatchStrategy = "file-exists",
+                Type = "file-exists",
                 MatchCriteria = ["*.sln", "*.slnx", "global.json"],
                 SkillPath = "skills/nuget-manager",
                 Language = "dotnet"
@@ -102,14 +102,14 @@ public class FileExistsMatchIntegrationTests
         {
             new RegistryEntry
             {
-                MatchStrategy = "package",
+                Type = "package",
                 MatchCriteria = ["Azure.Identity"],
                 SkillPath = ".github/skills/azure-identity-dotnet",
                 Language = "dotnet"
             },
             new RegistryEntry
             {
-                MatchStrategy = "file-exists",
+                Type = "file-exists",
                 MatchCriteria = ["*.sln"],
                 SkillPath = "skills/nuget-manager",
                 Language = "dotnet"
@@ -132,7 +132,7 @@ public class FileExistsMatchIntegrationTests
         {
             new RegistryEntry
             {
-                MatchStrategy = "package",
+                Type = "package",
                 MatchCriteria = ["SomePackage"],
                 SkillPath = "skills/some-skill"
             }

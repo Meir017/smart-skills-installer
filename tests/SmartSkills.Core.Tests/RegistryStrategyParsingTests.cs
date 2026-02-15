@@ -13,7 +13,8 @@ public class RegistryStrategyParsingTests
             "repoUrl": "https://github.com/org/repo",
             "skills": [
                 {
-                    "packagePatterns": ["Azure.Identity"],
+                    "type": "package",
+                    "matchCriteria": ["Azure.Identity"],
                     "skillPath": ".github/skills/azure-identity-dotnet"
                 }
             ]
@@ -23,19 +24,19 @@ public class RegistryStrategyParsingTests
         var entries = RegistryIndexParser.Parse(json);
 
         Assert.Single(entries);
-        Assert.Equal("package", entries[0].MatchStrategy);
+        Assert.Equal("package", entries[0].Type);
         Assert.Equal(["Azure.Identity"], entries[0].MatchCriteria);
     }
 
     [Fact]
-    public void Parse_NewFormat_UsesMatchStrategyAndCriteria()
+    public void Parse_NewFormat_UsesTypeAndCriteria()
     {
         var json = """
         {
             "repoUrl": "https://github.com/org/repo",
             "skills": [
                 {
-                    "matchStrategy": "file-exists",
+                    "type": "file-exists",
                     "matchCriteria": ["*.sln", "global.json"],
                     "skillPath": "skills/nuget-manager",
                     "language": "dotnet"
@@ -47,14 +48,14 @@ public class RegistryStrategyParsingTests
         var entries = RegistryIndexParser.Parse(json);
 
         Assert.Single(entries);
-        Assert.Equal("file-exists", entries[0].MatchStrategy);
+        Assert.Equal("file-exists", entries[0].Type);
         Assert.Equal(["*.sln", "global.json"], entries[0].MatchCriteria);
         Assert.Equal("skills/nuget-manager", entries[0].SkillPath);
         Assert.Equal("dotnet", entries[0].Language);
     }
 
     [Fact]
-    public void Parse_EntryWithNeither_IsSkipped()
+    public void Parse_EntryWithoutType_IsSkipped()
     {
         var json = """
         {
@@ -80,12 +81,13 @@ public class RegistryStrategyParsingTests
             "repoUrl": "https://github.com/org/repo",
             "skills": [
                 {
-                    "packagePatterns": ["Azure.Identity"],
+                    "type": "package",
+                    "matchCriteria": ["Azure.Identity"],
                     "skillPath": ".github/skills/azure-identity",
                     "language": "dotnet"
                 },
                 {
-                    "matchStrategy": "file-exists",
+                    "type": "file-exists",
                     "matchCriteria": ["*.sln"],
                     "skillPath": "skills/nuget-manager",
                     "language": "dotnet"
@@ -97,19 +99,19 @@ public class RegistryStrategyParsingTests
         var entries = RegistryIndexParser.Parse(json);
 
         Assert.Equal(2, entries.Count);
-        Assert.Equal("package", entries[0].MatchStrategy);
-        Assert.Equal("file-exists", entries[1].MatchStrategy);
+        Assert.Equal("package", entries[0].Type);
+        Assert.Equal("file-exists", entries[1].Type);
     }
 
     [Fact]
-    public void Parse_TopLevelMatchStrategy_InheritedByEntries()
+    public void Parse_TopLevelType_NotInheritedByEntries()
     {
         var json = """
         {
             "repoUrl": "https://github.com/org/repo",
-            "matchStrategy": "file-exists",
             "skills": [
                 {
+                    "type": "file-exists",
                     "matchCriteria": ["*.sln"],
                     "skillPath": "skills/nuget-manager"
                 }
@@ -120,7 +122,7 @@ public class RegistryStrategyParsingTests
         var entries = RegistryIndexParser.Parse(json);
 
         Assert.Single(entries);
-        Assert.Equal("file-exists", entries[0].MatchStrategy);
+        Assert.Equal("file-exists", entries[0].Type);
     }
 
     [Fact]
@@ -130,7 +132,7 @@ public class RegistryStrategyParsingTests
 
         var nugetManager = entries.FirstOrDefault(e => e.SkillPath == "skills/nuget-manager");
         Assert.NotNull(nugetManager);
-        Assert.Equal("file-exists", nugetManager.MatchStrategy);
+        Assert.Equal("file-exists", nugetManager.Type);
         Assert.Contains("*.sln", nugetManager.MatchCriteria);
         Assert.Contains("*.slnx", nugetManager.MatchCriteria);
         Assert.Contains("global.json", nugetManager.MatchCriteria);
@@ -147,6 +149,6 @@ public class RegistryStrategyParsingTests
         // Verify existing package-based entries still work
         var azureServiceBus = entries.FirstOrDefault(e => e.MatchCriteria.Contains("Azure.Messaging.ServiceBus"));
         Assert.NotNull(azureServiceBus);
-        Assert.Equal("package", azureServiceBus.MatchStrategy);
+        Assert.Equal("package", azureServiceBus.Type);
     }
 }
