@@ -122,7 +122,6 @@ smart-skills uninstall my-skill-name
 | Option | Description |
 |--------|-------------|
 | `-v, --verbose` | Enable verbose logging |
-| `--dry-run` | Preview changes without executing |
 
 ## Skills Lock File
 
@@ -159,7 +158,7 @@ On subsequent installs, SmartSkills compares the remote commit SHA and local con
 | Command | Behavior |
 |---------|----------|
 | `smart-skills install` | Fetches latest skills, updates lock file with new commit SHAs and content hashes |
-| `smart-skills install --force` | Overwrites locally modified skills |
+| `smart-skills install --dry-run` | Preview what would be installed without making changes |
 | `smart-skills restore` | Downloads skills at the exact commit SHAs recorded in the lock file |
 | `smart-skills status` | Shows which skills are up-to-date, modified, or missing |
 | `smart-skills status --check-remote` | Also checks if newer versions are available upstream |
